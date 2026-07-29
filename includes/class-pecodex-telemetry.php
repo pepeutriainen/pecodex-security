@@ -98,20 +98,21 @@ class Pecodex_Telemetry {
 	public function create_live_traffic_table() {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'pmc_live_traffic';
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
-			$charset_collate = $wpdb->get_charset_collate();
-			$sql = "CREATE TABLE $table_name (
-				id bigint(20) NOT NULL AUTO_INCREMENT,
-				ip varchar(100) NOT NULL,
-				url text NOT NULL,
-				method varchar(10) NOT NULL,
-				time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-				country_iso_code varchar(2) NOT NULL,
-				PRIMARY KEY  (id)
-			) $charset_collate;";
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-			dbDelta( $sql );
-		}
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			ip varchar(100) NOT NULL,
+			url text NOT NULL,
+			method varchar(10) NOT NULL,
+			time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+			country_iso_code varchar(2) NOT NULL,
+			user_agent text,
+			is_proxy tinyint(1) DEFAULT 0,
+			threat_score int(11) DEFAULT 0,
+			PRIMARY KEY  (id)
+		) $charset_collate;";
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
 	}
 
 	public function log_live_traffic() {
@@ -151,6 +152,45 @@ class Pecodex_Telemetry {
 		
 		$url = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'GET';
+		$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : 'Unknown';
+
+		// Check for proxy
+		$is_proxy = 0;
+		$proxy_headers = array( 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'HTTP_X_REAL_IP' );
+		foreach ( $proxy_headers as $header ) {
+			if ( ! empty( $_SERVER[ $header ] ) ) {
+				$is_proxy = 1;
+				break;
+			}
+		}
+
+		// Calculate Threat Score
+		$threat_score = 0;
+		if ( $is_proxy ) {
+			$threat_score += 20;
+		}
+
+		$bad_ua_patterns = array( 'curl', 'python', 'wget', 'nikto', 'headless', 'phantomjs', 'bot', 'spider' );
+		$ua_lower = strtolower( $user_agent );
+		if ( $user_agent === 'Unknown' || empty( trim( $user_agent ) ) ) {
+			$threat_score += 30;
+		} else {
+			foreach ( $bad_ua_patterns as $pattern ) {
+				if ( strpos( $ua_lower, $pattern ) !== false ) {
+					$threat_score += 30;
+					break;
+				}
+			}
+		}
+
+		$sensitive_urls = array( 'wp-config.php', '.env', 'xmlrpc.php', '.git', 'passwd', 'eval(' );
+		$url_lower = strtolower( $url );
+		foreach ( $sensitive_urls as $pattern ) {
+			if ( strpos( $url_lower, $pattern ) !== false ) {
+				$threat_score += 40;
+				break;
+			}
+		}
 		
 		$wpdb->insert(
 			$table_name,
@@ -159,7 +199,10 @@ class Pecodex_Telemetry {
 				'url' => $url,
 				'method' => $method,
 				'time' => current_time( 'mysql' ),
-				'country_iso_code' => $country
+				'country_iso_code' => $country,
+				'user_agent' => $user_agent,
+				'is_proxy' => $is_proxy,
+				'threat_score' => $threat_score
 			)
 		);
 	}

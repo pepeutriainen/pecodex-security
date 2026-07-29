@@ -1437,6 +1437,9 @@ class Pecodex_Security_API {
 
 				// Target is always our site
 				$event['target'] = 'Local Server';
+				$event['user_agent'] = 'Unknown (Lockout)';
+				$event['is_proxy'] = 0;
+				$event['threat_score'] = 100;
 
 				// Try to get GeoIP from transient cache
 				$geo = get_transient( 'pmc_geoip_' . md5( $ip ) );
@@ -1511,7 +1514,10 @@ class Pecodex_Security_API {
 					'statusClass' => 'info',
 					'attack' => 'Normal Traffic',
 					'target' => 'Local Server',
-					'endpoint' => $row['url']
+					'endpoint' => $row['url'],
+					'user_agent' => isset($row['user_agent']) ? $row['user_agent'] : 'Unknown',
+					'is_proxy' => isset($row['is_proxy']) ? (int) $row['is_proxy'] : 0,
+					'threat_score' => isset($row['threat_score']) ? (int) $row['threat_score'] : 0
 				);
 
 				$geo = get_transient( 'pmc_geoip_' . md5( $ip ) );

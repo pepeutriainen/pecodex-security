@@ -1345,6 +1345,18 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div><span class="lbl">IsÃ¤ntÃ¤:</span></div><div><span class="val" id="modal-host">ï¿½?"</span></div>
         <div><span class="lbl">PÃ¤Ã¤tepiste:</span></div><div><span class="val" style="font-family:monospace;" id="modal-endpoint">ï¿½?"</span></div>
       </div>
+      <div class="modal-section-title">Profilointi (Deep Traffic Profiler)</div>
+      <div class="modal-grid">
+        <div><span class="lbl">Sormenj&auml;lki (UA):</span></div><div><span class="val" id="modal-ua" style="font-size:11px;word-break:break-all;">-</span></div>
+        <div><span class="lbl">Yhteystyyppi:</span></div><div><span class="val" id="modal-proxy">-</span></div>
+        <div style="grid-column: span 2;">
+          <span class="lbl">Uhkataso:</span>
+          <div style="width:100%;background:#e5e7eb;border-radius:4px;height:12px;margin-top:4px;overflow:hidden;position:relative;">
+            <div id="modal-threat-bar" style="width:0%;height:100%;background:#3b82f6;transition:all 0.5s ease;"></div>
+            <span id="modal-threat-text" style="position:absolute;top:0;left:0;width:100%;text-align:center;font-size:10px;line-height:12px;color:#fff;font-weight:bold;text-shadow:0 0 2px rgba(0,0,0,0.5);"></span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="modal-status-row">
       <span id="modal-status" style="color:#dc2626;">ï¿½?"</span>
@@ -1705,9 +1717,12 @@ function drawAttackLines() {
         ip: data.ip,
         attack: data.attack,
         host: data.target,
-        endpoint: data.type.includes('404') ? '404 Probe' : 'N/A',
+                endpoint: data.type.includes('404') ? '404 Probe' : 'N/A',
         status: data.status,
-        statusClass: data.statusClass
+        statusClass: data.statusClass,
+        user_agent: data.user_agent,
+        is_proxy: data.is_proxy,
+        threat_score: data.threat_score
     };
     path.addEventListener('click', () => openModal(modalData));
     svg.appendChild(path);
@@ -1851,7 +1866,28 @@ function openModal(data) {
   document.getElementById('modal-host').textContent     = data.host     || 'ï¿½?"';
   document.getElementById('modal-endpoint').textContent = data.endpoint || 'ï¿½?"';
   document.getElementById('modal-status').textContent   = data.status   || 'ï¿½?"';
-  document.getElementById('threat-modal-backdrop').classList.add('open');
+      if(document.getElementById('modal-ua')) document.getElementById('modal-ua').textContent = data.user_agent || 'Unknown';
+    if(document.getElementById('modal-proxy')) {
+        document.getElementById('modal-proxy').textContent = data.is_proxy ? 'Proxy / VPN Detected (Riski)' : 'Suora yhteys';
+        document.getElementById('modal-proxy').style.color = data.is_proxy ? '#dc2626' : '#059669';
+    }
+    if(document.getElementById('modal-threat-bar')) {
+        const score = parseInt(data.threat_score) || 0;
+        const tBar = document.getElementById('modal-threat-bar');
+        const tText = document.getElementById('modal-threat-text');
+        tBar.style.width = Math.min(score, 100) + '%';
+        if (score === 0) {
+          tBar.style.background = '#3b82f6';
+          tText.textContent = score + '% (Turvallinen)';
+        } else if (score < 50) {
+          tBar.style.background = '#f59e0b';
+          tText.textContent = score + '% (Ep&auml;ilytt&auml;v&auml;)';
+        } else {
+          tBar.style.background = '#dc2626';
+          tText.textContent = score + '% (KORKEA RISKI)';
+        }
+    }
+    document.getElementById('threat-modal-backdrop').classList.add('open');
   
   const statusEl = document.getElementById('modal-status');
   const statusContainer = document.getElementById('modal-status-container');
@@ -2937,6 +2973,7 @@ pmcSec.init();
 
 }); // end DOMContentLoaded
 </script>
+
 
 
 
