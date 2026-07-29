@@ -17,6 +17,25 @@ class Pecodex_Cron {
         if ( ! wp_next_scheduled( 'pecodex_daily_security_scan' ) ) {
             wp_schedule_event( time(), 'daily', 'pecodex_daily_security_scan' );
         }
+        
+        add_action( 'pecodex_cleanup_live_traffic', array( __CLASS__, 'cleanup_live_traffic' ) );
+        if ( ! wp_next_scheduled( 'pecodex_cleanup_live_traffic' ) ) {
+            wp_schedule_event( time(), 'hourly', 'pecodex_cleanup_live_traffic' );
+        }
+    }
+
+    public static function cleanup_live_traffic() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pmc_live_traffic';
+        if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name ) {
+            $threshold = gmdate( 'Y-m-d H:i:s', current_time( 'timestamp' ) - 15 * 60 );
+            $wpdb->query(
+                $wpdb->prepare(
+                    "DELETE FROM $table_name WHERE time < %s",
+                    $threshold
+                )
+            );
+        }
     }
 
     /**

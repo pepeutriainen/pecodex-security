@@ -335,6 +335,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 .attack-line.critical { stroke: #dc2626; stroke-width: 2.8; }
 .attack-line.warning  { stroke: #f59e0b; stroke-width: 2.8; }
 .attack-line.safe     { stroke: #22c55e; stroke-width: 2.8; }
+.attack-line.info     { stroke: #3b82f6; stroke-width: 2.8; }
 
 /* Flight Blip (plane) */
 .flight-blip {
@@ -606,6 +607,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   white-space: nowrap;
 }
 .leaflet-tooltip.map-label-tooltip.critical { color: #dc2626; border-color: rgba(220,38,38,0.3); }
+.leaflet-tooltip.map-label-tooltip.info { color: #3b82f6; border-color: rgba(59,130,246,0.3); }
 .leaflet-tooltip.map-label-tooltip.hub { color: #1d4ed8; border-color: rgba(29,78,216,0.3); }
 .leaflet-tooltip.map-label-tooltip::before { display: none; }
 
@@ -1353,7 +1355,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     </div>
     <div class="modal-actions">
       <button class="btn-dismiss" onclick="closeModal()">OHITA</button>
-      <button class="btn-ban" onclick="closeModal()">EST�" IP</button>
+      <button class="btn-ban" id="btn-block-ip">EST�" IP</button>
     </div>
   </div>
 </div>
@@ -1654,12 +1656,12 @@ function updateMapMarkers(events) {
   
   events.forEach(e => {
     if (!e.lat || !e.lng) return;
-    const color = e.statusClass === 'critical' ? '#dc2626' : '#f59e0b';
+    const color = e.statusClass === 'critical' ? '#dc2626' : (e.statusClass === 'info' ? '#3b82f6' : '#f59e0b');
     const marker = L.marker([e.lat, e.lng], { icon: makeIcon(color), interactive: false })
       .addTo(map)
       .bindTooltip(`${e.country} �?" ${e.city}`, {
         permanent: false, direction: 'right', offset: [10, 0],
-        className: 'map-label-tooltip ' + (e.statusClass === 'critical' ? 'critical' : '')
+        className: 'map-label-tooltip ' + (e.statusClass === 'critical' ? 'critical' : (e.statusClass === 'info' ? 'info' : ''))
       });
     activeMarkers.push(marker);
   });
@@ -1712,7 +1714,7 @@ function drawAttackLines() {
     // Flight radar style blip (airplane dot)
     const plane = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     plane.setAttribute('r', '5');
-    plane.setAttribute('fill', cls === 'critical' ? '#dc2626' : '#f59e0b');
+    plane.setAttribute('fill', cls === 'critical' ? '#dc2626' : (cls === 'info' ? '#3b82f6' : '#f59e0b'));
     plane.setAttribute('class', 'flight-blip');
     plane.style.filter = 'drop-shadow(0 0 6px currentColor)';
     
@@ -1732,7 +1734,7 @@ function drawAttackLines() {
     dot.setAttribute('cx', from.x);
     dot.setAttribute('cy', from.y);
     dot.setAttribute('r', 4);
-    dot.setAttribute('fill', cls === 'critical' ? '#dc2626' : '#f59e0b');
+    dot.setAttribute('fill', cls === 'critical' ? '#dc2626' : (cls === 'info' ? '#3b82f6' : '#f59e0b'));
     dot.style.opacity = '0.8';
     svg.appendChild(dot);
   });
@@ -1849,12 +1851,53 @@ function openModal(data) {
   document.getElementById('modal-endpoint').textContent = data.endpoint || '�?"';
   document.getElementById('modal-status').textContent   = data.status   || '�?"';
   document.getElementById('threat-modal-backdrop').classList.add('open');
+  
+  const btnBlock = document.getElementById('btn-block-ip');
+  if (btnBlock) {
+    btnBlock.dataset.ip = data.ip;
+  }
 }
 function closeModal() {
   document.getElementById('threat-modal-backdrop').classList.remove('open');
 }
 window.openModal  = openModal;
 window.closeModal = closeModal;
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btnBlock = document.getElementById('btn-block-ip');
+  if (btnBlock) {
+    btnBlock.addEventListener('click', function() {
+      const ip = this.dataset.ip;
+      if (!ip) return;
+      
+      const formData = new URLSearchParams();
+      formData.append('action', 'pmc_instant_block');
+      formData.append('ip', ip);
+      
+      fetch(typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success || res.data) {
+          alert('IP Blocked: ' + ip);
+          closeModal();
+          if (typeof fetchLiveEvents === 'function') fetchLiveEvents();
+          else if (typeof refreshSecurityMap === 'function') refreshSecurityMap();
+        } else {
+          alert('Failed to block IP.');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Error blocking IP.');
+      });
+    });
+  }
+});
+
 
 /* �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
    LOCKDOWN

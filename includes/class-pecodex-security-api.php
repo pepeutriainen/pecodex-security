@@ -36,6 +36,7 @@ class Pecodex_Security_API {
 		add_action( 'wp_ajax_pmc_security_track_ip',       array( $this, 'ajax_track_ip' ) );
 		add_action( 'wp_ajax_pmc_security_terminate_ip',   array( $this, 'ajax_terminate_ip' ) );
 		add_action( 'wp_ajax_pmc_export_audit_log',        array( $this, 'ajax_export_audit_log' ) );
+		add_action( 'wp_ajax_pmc_instant_block',           array( $this, 'ajax_instant_block' ) );
 
 		// ── Forensinen Tarkastusloki – Hookit ──────────────────────────────
 		// Kirjautumiset
@@ -1135,6 +1136,27 @@ class Pecodex_Security_API {
 		}
 	}
 
+	public function ajax_instant_block() {
+		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+
+		$ip = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
+		if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+			wp_send_json_error( 'Invalid IP' );
+		}
+
+		$blacklist = get_option( 'pmc_firewall_blacklist', '' );
+		$ips = array_filter( array_map( 'trim', explode( "\n", $blacklist ) ) );
+		
+		if ( ! in_array( $ip, $ips, true ) ) {
+			$ips[] = $ip;
+			update_option( 'pmc_firewall_blacklist', implode( "\n", $ips ) );
+		}
+		
+		$this->pmc_append_audit_log( 'instant_block', "IP instantly blocked: {$ip}", 'critical' );
+		
+		wp_send_json_success( array( 'message' => 'Blocked', 'ip' => $ip ) );
+	}
 
 	// ── Forensinen apufunktio – kerää kaikki saatavilla oleva tieto ──
 	private function pmc_get_forensic_context( $override_user = null ) {
@@ -1467,6 +1489,77 @@ class Pecodex_Security_API {
 				}
 			}
 			$events = $valid_events;
+		}
+
+		$traffic_table = $wpdb->prefix . 'pmc_live_traffic';
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$traffic_table'" ) == $traffic_table ) {
+			$traffic_rows = $wpdb->get_results( "SELECT * FROM {$traffic_table} ORDER BY id DESC LIMIT 10", ARRAY_A );
+			$missing_traffic_ips = array();
+
+			foreach ( $traffic_rows as $row ) {
+				$ip = $row['ip'];
+				$event = array(
+					'id' => 'traffic_' . $row['id'],
+					'ip' => $ip,
+					'timestamp' => $row['time'] ? gmdate( 'H:i:s', (int) strtotime( $row['time'] ) ) : '',
+					'type' => 'traffic',
+					'country' => $row['country_iso_code'] ? $row['country_iso_code'] : 'Unknown',
+					'lat' => null,
+					'lng' => null,
+					'city' => 'Unknown',
+					'status' => 'Active',
+					'statusClass' => 'info',
+					'attack' => 'Normal Traffic',
+					'target' => 'Local Server',
+					'endpoint' => $row['url']
+				);
+
+				$geo = get_transient( 'pmc_geoip_' . md5( $ip ) );
+				if ( $geo && is_array( $geo ) ) {
+					$event['lat']     = $geo['lat'];
+					$event['lng']     = $geo['lon'];
+					$event['city']    = $geo['city'];
+					$event['country'] = $geo['countryCode'];
+				} elseif ( ! isset( $missing_traffic_ips[ $ip ] ) ) {
+					$missing_traffic_ips[ $ip ] = true;
+				}
+				$events[] = $event;
+			}
+
+			$ips_to_fetch_traffic = array_slice( array_keys( $missing_traffic_ips ), 0, 15 );
+			if ( ! empty( $ips_to_fetch_traffic ) ) {
+				$response = wp_remote_post( 'http://ip-api.com/batch?fields=status,countryCode,city,lat,lon,query', array(
+					'body' => wp_json_encode( $ips_to_fetch_traffic ),
+					'timeout' => 5,
+				) );
+				if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
+					$data = json_decode( wp_remote_retrieve_body( $response ), true );
+					if ( is_array( $data ) ) {
+						foreach ( $data as $res ) {
+							if ( isset( $res['status'] ) && $res['status'] === 'success' ) {
+								$ip = $res['query'];
+								set_transient( 'pmc_geoip_' . md5( $ip ), $res, 30 * DAY_IN_SECONDS );
+								foreach ( $events as &$e ) {
+									if ( $e['ip'] === $ip && $e['type'] === 'traffic' ) {
+										$e['lat']     = $res['lat'];
+										$e['lng']     = $res['lon'];
+										$e['city']    = $res['city'];
+										$e['country'] = $res['countryCode'];
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			$final_events = array();
+			foreach ( $events as $e ) {
+				if ( $e['lat'] !== null && $e['lng'] !== null ) {
+					$final_events[] = $e;
+				}
+			}
+			$events = $final_events;
 		}
 
 		wp_send_json_success( $events );
