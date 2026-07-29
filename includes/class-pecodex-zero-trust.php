@@ -30,7 +30,7 @@ class Pecodex_Zero_Trust {
         if ( ! isset( $_COOKIE['pmc_device_fp'] ) ) {
             if ( class_exists('Pecodex_Notifications') ) {
                 $subject = 'Zero Trust: Uusi laitekirjautuminen';
-                $message = sprintf( 'Käyttäjä %s kirjautui sisään uudelta laitteelta. Jos tämä olit sinä, toimenpiteitä ei tarvita.', $user_login );
+                $message = sprintf( 'Käyttöjä %s kirjautui sisään uudelta laitteelta. Jos tämä olit sinä, toimenpiteitä ei tarvita.', $user_login );
                 Pecodex_Notifications::send_notification('new_device', $subject, $message);
             }
             

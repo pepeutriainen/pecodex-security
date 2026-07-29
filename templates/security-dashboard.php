@@ -1,7 +1,7 @@
 ﻿<?php
 /**
  * Security Dashboard Template
- * Pecodex Security ï¿½?" Cybersecurity dashboard rendered inside WordPress admin.
+ * Pecodex Security ä?" Cybersecurity dashboard rendered inside WordPress admin.
  * This file is include()'d by render_security_dashboard_page().
  * Assets (Leaflet, SortableJS, fonts) are enqueued in enqueue_security_dashboard_assets().
  */
@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <style>
-/* ï¿½"?ï¿½"? Base reset (scoped) ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Base reset (scoped) ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 *, *::before, *::after { box-sizing: border-box; }
 
-/* ï¿½"?ï¿½"? Material Symbols ï¿½?" force correct rendering inside WP admin ï¿½"?ï¿½"? */
+/* ä"?ä"? Material Symbols ä?" force correct rendering inside WP admin ä"?ä"? */
 #ps-shell .material-symbols-outlined {
   font-family: 'Material Symbols Outlined', sans-serif !important;
   font-weight: normal;
@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ï¿½"?ï¿½"? Inter font for the shell ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Inter font for the shell ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #ps-shell, #threat-modal, #lockdown-overlay {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   max-width: none !important;
 }
 
-/* ï¿½"?ï¿½"? Layout ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Layout ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 /* Fills the WP content area (after WP sidebar & admin bar) */
 #ps-shell {
   display: flex;
@@ -59,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* ï¿½"?ï¿½"? Sidebar ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Sidebar ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #ps-sidebar {
   width: 200px;
   min-width: 200px;
@@ -160,7 +160,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 .sidebar-footer-links a:hover { color: #374151; background: #f9fafb; }
 .sidebar-footer-links .material-symbols-outlined { font-size: 15px; flex-shrink: 0; }
 
-/* ï¿½"?ï¿½"? Hardening Accordion ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Hardening Accordion ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 .ps-accordion-item {
   transition: background 0.3s ease;
 }
@@ -198,7 +198,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 #ps-sidebar.collapsed .sidebar-nav a { justify-content: center; }
 #ps-sidebar.collapsed .btn-incident { padding: 9px; justify-content: center; }
 
-/* ï¿½"?ï¿½"? Main area ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Main area ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #ps-main {
   flex: 1;
   display: flex;
@@ -208,7 +208,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   min-height: 0;
 }
 
-/* ï¿½"?ï¿½"? Header bar ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Header bar ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #ps-header {
   height: 52px;
   background: rgba(255,255,255,0.97);
@@ -270,7 +270,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-/* ï¿½"?ï¿½"? Map container ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Map container ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #ps-map-area {
   flex: 1;
   position: relative;
@@ -313,7 +313,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 .leaflet-control-zoom-out { border-bottom: none !important; }
 
-/* ï¿½"?ï¿½"? SVG attack lines overlay ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? SVG attack lines overlay ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #attack-svg {
   position: absolute;
   inset: 0;
@@ -352,7 +352,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   100% { r: 4;   opacity: 0; }
 }
 
-/* ï¿½"?ï¿½"? Widgets overlay (on map) ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Widgets overlay (on map) ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #ps-widgets {
   position: absolute;
   inset: 12px;
@@ -364,7 +364,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   gap: 12px;
 }
 
-/* ï¿½"?ï¿½"? Grid Cells ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Grid Cells ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 .grid-cell {
   position: relative;
   display: flex;
@@ -385,7 +385,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 #cell-3, #cell-4, #cell-5 { justify-content: center; }     /* Middle row */
 #cell-6, #cell-7, #cell-8 { justify-content: flex-end; }   /* Bottom row */
 
-/* ï¿½"?ï¿½"? Container grid background (subtle) ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Container grid background (subtle) ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 .grid-cell::before {
   content: '';
   position: absolute;
@@ -407,7 +407,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   opacity: 1;
 }
 
-/* ï¿½"?ï¿½"? Maximize Widget ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Maximize Widget ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 .widget-maximize {
   position: absolute; top: 8px; right: 32px;
   cursor: pointer; opacity: 0.4; transition: opacity 0.15s;
@@ -448,7 +448,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 #maximize-backdrop.active { display: block; }
 
-/* ï¿½"?ï¿½"? SortableJS ghost + chosen states ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? SortableJS ghost + chosen states ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 .glass-card.sortable-ghost {
   opacity: 1 !important;
   background: rgba(184,0,72,0.04) !important;
@@ -461,7 +461,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   visibility: hidden;
 }
 .glass-card.sortable-ghost::after {
-  content: 'PUDOTA Tï¿½"Hï¿½"N';
+  content: 'PUDOTA Tä"Hä"N';
   visibility: visible;
   position: absolute;
   inset: 0;
@@ -491,7 +491,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   animation: widget-drop 0.35s cubic-bezier(.22,.68,0,1.2) forwards;
 }
 
-/* ï¿½"?ï¿½"? Glass card ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Glass card ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 .glass-card {
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(16px);
@@ -592,7 +592,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 .btn-lockdown:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
 .btn-lockdown .material-symbols-outlined { font-size: 16px; }
 
-/* ï¿½"?ï¿½"? Map pin labels ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Map pin labels ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 .leaflet-tooltip.map-label-tooltip {
   background: rgba(255,255,255,0.92);
   border: 1px solid rgba(0,0,0,0.1);
@@ -611,7 +611,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 .leaflet-tooltip.map-label-tooltip.hub { color: #1d4ed8; border-color: rgba(29,78,216,0.3); }
 .leaflet-tooltip.map-label-tooltip::before { display: none; }
 
-/* ï¿½"?ï¿½"? Threat modal ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Threat modal ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #threat-modal-backdrop {
   position: fixed; inset: 0; z-index: 200;
   background: rgba(0,0,0,0.45);
@@ -666,7 +666,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 .btn-ban:hover { background: #b91c1c; }
 
-/* ï¿½"?ï¿½"? Lockdown overlay ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Lockdown overlay ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #lockdown-overlay {
   position: fixed; inset: 0; z-index: 300;
   background: rgba(127,0,0,0.96); backdrop-filter: blur(8px);
@@ -691,9 +691,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div id="ps-shell">
 
-  <!-- ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½
+  <!-- ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä
        SIDEBAR
-  ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ -->
+  ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä -->
   <nav id="ps-sidebar">
 
     <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
@@ -715,7 +715,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <li>
           <a href="#" class="active" onclick="psOpenModule('none'); return false;">
             <span class="material-symbols-outlined">dashboard</span>
-            <span class="nav-label">OhjausnÃ¤kymÃ¤</span>
+            <span class="nav-label">Ohjausnäkymä</span>
           </a>
         </li>
         <li>
@@ -727,7 +727,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <li>
           <a href="#" onclick="psOpenModule('hardening'); return false;">
             <span class="material-symbols-outlined">health_and_safety</span>
-            <span class="nav-label">JÃ¤rjestelmÃ¤n Suojaus</span>
+            <span class="nav-label">Järjestelmän Suojaus</span>
           </a>
         </li>
         <li>
@@ -739,7 +739,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <li>
           <a href="#" onclick="psOpenModule('advanced'); return false;">
             <span class="material-symbols-outlined">settings_suggest</span>
-            <span class="nav-label">LisÃ¤tyÃ¶kalut</span>
+            <span class="nav-label">Lisätyökalut</span>
           </a>
         </li>
         <li>
@@ -781,15 +781,15 @@ if ( ! defined( 'ABSPATH' ) ) {
         </a>
         <a href="#">
           <span class="material-symbols-outlined">terminal</span>
-          <span class="footer-label">JÃ¤rjestelmÃ¤loki</span>
+          <span class="footer-label">Järjestelmäloki</span>
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½
+  <!-- ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä
        MAIN AREA
-  ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ -->
+  ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä -->
   <div id="ps-main">
 
     <!-- Header -->
@@ -797,20 +797,20 @@ if ( ! defined( 'ABSPATH' ) ) {
       <h1>Pecodex Security</h1>
       <div class="header-search">
         <span class="material-symbols-outlined">search</span>
-        <input type="text" placeholder="Hae jÃ¤rjestelmistÃ¤ï¿½?ï¿½" id="header-search"/>
+        <input type="text" placeholder="Hae järjestelmistää?ä" id="header-search"/>
       </div>
       
       <div class="widget-toggles">
         <button id="toggle-all-widgets" class="widget-toggle" title="Piilota kaikki widgetit" style="background: #f8fafc; color: #475569; border-color: #cbd5e1; margin-right: 8px;">
           <span class="material-symbols-outlined" id="toggle-all-icon">visibility_off</span>
         </button>
-        <button class="widget-toggle active" data-target="w-resources" title="Vaihda jÃ¤rjestelmÃ¤resurssit">
+        <button class="widget-toggle active" data-target="w-resources" title="Vaihda järjestelmäresurssit">
           <span class="material-symbols-outlined">memory</span>
         </button>
         <button class="widget-toggle active" data-target="w-traffic" title="Vaihda Liikenne">
           <span class="material-symbols-outlined">monitoring</span>
         </button>
-        <button class="widget-toggle active" data-target="w-heatmap" title="Vaihda Uhkien LÃ¤hdekartta">
+        <button class="widget-toggle active" data-target="w-heatmap" title="Vaihda Uhkien Lähdekartta">
           <span class="material-symbols-outlined">public</span>
         </button>
         <button class="widget-toggle active" data-target="w-log" title="Vaihda Reaaliaikainen Tapahtumaloki">
@@ -831,7 +831,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <button class="widget-toggle active" data-target="w-malware" title="Vaihda Haittaohjelmat & Tiedostojen Eheys">
           <span class="material-symbols-outlined">pest_control</span>
         </button>
-        <button class="widget-toggle active" data-target="w-vulnerabilities" title="Vaihda HaavoittuvuushÃ¤lytykset">
+        <button class="widget-toggle active" data-target="w-vulnerabilities" title="Vaihda Haavoittuvuushälytykset">
           <span class="material-symbols-outlined">security_update_warning</span>
         </button>
         <button class="widget-toggle active" data-target="w-login-security" title="Vaihda Kirjautumisen Tietoturva">
@@ -840,7 +840,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <button class="widget-toggle active" data-target="w-audit" title="Vaihda Tarkastusloki">
           <span class="material-symbols-outlined">manage_search</span>
         </button>
-        <button class="widget-toggle active" data-target="w-hardening" title="Vaihda JÃ¤rjestelmÃ¤n Suojaus">
+        <button class="widget-toggle active" data-target="w-hardening" title="Vaihda Järjestelmän Suojaus">
           <span class="material-symbols-outlined">shield_with_heart</span>
         </button>
       </div>
@@ -886,10 +886,10 @@ if ( ! defined( 'ABSPATH' ) ) {
             <span class="material-symbols-outlined drag-handle">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
             <h4>
               <span class="material-symbols-outlined">memory</span>
-              JÃ¤rjestelmÃ¤resurssit
+              Järjestelmäresurssit
             </h4>
             <div class="res-row">
-              <div class="res-row-head"><span>Suorittimen KÃ¤yttÃ¶</span><span>42%</span></div>
+              <div class="res-row-head"><span>Suorittimen Käyttö</span><span>42%</span></div>
               <div class="res-bar"><div class="res-bar-fill" style="width:42%"></div></div>
             </div>
             <div class="res-row">
@@ -900,12 +900,12 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
 
         <div class="grid-cell" id="cell-1" data-cell="1">
-          <!-- 3. Uhan LÃ¤hde Heatmap [NEW] -->
+          <!-- 3. Uhan Lähde Heatmap [NEW] -->
           <div class="glass-card p-4 w-[360px]" id="w-heatmap">
             <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
             <div class="flex items-center gap-2 mb-3 mt-1 ml-5">
               <span class="material-symbols-outlined text-pink-600">public</span>
-              <h3 class="font-bold text-slate-800 text-sm">Pahimmat HyÃ¶kkÃ¤Ã¤jÃ¤t</h3>
+              <h3 class="font-bold text-slate-800 text-sm">Pahimmat Hyökkääjät</h3>
             </div>
             <div class="flex flex-col gap-2">
               <div class="flex items-center justify-between text-xs">
@@ -934,7 +934,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <span class="material-symbols-outlined text-red-600">security_update_warning</span>
                 <h3 class="font-bold text-slate-800 text-sm">Haavoittuvuudet</h3>
               </div>
-              <span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded-full">3 KriittistÃ¤</span>
+              <span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded-full">3 Kriittistä</span>
             </div>
             <div class="flex flex-col gap-2">
               <div class="flex justify-between items-center text-xs p-2 bg-red-50 border border-red-100 rounded">
@@ -942,25 +942,25 @@ if ( ! defined( 'ABSPATH' ) ) {
                   <div class="font-bold text-slate-800">WooCommerce</div>
                   <div class="text-[10px] text-slate-500">CVE-2024-1234 (RCE)</div>
                 </div>
-                <button class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded font-bold hover:bg-slate-50">PÃ¤ivitÃ¤</button>
+                <button class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded font-bold hover:bg-slate-50">Päivitä</button>
               </div>
               <div class="flex justify-between items-center text-xs p-2 bg-orange-50 border border-orange-100 rounded">
                 <div>
                   <div class="font-bold text-slate-800">Elementor</div>
                   <div class="text-[10px] text-slate-500">CVE-2024-5678 (XSS)</div>
                 </div>
-                <button class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded font-bold hover:bg-slate-50">PÃ¤ivitÃ¤</button>
+                <button class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded font-bold hover:bg-slate-50">Päivitä</button>
               </div>
             </div>
             <div class="widget-settings-panel">
               <h4 class="text-sm font-bold text-slate-700 mb-2">Asetukset</h4>
               <label class="flex items-center gap-2 text-xs text-slate-600 mb-2">
                 <input type="checkbox" checked class="rounded border-slate-300 text-pink-600 focus:ring-pink-500">
-                PÃ¤ivitÃ¤ kriittiset haavoittuvuudet automaattisesti
+                Päivitä kriittiset haavoittuvuudet automaattisesti
               </label>
               <label class="flex items-center gap-2 text-xs text-slate-600">
                 <input type="checkbox" class="rounded border-slate-300 text-pink-600 focus:ring-pink-500">
-                LÃ¤hetÃ¤ sÃ¤hkÃ¶posti-ilmoitus uusista uhista
+                Lähetä sähköposti-ilmoitus uusista uhista
               </label>
             </div>
           </div>
@@ -983,7 +983,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 $modules = [
                   ['id' => 'waf', 'name' => 'WAF-moottori', 'icon' => 'shield', 'color' => '#3b82f6'],
                   ['id' => 'bot', 'name' => 'Bottisuojaus', 'icon' => 'smart_toy', 'color' => '#14b8a6'],
-                  ['id' => 'geoip', 'name' => 'GeoIP-sÃ¤Ã¤nnÃ¶t', 'icon' => 'public', 'color' => '#6366f1'],
+                  ['id' => 'geoip', 'name' => 'GeoIP-säännöt', 'icon' => 'public', 'color' => '#6366f1'],
                   ['id' => 'honeypot', 'name' => 'Hunajapurkit', 'icon' => 'bug_report', 'color' => '#ec4899'],
                   ['id' => 'zerotrust', 'name' => 'Zero Trust', 'icon' => 'fingerprint', 'color' => '#a855f7'],
                   ['id' => 'webauthn', 'name' => 'WebAuthn', 'icon' => 'passkey', 'color' => '#22c55e'],
@@ -992,15 +992,15 @@ if ( ! defined( 'ABSPATH' ) ) {
                   ['id' => 'hardening', 'name' => 'Ytimen Suojaus', 'icon' => 'gpp_good', 'color' => '#14b8a6'],
                   ['id' => 'advanced', 'name' => 'Kehittynyt AI-turva', 'icon' => 'memory', 'color' => '#6366f1'],
                   ['id' => 'scanner', 'name' => 'Haittaohjelmien Skanneri', 'icon' => 'troubleshoot', 'color' => '#3b82f6'],
-                  ['id' => 'deepscanner', 'name' => 'SyvÃ¤heuristiikka', 'icon' => 'biotech', 'color' => '#ec4899'],
-                  ['id' => 'captcha', 'name' => 'ï¿½"lykÃ¤s Captcha', 'icon' => 'fact_check', 'color' => '#f97316'],
+                  ['id' => 'deepscanner', 'name' => 'Syväheuristiikka', 'icon' => 'biotech', 'color' => '#ec4899'],
+                  ['id' => 'captcha', 'name' => 'ä"lykäs Captcha', 'icon' => 'fact_check', 'color' => '#f97316'],
                   ['id' => 'telemetry', 'name' => 'Reaaliaikainen Telemetria', 'icon' => 'radar', 'color' => '#3b82f6'],
-                  ['id' => 'cache', 'name' => 'Turvallinen VÃ¤limuisti', 'icon' => 'cached', 'color' => '#22c55e'],
+                  ['id' => 'cache', 'name' => 'Turvallinen Välimuisti', 'icon' => 'cached', 'color' => '#22c55e'],
                   ['id' => 'encryption', 'name' => 'Tietojen Salaus', 'icon' => 'key', 'color' => '#a855f7'],
                   ['id' => 'appsec', 'name' => 'Sovellusturva', 'icon' => 'app_blocking', 'color' => '#ef4444'],
                   ['id' => 'audit', 'name' => 'Tarkastusloki', 'icon' => 'manage_search', 'color' => '#14b8a6'],
                   ['id' => 'auth', 'name' => 'Tunnistautumisen Suojat', 'icon' => 'admin_panel_settings', 'color' => '#6366f1'],
-                  ['id' => 'wizard', 'name' => 'API-yhdyskÃ¤ytÃ¤vÃ¤', 'icon' => 'api', 'color' => '#3b82f6'],
+                  ['id' => 'wizard', 'name' => 'API-yhdyskäytävä', 'icon' => 'api', 'color' => '#3b82f6'],
                 ];
                 foreach ($modules as $mod):
                   $is_active = $is_first_run ? true : !empty($active_modules[$mod['id']]);
@@ -1021,7 +1021,7 @@ if ( ! defined( 'ABSPATH' ) ) {
               <div class="ctrl-footer" style="margin-top: 14px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 14px;">
                 <button class="btn-lockdown" onclick="triggerLockdown()" style="width: 100%; background: #ef4444; color: #fff; border: none; font-size: 14px; padding: 12px; border-radius: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); transition: transform 0.1s, box-shadow 0.1s;" onmouseover="this.style.transform='scale(1.01)'; this.style.boxShadow='0 6px 16px rgba(239, 68, 68, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(239, 68, 68, 0.4)'">
                   <span class="material-symbols-outlined" style="margin-right: 8px;">dangerous</span>
-                  KÃ¤ynnistÃ¤ TÃ¤ysi Sulkutila
+                  Käynnistä Täysi Sulkutila
                 </button>
               </div>
             </div>
@@ -1042,23 +1042,23 @@ if ( ! defined( 'ABSPATH' ) ) {
                   <thead>
                     <tr>
                       <th>Aikaleima (UTC)</th>
-                      <th>LÃ¤hde</th>
+                      <th>Lähde</th>
                       <th>Kohde</th>
-                      <th>HyÃ¶kkÃ¤ys</th>
+                      <th>Hyökkäys</th>
                       <th style="text-align:right">Status</th>
                     </tr>
                   </thead>
                   <tbody id="event-log-body">
                     <tr>
                       <td class="td-time">14:32:01</td>
-                      <td>CN ï¿½?" Beijing</td>
+                      <td>CN ä?" Beijing</td>
                       <td>Helsinki-Edge-4</td>
                       <td>DDoS</td>
                       <td style="text-align:right"><span class="badge-status badge-critical">Kriittinen</span></td>
                     </tr>
                     <tr>
                       <td class="td-time">14:31:45</td>
-                      <td>US ï¿½?" Ashburn</td>
+                      <td>US ä?" Ashburn</td>
                       <td>Vantaa-DC-01</td>
                       <td>SQLi</td>
                       <td style="text-align:right"><span class="badge-status badge-blocked">Estetty</span></td>
@@ -1079,7 +1079,7 @@ if ( ! defined( 'ABSPATH' ) ) {
               <div class="flex gap-3 text-xs border-b border-slate-100 pb-2">
                 <span class="text-slate-400 font-mono">14:22</span>
                 <span class="font-bold text-indigo-600 w-16">pepeu</span>
-                <span class="text-slate-700">Deaktivoi lisÃ¤osan <span class="font-mono bg-slate-100 px-1 rounded">hello-dolly</span></span>
+                <span class="text-slate-700">Deaktivoi lisäosan <span class="font-mono bg-slate-100 px-1 rounded">hello-dolly</span></span>
               </div>
               <div class="flex gap-3 text-xs border-b border-slate-100 pb-2">
                 <span class="text-slate-400 font-mono">13:05</span>
@@ -1089,7 +1089,7 @@ if ( ! defined( 'ABSPATH' ) ) {
               <div class="flex gap-3 text-xs border-b border-slate-100 pb-2">
                 <span class="text-slate-400 font-mono">10:14</span>
                 <span class="font-bold text-red-600 w-16">SYSTEM</span>
-                <span class="text-slate-700">Estetty 45 kirjautumisyritystÃ¤ osoitteesta <span class="font-mono bg-red-50 text-red-700 px-1 rounded">192.168.1.1</span></span>
+                <span class="text-slate-700">Estetty 45 kirjautumisyritystä osoitteesta <span class="font-mono bg-red-50 text-red-700 px-1 rounded">192.168.1.1</span></span>
               </div>
             </div>
           </div>
@@ -1122,7 +1122,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
             <div class="flex items-center gap-2 mb-3 mt-1 ml-5">
               <span class="material-symbols-outlined text-teal-600">shield_with_heart</span>
-              <h3 class="font-bold text-slate-800 text-sm">JÃ¤rjestelmÃ¤n Suojaus</h3>
+              <h3 class="font-bold text-slate-800 text-sm">Järjestelmän Suojaus</h3>
             </div>
             <div class="flex flex-col gap-2" id="w-hardening-list">
               <div class="text-xs text-slate-400">Ladataan tietoja...</div>
@@ -1187,7 +1187,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             </div>
             <div class="text-center my-1">
               <span class="text-2xl font-black text-slate-800">412</span>
-              <span class="text-xs text-slate-500 font-bold ml-1">pyyntÃ¶Ã¤/s</span>
+              <span class="text-xs text-slate-500 font-bold ml-1">pyyntöä/s</span>
             </div>
             <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
               <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 82%"></div>
@@ -1199,7 +1199,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <div class="widget-settings-panel">
               <h4 class="text-sm font-bold text-slate-700 mb-2">Asetukset</h4>
               <div class="flex flex-col gap-2">
-                <label class="text-xs text-slate-600">PyyntÃ¶raja (req/s)
+                <label class="text-xs text-slate-600">Pyyntöraja (req/s)
                   <input type="number" value="500" class="w-full mt-1 px-2 py-1 border border-slate-200 rounded text-xs">
                 </label>
                 <label class="text-xs text-slate-600">Estoaika (min)
@@ -1216,7 +1216,7 @@ if ( ! defined( 'ABSPATH' ) ) {
               <h3 class="font-bold text-slate-800 text-sm">Kirjautumisen Tietoturva</h3>
             </div>
             <div class="flex justify-between items-center mb-2">
-              <span class="text-xs font-bold text-slate-600">EpÃ¤onnistuneet Kirjautumiset (24h)</span>
+              <span class="text-xs font-bold text-slate-600">Epäonnistuneet Kirjautumiset (24h)</span>
               <span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full text-xs">842</span>
             </div>
             <div class="flex justify-between items-center mb-2">
@@ -1224,27 +1224,27 @@ if ( ! defined( 'ABSPATH' ) ) {
               <span class="bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full text-xs">15</span>
             </div>
             <div class="flex justify-between items-center">
-              <span class="text-xs font-bold text-slate-600">Aktiiviset JÃ¤rjestelmÃ¤nvalvojat</span>
+              <span class="text-xs font-bold text-slate-600">Aktiiviset Järjestelmänvalvojat</span>
               <span class="bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full text-xs">2</span>
             </div>
             <div class="widget-settings-panel w-full mt-4">
               <div class="flex flex-col gap-4">
-                <!-- YlÃ¤osa: Kaavio ja Asetukset -->
+                <!-- Yläosa: Kaavio ja Asetukset -->
                 <div class="bg-white rounded border border-slate-200 p-4 shadow-sm w-full">
                   <div class="flex justify-between items-center mb-3">
                     <div class="flex items-center gap-3">
                       <h4 class="text-sm font-bold text-slate-700">Kirjautumisyritykset</h4>
                       <select id="login-timeframe-filter" class="text-xs border border-slate-200 rounded px-2 py-1 text-slate-600 bg-slate-50" onchange="pmcSec.fetchLoginSubModalData()">
                         <option value="24h">24 tuntia</option>
-                        <option value="7d">7 pÃ¤ivÃ¤Ã¤</option>
-                        <option value="30d">30 pÃ¤ivÃ¤Ã¤</option>
+                        <option value="7d">7 päivää</option>
+                        <option value="30d">30 päivää</option>
                       </select>
                     </div>
                     <div class="flex gap-4">
                       <label class="flex items-center gap-2 text-xs text-slate-600">
                         Lukitse IP 
                         <input type="number" id="quick-login-attempts" min="1" max="100" class="w-16 h-6 px-1 text-center border-slate-300 rounded text-pink-600 focus:ring-pink-500 bg-white" onchange="pmcSec.updateLoginAttempts(this.value)"> 
-                        epÃ¤onnistuneen yrityksen jÃ¤lkeen
+                        epäonnistuneen yrityksen jälkeen
                       </label>
                     </div>
                   </div>
@@ -1255,8 +1255,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <!-- Alaosa: Taulukko -->
                 <div class="bg-white rounded border border-slate-200 p-4 shadow-sm w-full flex flex-col">
                   <div class="flex justify-between items-center mb-3">
-                    <h4 class="text-sm font-bold text-slate-700">ViimeisimmÃ¤t Kirjautumistapahtumat</h4>
-                    <button class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded font-bold text-slate-700" onclick="pmcSec.fetchLoginSubModalData()">PÃ¤ivitÃ¤</button>
+                    <h4 class="text-sm font-bold text-slate-700">Viimeisimmät Kirjautumistapahtumat</h4>
+                    <button class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded font-bold text-slate-700" onclick="pmcSec.fetchLoginSubModalData()">Päivitä</button>
                   </div>
                   <div class="overflow-y-auto flex-grow" style="max-height: 280px;">
                     <table class="w-full text-left text-xs" id="login-events-table">
@@ -1319,9 +1319,9 @@ if ( ! defined( 'ABSPATH' ) ) {
   </div><!-- /ps-main -->
 </div><!-- /ps-shell -->
 
-<!-- ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½
+<!-- ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä
      THREAT MODAL
-ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ -->
+ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä -->
 <div id="threat-modal-backdrop" onclick="if(event.target===this)closeModal()">
   <div id="threat-modal">
     <button class="modal-close" onclick="closeModal()">
@@ -1332,18 +1332,18 @@ if ( ! defined( 'ABSPATH' ) ) {
       <h2 style="font-size:18px;font-weight:700;color:#111;">Uhkaraportti</h2>
     </div>
     <div class="modal-section">
-      <div class="modal-section-title">Uhan LÃ¤hde</div>
+      <div class="modal-section-title">Uhan Lähde</div>
       <div class="modal-grid">
-        <div><span class="lbl">Maa:</span></div><div><span class="val" id="modal-origin">ï¿½?"</span></div>
-        <div><span class="lbl">IP:</span></div><div><span class="val modal-ip" id="modal-ip">ï¿½?"</span></div>
-        <div><span class="lbl">HyÃ¶kkÃ¤ys:</span></div><div><span class="val" id="modal-attack">ï¿½?"</span></div>
+        <div><span class="lbl">Maa:</span></div><div><span class="val" id="modal-origin">ä?"</span></div>
+        <div><span class="lbl">IP:</span></div><div><span class="val modal-ip" id="modal-ip">ä?"</span></div>
+        <div><span class="lbl">Hyökkäys:</span></div><div><span class="val" id="modal-attack">ä?"</span></div>
       </div>
     </div>
     <div class="modal-section">
       <div class="modal-section-title">Kohderesurssi</div>
       <div class="modal-grid">
-        <div><span class="lbl">IsÃ¤ntÃ¤:</span></div><div><span class="val" id="modal-host">ï¿½?"</span></div>
-        <div><span class="lbl">PÃ¤Ã¤tepiste:</span></div><div><span class="val" style="font-family:monospace;" id="modal-endpoint">ï¿½?"</span></div>
+        <div><span class="lbl">Isäntä:</span></div><div><span class="val" id="modal-host">ä?"</span></div>
+        <div><span class="lbl">Päätepiste:</span></div><div><span class="val" style="font-family:monospace;" id="modal-endpoint">ä?"</span></div>
       </div>
       <div class="modal-section-title">Profilointi (Deep Traffic Profiler)</div>
       <div class="modal-grid">
@@ -1359,7 +1359,7 @@ if ( ! defined( 'ABSPATH' ) ) {
       </div>
     </div>
     <div class="modal-status-row">
-      <span id="modal-status" style="color:#dc2626;">ï¿½?"</span>
+      <span id="modal-status" style="color:#dc2626;">ä?"</span>
       <span id="modal-status-container" style="color:#dc2626;display:flex;align-items:center;gap:5px;">
         <span id="modal-status-dot" style="width:7px;height:7px;border-radius:50%;background:#dc2626;animation:blink 1.2s infinite;display:inline-block;"></span>
         <span id="modal-status-label">Aktiivinen Murtoyritys</span>
@@ -1372,19 +1372,19 @@ if ( ! defined( 'ABSPATH' ) ) {
   </div>
 </div>
 
-<!-- ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½
+<!-- ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä
      LOCKDOWN OVERLAY
-ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ -->
+ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä -->
 <div id="lockdown-overlay">
   <span class="material-symbols-outlined" style="font-size:80px;color:#fca5a5;">lock_person</span>
-  <h1>Jï¿½"RJESTELMï¿½"N SULKUTILA AKTIIVINEN</h1>
+  <h1>Jä"RJESTELMä"N SULKUTILA AKTIIVINEN</h1>
   <p>Kaikki ulkoiset yhteydet on keskeytetty.</p>
   <button class="btn-disengage" onclick="disableLockdown()">POISTA SULKUTILA</button>
 </div>
 
-<!-- ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½
+<!-- ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä
      SECURITY MODULES (INCLUDES)
-ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ -->
+ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä -->
 <div id="ps-modules-container">
 	<?php
 	$modules_dir = __DIR__ . '/security-modules/';
@@ -1400,7 +1400,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </div>
 
 <style>
-/* ï¿½"?ï¿½"? Modular UI Styles ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"? Modular UI Styles ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 #ps-modules-container {
 	display: none; /* Hidden by default until a module is clicked */
 	flex: 1;
@@ -1588,9 +1588,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½
+<!-- ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä
      SCRIPTS
-ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ï¿½.ï¿½ -->
+ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -1602,16 +1602,16 @@ document.addEventListener('DOMContentLoaded', function () {
   $server_lng = $server_geo['lng'];
   $server_city = $server_geo['city'] !== 'Unknown' ? strtoupper($server_geo['city']) : 'SERVER HUB';
 ?>
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    LOCATIONS  (lat, lng)
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 const locations = {
   hub: [<?php echo esc_js($server_lat); ?>, <?php echo esc_js($server_lng); ?>],
 };
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    MAP INIT  (light tiles)
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 const map = L.map('security-map', {
   center: locations.hub,
   zoom: 4,
@@ -1633,9 +1633,9 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    MAP MARKERS + TOOLTIPS
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 function makeIcon(color) {
   return L.divIcon({
     className: '',
@@ -1671,7 +1671,7 @@ function updateMapMarkers(events) {
     const color = e.statusClass === 'critical' ? '#dc2626' : (e.statusClass === 'info' ? '#3b82f6' : '#f59e0b');
     const marker = L.marker([e.lat, e.lng], { icon: makeIcon(color), interactive: false })
       .addTo(map)
-      .bindTooltip(`${e.country} ï¿½?" ${e.city}`, {
+      .bindTooltip(`${e.country} ä?" ${e.city}`, {
         permanent: false, direction: 'right', offset: [10, 0],
         className: 'map-label-tooltip ' + (e.statusClass === 'critical' ? 'critical' : (e.statusClass === 'info' ? 'info' : ''))
       });
@@ -1679,10 +1679,10 @@ function updateMapMarkers(events) {
   });
 }
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    ATTACK SVG LINES (screen coords)
-   Drawn after map is ready so lat/lng ï¿½?' px is accurate
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+   Drawn after map is ready so lat/lng ä?' px is accurate
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 function latLngToSvgPoint(latlng) {
   const pt = map.latLngToContainerPoint(L.latLng(latlng));
   return { x: pt.x, y: pt.y };
@@ -1713,7 +1713,7 @@ function drawAttackLines() {
     path.style.pointerEvents = 'stroke';
     
     const modalData = {
-        origin: `${data.country} ï¿½?" ${data.city}`,
+        origin: `${data.country} ä?" ${data.city}`,
         ip: data.ip,
         attack: data.attack,
         host: data.target,
@@ -1793,9 +1793,9 @@ map.on('zoomend', () => {
   document.getElementById('attack-svg').style.opacity = '1';
 });
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    LIVE EVENTS POLLING
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 async function fetchLiveEvents() {
   try {
     const formData = new FormData();
@@ -1812,7 +1812,7 @@ async function fetchLiveEvents() {
       drawAttackLines();
     }
   } catch (err) {
-    console.error('Live-tapahtumien nouto epÃ¤onnistui:', err);
+    console.error('Live-tapahtumien nouto epäonnistui:', err);
   }
 }
 
@@ -1829,7 +1829,7 @@ function updateEventLogTable(events) {
     html += `
       <tr>
         <td class="td-time">${e.timestamp}</td>
-        <td>${e.country} ï¿½?" ${e.city}</td>
+        <td>${e.country} ä?" ${e.city}</td>
         <td>${e.target}</td>
         <td>${e.attack}</td>
         <td style="text-align:right"><span class="badge-status ${badgeCls}">${e.status}</span></td>
@@ -1843,9 +1843,9 @@ function updateEventLogTable(events) {
 setInterval(fetchLiveEvents, 15000);
 fetchLiveEvents();
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    SIDEBAR TOGGLE
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 function toggleSidebar() {
   const sb   = document.getElementById('ps-sidebar');
   const icon = document.getElementById('sidebar-icon');
@@ -1856,16 +1856,16 @@ function toggleSidebar() {
 }
 window.toggleSidebar = toggleSidebar;
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    THREAT MODAL
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 function openModal(data) {
-  document.getElementById('modal-origin').textContent   = data.origin   || 'ï¿½?"';
-  document.getElementById('modal-ip').textContent       = data.ip       || 'ï¿½?"';
-  document.getElementById('modal-attack').textContent   = data.attack   || 'ï¿½?"';
-  document.getElementById('modal-host').textContent     = data.host     || 'ï¿½?"';
-  document.getElementById('modal-endpoint').textContent = data.endpoint || 'ï¿½?"';
-  document.getElementById('modal-status').textContent   = data.status   || 'ï¿½?"';
+  document.getElementById('modal-origin').textContent   = data.origin   || 'ä?"';
+  document.getElementById('modal-ip').textContent       = data.ip       || 'ä?"';
+  document.getElementById('modal-attack').textContent   = data.attack   || 'ä?"';
+  document.getElementById('modal-host').textContent     = data.host     || 'ä?"';
+  document.getElementById('modal-endpoint').textContent = data.endpoint || 'ä?"';
+  document.getElementById('modal-status').textContent   = data.status   || 'ä?"';
       if(document.getElementById('modal-ua')) document.getElementById('modal-ua').textContent = data.user_agent || 'Unknown';
     if(document.getElementById('modal-proxy')) {
         document.getElementById('modal-proxy').textContent = data.is_proxy ? 'Proxy / VPN Detected (Riski)' : 'Suora yhteys';
@@ -1953,9 +1953,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    LOCKDOWN
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 function triggerLockdown() {
   document.getElementById('lockdown-overlay').classList.add('open');
 }
@@ -1965,12 +1965,12 @@ function disableLockdown() {
 window.triggerLockdown  = triggerLockdown;
 window.disableLockdown  = disableLockdown;
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-   DRAG & DROP WIDGETS ï¿½?" smart grid
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
+   DRAG & DROP WIDGETS ä?" smart grid
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 if (typeof Sortable !== 'undefined') {
 
-  // ï¿½"? 9-cell grid ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+  // ä"? 9-cell grid ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
   document.querySelectorAll('.grid-cell').forEach(cell => {
     new Sortable(cell, {
       group: 'widgets',
@@ -1997,7 +1997,7 @@ if (typeof Sortable !== 'undefined') {
     });
   });
 
-  // ï¿½"? persist order ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+  // ä"? persist order ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
   function saveWidgetOrder() {
     const layout = {};
     document.querySelectorAll('.grid-cell').forEach(cell => {
@@ -2023,7 +2023,7 @@ if (typeof Sortable !== 'undefined') {
   }
   restoreWidgetOrder();
 
-  // ï¿½"? Widget Toggles ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+  // ä"? Widget Toggles ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
   function initWidgetToggles() {
     const savedHidden = JSON.parse(localStorage.getItem('ps-hidden-widgets') || '[]');
     document.querySelectorAll('.widget-toggle:not(#toggle-all-widgets)').forEach(btn => {
@@ -2053,7 +2053,7 @@ if (typeof Sortable !== 'undefined') {
   }
   initWidgetToggles();
 
-  // ï¿½"? Toggle All Widgets ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+  // ä"? Toggle All Widgets ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
   function initToggleAll() {
     const btnAll = document.getElementById('toggle-all-widgets');
     const iconAll = document.getElementById('toggle-all-icon');
@@ -2088,7 +2088,7 @@ if (typeof Sortable !== 'undefined') {
   }
   initToggleAll();
 
-  // ï¿½"? Maximize Widgets ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+  // ä"? Maximize Widgets ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
   function initMaximize() {
     const backdrop = document.getElementById('maximize-backdrop');
     let currentlyMaximized = null;
@@ -2145,38 +2145,38 @@ if (typeof Sortable !== 'undefined') {
 
 }
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    LIVE EVENT FEED
    Now handled by fetchLiveEvents()
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 
-/* ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    PECODEX SECURITY AJAX INTEGRATION
-ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"? */
+ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 const TWEAK_DEFS = {
-	xml_rpc: { title: "Poista XML-RPC kÃ¤ytÃ¶stÃ¤", desc: "EstÃ¤ XML-RPC brute force -hyÃ¶kkÃ¤ykset.", overview: "XML-RPC on usein brute force - ja DDoS-hyÃ¶kkÃ¤ysten kohteena. Jos et kÃ¤ytÃ¤ WordPress-mobiilisovellusta tai palveluja kuten Jetpack, on turvallisempaa poistaa se kÃ¤ytÃ¶stÃ¤.", fix: "Poistamme XML-RPC:n kÃ¤ytÃ¶stÃ¤ suojataksemme sivustoasi nÃ¤iltÃ¤ automatisoiduilta hyÃ¶kkÃ¤yksiltÃ¤." },
-	file_editor: { title: "Poista Tiedostoeditori kÃ¤ytÃ¶stÃ¤", desc: "Poista kÃ¤ytÃ¶stÃ¤ sisÃ¤Ã¤nrakennettu teema-/lisÃ¤osaeditori.", overview: "WordPressissÃ¤ on sisÃ¤Ã¤nrakennettu tiedostoeditori. Jos hyÃ¶kkÃ¤Ã¤jÃ¤ saa yllÃ¤pito-oikeudet, he voivat kÃ¤yttÃ¤Ã¤ tÃ¤tÃ¤ haitallisen koodin syÃ¶ttÃ¤miseen. Sen poistaminen lisÃ¤Ã¤ kriittisen puolustuskerroksen.", fix: "MÃ¤Ã¤ritÃ¤mme DISALLOW_FILE_EDIT wp-config.php -tiedostoosi estÃ¤Ã¤ksemme pÃ¤Ã¤syn." },
-	wp_version: { title: "Piilota WP-versio", desc: "Poista WordPressin versio HTML-tulosteesta.", overview: "WordPress tulostaa automaattisesti versionumeronsa sivuston lÃ¤hdekoodiin. Hakkerit skannaavat tÃ¤tÃ¤ kohdistaakseen hyÃ¶kkÃ¤yksiÃ¤ sivustoihin, joissa on vanhentuneita, haavoittuvia versioita.", fix: "Piilotamme WordPressin version julkisesta HTML-tulosteestasi." },
-	prevent_enum: { title: "EstÃ¤ KÃ¤yttÃ¤jien Luetteleminen", desc: "EstÃ¤ botteja lÃ¶ytÃ¤mÃ¤stÃ¤ kÃ¤yttÃ¤jÃ¤tunnuksia.", overview: "Oletuksena hyÃ¶kkÃ¤Ã¤jÃ¤t voivat helposti lÃ¶ytÃ¤Ã¤ sivustosi kÃ¤yttÃ¤jÃ¤tunnukset skannaamalla kirjoittaja-arkistoja. TÃ¤mÃ¤ tekee brute-force -hyÃ¶kkÃ¤yksistÃ¤ paljon helpompia.", fix: "EstÃ¤mme skriptit, jotka yrittÃ¤vÃ¤t automaattisesti luetella kÃ¤yttÃ¤jiÃ¤si." },
-	hide_errors: { title: "Piilota PHP-virheet", desc: "EstÃ¤ virheiden nÃ¤kyminen julkisivulla.", overview: "PHP-virheet voivat paljastaa hyÃ¶kkÃ¤Ã¤jille arkaluonteisia palvelinpolkuja, muuttujia ja tietokantarakenteita.", fix: "Varmistamme, ettÃ¤ WP_DEBUG_DISPLAY on poistettu kÃ¤ytÃ¶stÃ¤, jotta virheet pysyvÃ¤t piilossa vierailijoilta." },
-	change_admin: { title: "Vaihda 'admin'-kÃ¤yttÃ¤jÃ¤tunnus", desc: "Varmista, ettei kenellÃ¤kÃ¤Ã¤n kÃ¤yttÃ¤jÃ¤llÃ¤ ole oletus 'admin'-tunnusta.", overview: "KÃ¤yttÃ¤jÃ¤tunnus 'admin' on ensimmÃ¤inen asia, jota hakkerit yrittÃ¤vÃ¤t yrittÃ¤essÃ¤Ã¤n brute force -hyÃ¶kkÃ¤ystÃ¤ sivustollesi.", fix: "Luo uusi jÃ¤rjestelmÃ¤nvalvojan tili eri kÃ¤yttÃ¤jÃ¤tunnuksella, ja poista sitten vanha 'admin'-tili.", toggleable: false, action_text: "Toimenpide vaaditaan WP-KÃ¤yttÃ¤jissÃ¤" },
-	login_duration: { title: "Kirjautumisen Kesto", desc: "VÃ¤hennÃ¤ sitÃ¤ aikaa, jonka kÃ¤yttÃ¤jÃ¤t pysyvÃ¤t kirjautuneina.", overview: "Oletuksena kÃ¤yttÃ¤jÃ¤t, jotka valitsevat 'muista minut', pysyvÃ¤t kirjautuneina 14 pÃ¤ivÃ¤Ã¤. TÃ¤mÃ¤n vÃ¤hentÃ¤minen rajoittaa ikkunaa, jolloin hyÃ¶kkÃ¤Ã¤jÃ¤ voi hyÃ¶dyntÃ¤Ã¤ hylÃ¤ttyÃ¤ istuntoa.", fix: "VÃ¤hennÃ¤mme oletuskirjautumisen kestoa." },
-	disable_trackback: { title: "Poista Paluuviitteet kÃ¤ytÃ¶stÃ¤", desc: "EstÃ¤ trackback- ja pingback-roskaposti.", overview: "PaluuviitteitÃ¤ ja takaisinkutsuja kÃ¤ytetÃ¤Ã¤n paljolti roskapostiin ja niitÃ¤ voidaan hyÃ¶dyntÃ¤Ã¤ DDoS-hyÃ¶kkÃ¤yksissÃ¤.", fix: "Poistamme paluuviitteet ja takaisinkutsut kÃ¤ytÃ¶stÃ¤ koko sivustoltasi." },
-	protect_info: { title: "Suojaa Tiedot", desc: "EstÃ¤ pÃ¤Ã¤sy ydintiedostoihin kuten readme.html.", overview: "Tiedostot kuten readme.html tai varmuuskopiotiedostot voivat paljastaa arkaluonteisia tietoja ympÃ¤ristÃ¶stÃ¤si.", fix: "Lukitsemme nÃ¤mÃ¤ tiedostot varmistaaksemme, etteivÃ¤t hakkerit pÃ¤Ã¤se niihin kÃ¤siksi." },
-	php_version: { title: "PÃ¤ivitÃ¤ PHP", desc: "Varmista, ettÃ¤ kÃ¤ytÃ¤t tuettua PHP-versiota.", overview: "Vanhentuneiden PHP-versioiden suorittaminen altistaa palvelimesi korjaamattomille haavoittuvuuksille.", fix: "PÃ¤ivitÃ¤ PHP-versiosi uusimpaan vakaaseen julkaisuun hosting-paneelisi kautta.", toggleable: false, action_text: "PÃ¤ivitÃ¤ Hosting-paneelista" },
-	prevent_php: { title: "EstÃ¤ PHP:n Suoritus", desc: "EstÃ¤ PHP:n suoritus lataushakemistossa.", overview: "Latauskansion pitÃ¤isi sisÃ¤ltÃ¤Ã¤ vain mediaa. Jos hakkeri lataa tÃ¤nne haitallisen PHP-skriptin, tÃ¤mÃ¤ estÃ¤Ã¤ sen suorittamisen.", fix: "Asetamme suojauksia lataushakemistoon estÃ¤Ã¤ksemme PHP:n suorittamisen." },
-	security_keys: { title: "Tietoturva-avaimet", desc: "Varmista, ettÃ¤ tietoturva-avaimet on asetettu wp-config.php -tiedostossa.", overview: "Tietoturva-avaimet parantavat kÃ¤yttÃ¤jÃ¤n evÃ¤steisiin tallennettujen tietojen salausta.", fix: "Varmistamme, ettÃ¤ uudet tietoturva-avaimet luodaan ja otetaan kÃ¤yttÃ¶Ã¶n.", toggleable: false, action_text: "Luo Avaimet Uudelleen" },
-	disable_indexes: { title: "EstÃ¤ Hakemiston Listaus", desc: "EstÃ¤ palvelimen kansioiden selaaminen.", overview: "Jos hakemiston listaus on pÃ¤Ã¤llÃ¤, hyÃ¶kkÃ¤Ã¤jÃ¤t voivat selata sivustosi kansiorakennetta ja lÃ¶ytÃ¤Ã¤ haavoittuvia tiedostoja.", fix: "LisÃ¤Ã¤mme sÃ¤Ã¤nnÃ¶n joka estÃ¤Ã¤ hakemistojen sisÃ¤llÃ¶n selaamisen." }
+	xml_rpc: { title: "Poista XML-RPC käytöstä", desc: "Estä XML-RPC brute force -hyökkäykset.", overview: "XML-RPC on usein brute force - ja DDoS-hyökkäysten kohteena. Jos et käytä WordPress-mobiilisovellusta tai palveluja kuten Jetpack, on turvallisempaa poistaa se käytöstä.", fix: "Poistamme XML-RPC:n käytöstä suojataksemme sivustoasi näiltä automatisoiduilta hyökkäyksiltä." },
+	file_editor: { title: "Poista Tiedostoeditori käytöstä", desc: "Poista käytöstä sisäänrakennettu teema-/lisäosaeditori.", overview: "WordPressissä on sisäänrakennettu tiedostoeditori. Jos hyökkääjä saa ylläpito-oikeudet, he voivat käyttää tätä haitallisen koodin syöttämiseen. Sen poistaminen lisää kriittisen puolustuskerroksen.", fix: "Määritämme DISALLOW_FILE_EDIT wp-config.php -tiedostoosi estääksemme pääsyn." },
+	wp_version: { title: "Piilota WP-versio", desc: "Poista WordPressin versio HTML-tulosteesta.", overview: "WordPress tulostaa automaattisesti versionumeronsa sivuston lähdekoodiin. Hakkerit skannaavat tätä kohdistaakseen hyökkäyksiä sivustoihin, joissa on vanhentuneita, haavoittuvia versioita.", fix: "Piilotamme WordPressin version julkisesta HTML-tulosteestasi." },
+	prevent_enum: { title: "Estä Käyttöjien Luetteleminen", desc: "Estä botteja löytämästä käyttäjätunnuksia.", overview: "Oletuksena hyökkääjät voivat helposti löytää sivustosi käyttäjätunnukset skannaamalla kirjoittaja-arkistoja. Tämä tekee brute-force -hyökkäyksistä paljon helpompia.", fix: "Estämme skriptit, jotka yrittävät automaattisesti luetella käyttäjiäsi." },
+	hide_errors: { title: "Piilota PHP-virheet", desc: "Estä virheiden näkyminen julkisivulla.", overview: "PHP-virheet voivat paljastaa hyökkääjille arkaluonteisia palvelinpolkuja, muuttujia ja tietokantarakenteita.", fix: "Varmistamme, että WP_DEBUG_DISPLAY on poistettu käytöstä, jotta virheet pysyvät piilossa vierailijoilta." },
+	change_admin: { title: "Vaihda 'admin'-käyttäjätunnus", desc: "Varmista, ettei kenelläkään käyttäjällä ole oletus 'admin'-tunnusta.", overview: "Käyttöjätunnus 'admin' on ensimmäinen asia, jota hakkerit yrittävät yrittäessään brute force -hyökkäystä sivustollesi.", fix: "Luo uusi järjestelmänvalvojan tili eri käyttäjätunnuksella, ja poista sitten vanha 'admin'-tili.", toggleable: false, action_text: "Toimenpide vaaditaan WP-Käyttöjissä" },
+	login_duration: { title: "Kirjautumisen Kesto", desc: "Vähennä sitä aikaa, jonka käyttäjät pysyvät kirjautuneina.", overview: "Oletuksena käyttäjät, jotka valitsevat 'muista minut', pysyvät kirjautuneina 14 päivää. Tämän vähentäminen rajoittaa ikkunaa, jolloin hyökkääjä voi hyödyntää hylättyö istuntoa.", fix: "Vähennämme oletuskirjautumisen kestoa." },
+	disable_trackback: { title: "Poista Paluuviitteet käytöstä", desc: "Estä trackback- ja pingback-roskaposti.", overview: "Paluuviitteitä ja takaisinkutsuja käytetään paljolti roskapostiin ja niitä voidaan hyödyntää DDoS-hyökkäyksissä.", fix: "Poistamme paluuviitteet ja takaisinkutsut käytöstä koko sivustoltasi." },
+	protect_info: { title: "Suojaa Tiedot", desc: "Estä pääsy ydintiedostoihin kuten readme.html.", overview: "Tiedostot kuten readme.html tai varmuuskopiotiedostot voivat paljastaa arkaluonteisia tietoja ympäristöstäsi.", fix: "Lukitsemme nämä tiedostot varmistaaksemme, etteivät hakkerit pääse niihin käsiksi." },
+	php_version: { title: "Päivitä PHP", desc: "Varmista, että käytät tuettua PHP-versiota.", overview: "Vanhentuneiden PHP-versioiden suorittaminen altistaa palvelimesi korjaamattomille haavoittuvuuksille.", fix: "Päivitä PHP-versiosi uusimpaan vakaaseen julkaisuun hosting-paneelisi kautta.", toggleable: false, action_text: "Päivitä Hosting-paneelista" },
+	prevent_php: { title: "Estä PHP:n Suoritus", desc: "Estä PHP:n suoritus lataushakemistossa.", overview: "Latauskansion pitäisi sisältäää vain mediaa. Jos hakkeri lataa tänne haitallisen PHP-skriptin, tämä estää sen suorittamisen.", fix: "Asetamme suojauksia lataushakemistoon estääksemme PHP:n suorittamisen." },
+	security_keys: { title: "Tietoturva-avaimet", desc: "Varmista, että tietoturva-avaimet on asetettu wp-config.php -tiedostossa.", overview: "Tietoturva-avaimet parantavat käyttäjän evästeisiin tallennettujen tietojen salausta.", fix: "Varmistamme, että uudet tietoturva-avaimet luodaan ja otetaan käyttöön.", toggleable: false, action_text: "Luo Avaimet Uudelleen" },
+	disable_indexes: { title: "Estä Hakemiston Listaus", desc: "Estä palvelimen kansioiden selaaminen.", overview: "Jos hakemiston listaus on päällä, hyökkääjät voivat selata sivustosi kansiorakennetta ja löytää haavoittuvia tiedostoja.", fix: "Lisäämme säännön joka estää hakemistojen sisällön selaamisen." }
 };
 
 const HEADER_DEFS = {
 	sh_strict_transport: { title: "Strict Transport Security (HSTS)", desc: "Pakottaa turvalliset (HTTP yli SSL/TLS) yhteydet palvelimeen." },
 	sh_xframe: { title: "X-Frame-Options", desc: "Suojaa clickjackingilta (napin kaappaukselta)." },
-	sh_xss_protection: { title: "X-XSS-Protection", desc: "EstÃ¤Ã¤ sivujen latautumisen, kun ne havaitsevat heijastuvia cross-site scripting (XSS) -hyÃ¶kkÃ¤yksiÃ¤." },
-	sh_content_type_options: { title: "X-Content-Type-Options", desc: "EstÃ¤Ã¤ selainta yrittÃ¤mÃ¤stÃ¤ MIME-nuuskia sisÃ¤ltÃ¶tyyppiÃ¤." },
-	sh_referrer_policy: { title: "Referrer-Policy", desc: "MÃ¤Ã¤rittelee, mitÃ¤ viittaustietoja tulisi sisÃ¤llyttÃ¤Ã¤ tehtyihin pyyntÃ¶ihin." },
-	sh_feature_policy: { title: "Permissions-Policy", desc: "Tarjoaa mekanismeja selaimen ominaisuuksien kÃ¤yttÃ¶Ã¶nottoon ja poistamiseen." },
-	sh_content_security_policy: { title: "Content-Security-Policy", desc: "EstÃ¤Ã¤ lataamasta haitallisia resursseja sivuston ulkopuolelta." }
+	sh_xss_protection: { title: "X-XSS-Protection", desc: "Estää sivujen latautumisen, kun ne havaitsevat heijastuvia cross-site scripting (XSS) -hyökkäyksiä." },
+	sh_content_type_options: { title: "X-Content-Type-Options", desc: "Estää selainta yrittämästä MIME-nuuskia sisältötyyppiä." },
+	sh_referrer_policy: { title: "Referrer-Policy", desc: "Määrittelee, mitä viittaustietoja tulisi sisällyttää tehtyihin pyyntöihin." },
+	sh_feature_policy: { title: "Permissions-Policy", desc: "Tarjoaa mekanismeja selaimen ominaisuuksien käyttöönottoon ja poistamiseen." },
+	sh_content_security_policy: { title: "Content-Security-Policy", desc: "Estää lataamasta haitallisia resursseja sivuston ulkopuolelta." }
 };
 
 window.pmcSec = {
@@ -2208,7 +2208,7 @@ window.pmcSec = {
 				this.renderTweaks(res.data.hardening.tweaks);
 			}
 		} catch (e) {
-			console.error("Pecodex Security: PÃ¤Ã¤tietojen nouto epÃ¤onnistui", e);
+			console.error("Pecodex Security: Päätietojen nouto epäonnistui", e);
 		}
 	},
 	async fetchAuditLog(page = 1) {
@@ -2221,9 +2221,9 @@ window.pmcSec = {
 			}
 			res.data.items.forEach(log => {
 				const sevConfig = {
-					critical: { label: 'ï¿½Y"ï¿½ Kriittinen', color: '#fef2f2', text: '#dc2626' },
-					warning:  { label: 'ï¿½YYï¿½ Varoitus',  color: '#fffbeb', text: '#d97706' },
-					info:     { label: 'ï¿½Y"ï¿½ Info',      color: '#eff6ff', text: '#2563eb' },
+					critical: { label: 'äY"ä Kriittinen', color: '#fef2f2', text: '#dc2626' },
+					warning:  { label: 'äYYä Varoitus',  color: '#fffbeb', text: '#d97706' },
+					info:     { label: 'äY"ä Info',      color: '#eff6ff', text: '#2563eb' },
 				};
 				const sev = sevConfig[log.severity] || sevConfig.info;
 				const sevBadge = `<span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;background:${sev.color};color:${sev.text};white-space:nowrap;">${sev.label}</span>`;
@@ -2251,7 +2251,7 @@ window.pmcSec = {
 		if (res.success) {
 			this.showToast('Asetukset tallennettu', 'success');
 		} else {
-			this.showToast('Tallennus epÃ¤onnistui', 'error');
+			this.showToast('Tallennus epäonnistui', 'error');
 		}
 	},
 	loginChartInstance: null,
@@ -2275,7 +2275,7 @@ window.pmcSec = {
 				} else {
 					res.data.items.forEach(log => {
 						const date = log.date || '-';
-						const type = log.type === 'auth_fail' ? '<span class="text-orange-600">EpÃ¤onnistunut</span>' : (log.type === 'auth_lock' ? '<span class="text-red-600 font-bold">Lukittu</span>' : log.type);
+						const type = log.type === 'auth_fail' ? '<span class="text-orange-600">Epäonnistunut</span>' : (log.type === 'auth_lock' ? '<span class="text-red-600 font-bold">Lukittu</span>' : log.type);
 						const ip = log.ip || '-';
 						const country = log.country_iso_code || '-';
 						let actionBtn = `<button class="px-2 py-1 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded text-[10px] font-bold" onclick="pmcSec.banIp('${ip}')">EST&Auml; IP</button>`;
@@ -2311,7 +2311,7 @@ window.pmcSec = {
 									borderRadius: 2
 								},
 								{
-									label: 'EpÃ¤onnistuneet',
+									label: 'Epäonnistuneet',
 									data: res.data.chart_data.failed,
 									backgroundColor: '#ef4444',
 									borderColor: '#ef4444',
@@ -2422,12 +2422,12 @@ window.pmcSec = {
 								  <div class="font-bold text-slate-800">${v.plugin}</div>
 								  <div class="text-[10px] text-slate-500">${v.cve}</div>
 								</div>
-								<button class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded font-bold hover:bg-slate-50">PÃ¤ivitÃ¤</button>
+								<button class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded font-bold hover:bg-slate-50">Päivitä</button>
 							  </div>`;
 				});
 				vulnContainer.innerHTML = html;
 				const titleBadge = document.querySelector('#w-vulnerabilities .bg-red-100');
-				if (titleBadge) titleBadge.textContent = `${data.vulnerabilities.length} KriittistÃ¤`;
+				if (titleBadge) titleBadge.textContent = `${data.vulnerabilities.length} Kriittistä`;
 			}
 		}
 
@@ -2437,9 +2437,9 @@ window.pmcSec = {
 			if (hList) {
 				const map = [
 					{ key: 'protect_info', label: 'wp-config.php oikeudet', ok: 'Suojattu', bad: 'Ei suojattu' },
-					{ key: 'disable_indexes', label: 'Hakemiston Listaus', ok: 'Pois kÃ¤ytÃ¶stÃ¤', bad: 'KÃ¤ytÃ¶ssÃ¤!' },
-					{ key: 'wp_version', label: 'WP-versio piilotettu', ok: 'KyllÃ¤', bad: 'Ei' },
-					{ key: 'xml_rpc', label: 'XML-RPC', ok: 'Pois kÃ¤ytÃ¶stÃ¤', bad: 'KÃ¤ytÃ¶ssÃ¤!' }
+					{ key: 'disable_indexes', label: 'Hakemiston Listaus', ok: 'Pois käytöstä', bad: 'Käytössä!' },
+					{ key: 'wp_version', label: 'WP-versio piilotettu', ok: 'Kyllä', bad: 'Ei' },
+					{ key: 'xml_rpc', label: 'XML-RPC', ok: 'Pois käytöstä', bad: 'Käytössä!' }
 				];
 				let html = '';
 				map.forEach(item => {
@@ -2586,12 +2586,12 @@ window.pmcSec = {
 	async unbanIp(ip) {
 		const res = await this.post('pmc_security_unban_ip', { ip });
 		if (res.success) this.fetchMasterData();
-		else alert('IP:n poistaminen estolistalta epÃ¤onnistui.');
+		else alert('IP:n poistaminen estolistalta epäonnistui.');
 	},
 	async removeAllowedIp(ip) {
 		const res = await this.post('pmc_security_firewall_remove_allowed_ip', { ip });
 		if (res.success) this.fetchMasterData();
-		else alert('IP:n poistaminen sallittujen listalta epÃ¤onnistui.');
+		else alert('IP:n poistaminen sallittujen listalta epäonnistui.');
 	},
 	renderHeaders(headers) {
 		const grid = document.getElementById('security-headers-grid');
@@ -2647,8 +2647,8 @@ window.pmcSec = {
 			}
 		}
 
-		recContainer.innerHTML = recHtml || '<div style="padding:20px; color:#9ca3af;">Ei suosituksia tÃ¤llÃ¤ hetkellÃ¤.</div>';
-		actContainer.innerHTML = actHtml || '<div style="padding:20px; color:#9ca3af;">YhtÃ¤Ã¤n asetusta ei ole vielÃ¤ aktivoitu.</div>';
+		recContainer.innerHTML = recHtml || '<div style="padding:20px; color:#9ca3af;">Ei suosituksia tällä hetkellä.</div>';
+		actContainer.innerHTML = actHtml || '<div style="padding:20px; color:#9ca3af;">Yhtään asetusta ei ole vielä aktivoitu.</div>';
 
 		if(recBadge) recBadge.textContent = recCount;
 		if(recBadgeInner) recBadgeInner.textContent = recCount;
@@ -2659,15 +2659,15 @@ window.pmcSec = {
 		const statusIcon = isOk ? '<i class="fas fa-check-circle" style="color:#10b981;"></i>' : '<i class="fas fa-exclamation-circle" style="color:#b80048;"></i>';
 		const alertBg = isOk ? 'rgba(16, 185, 129, 0.1)' : 'rgba(184, 0, 72, 0.05)';
 		const alertBorder = isOk ? '#10b981' : '#b80048';
-		const alertMsg = isOk ? 'TÃ¤mÃ¤ tietoturva-asetus on aktiivinen ja suojaa sivustoasi.' : 'TÃ¤mÃ¤ tietoturva-asetus EI ole aktiivinen. Sivustosi saattaa olla haavoittuva.';
+		const alertMsg = isOk ? 'Tämä tietoturva-asetus on aktiivinen ja suojaa sivustoasi.' : 'Tämä tietoturva-asetus EI ole aktiivinen. Sivustosi saattaa olla haavoittuva.';
 		
 		let actionRow = '';
 		if (def.toggleable === false) {
 			actionRow = `
 				<div style="border-top:1px solid #e5e7eb; padding-top:15px; display:flex; justify-content:space-between; align-items:center;">
-					<span style="font-size:13px; color:#4b5563;">Vaatii ToimenpiteitÃ¤</span>
+					<span style="font-size:13px; color:#4b5563;">Vaatii Toimenpiteitä</span>
 					<div class="ps-control-row" style="margin:0;">
-						<span style="background: #e5e7eb; color: #4b5563; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: bold;">${def.action_text || 'MÃ¤Ã¤ritÃ¤ Manuaalisesti'}</span>
+						<span style="background: #e5e7eb; color: #4b5563; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: bold;">${def.action_text || 'Määritä Manuaalisesti'}</span>
 					</div>
 				</div>
 			`;
@@ -2725,7 +2725,7 @@ window.pmcSec = {
 		const res = await this.post('pmc_security_toggle_tweak', { tweak: slug, state: enable ? 'true' : 'false' });
 		if (!res.success) {
 			inputEl.checked = !inputEl.checked;
-			alert('Tilan vaihto epÃ¤onnistui: ' + (res.data || 'Tuntematon virhe'));
+			alert('Tilan vaihto epäonnistui: ' + (res.data || 'Tuntematon virhe'));
 		} else {
 			// Update local DOM gracefully instead of completely rebuilding and moving the element
 			const accordionItem = inputEl.closest('.ps-accordion-item');
@@ -2742,14 +2742,14 @@ window.pmcSec = {
 				if (statusBox) {
 					statusBox.style.background = enable ? 'rgba(16, 185, 129, 0.1)' : 'rgba(184, 0, 72, 0.05)';
 					statusBox.style.borderLeft = '3px solid ' + (enable ? '#10b981' : '#b80048');
-					statusBox.innerHTML = '<i class="fas fa-info-circle"></i> ' + (enable ? 'TÃ¤mÃ¤ tietoturva-asetus on aktiivinen ja suojaa sivustoasi.' : 'TÃ¤mÃ¤ tietoturva-asetus EI ole aktiivinen. Sivustosi saattaa olla haavoittuva.');
+					statusBox.innerHTML = '<i class="fas fa-info-circle"></i> ' + (enable ? 'Tämä tietoturva-asetus on aktiivinen ja suojaa sivustoasi.' : 'Tämä tietoturva-asetus EI ole aktiivinen. Sivustosi saattaa olla haavoittuva.');
 				}
 				
 				// Update Action Row Text
 				const actionRow = accordionItem.querySelector('.ps-accordion-body > div:last-child');
 				if (actionRow) {
 					const toggleTextSpan = actionRow.querySelector('span');
-					if (toggleTextSpan) toggleTextSpan.textContent = enable ? 'Vaihda poistaaksesi' : 'Vaihda ottaaksesi kÃ¤yttÃ¶Ã¶n';
+					if (toggleTextSpan) toggleTextSpan.textContent = enable ? 'Vaihda poistaaksesi' : 'Vaihda ottaaksesi käyttöön';
 				}
 			}
 			
@@ -2765,7 +2765,7 @@ window.pmcSec = {
 			this.fetchMasterData();
 			alert('Skannaus suoritettu onnistuneesti.');
 		} else {
-			alert('Skannaus epÃ¤onnistui.');
+			alert('Skannaus epäonnistui.');
 		}
 		btnEl.disabled = false;
 		btnEl.textContent = 'Suorita Haittaohjelmaskannaus Nyt';
@@ -2791,7 +2791,7 @@ window.pmcToggleHeaderUI = async (el) => {
 
 	const res = await pmcSec.post('pmc_security_save_headers', payload);
 	if (!res.success) {
-		alert('Otsikon tallennus epÃ¤onnistui: ' + (res.data || 'Tuntematon virhe'));
+		alert('Otsikon tallennus epäonnistui: ' + (res.data || 'Tuntematon virhe'));
 		// Revert UI if failed
 		el.checked = !el.checked;
 		if (statusDiv) {
@@ -2825,9 +2825,9 @@ window.pmcSaveAdvancedSettings = async (btn) => {
 		});
 		
 		if (res.success) {
-			alert("LisÃ¤asetukset tallennettu tietokantaan onnistuneesti!");
+			alert("Lisäasetukset tallennettu tietokantaan onnistuneesti!");
 		} else {
-			alert("Joidenkin asetusten tallennus epÃ¤onnistui: " + (res.data || 'Tuntematon virhe'));
+			alert("Joidenkin asetusten tallennus epäonnistui: " + (res.data || 'Tuntematon virhe'));
 		}
 	} catch (err) {
 		alert("Virhe tallennettaessa asetuksia.");
@@ -2851,7 +2851,7 @@ window.pmcSaveFirewall = async () => {
 		console.log('Palomuurin asetukset tallennettu onnistuneesti.');
 		pmcSec.fetchMasterData();
 	} else {
-		alert('Palomuurin asetusten tallennus epÃ¤onnistui: ' + (res.data || 'Tuntematon virhe'));
+		alert('Palomuurin asetusten tallennus epäonnistui: ' + (res.data || 'Tuntematon virhe'));
 	}
 };
 
@@ -2863,7 +2863,7 @@ window.pmcBanIp = async () => {
 	if (res.success) {
 		input.value = '';
 		pmcSec.fetchMasterData();
-	} else alert('IP:n esto epÃ¤onnistui.');
+	} else alert('IP:n esto epäonnistui.');
 };
 
 window.pmcAllowIp = async () => {
@@ -2874,7 +2874,7 @@ window.pmcAllowIp = async () => {
 	if (res.success) {
 		input.value = '';
 		pmcSec.fetchMasterData();
-	} else alert('IP:n salliminen epÃ¤onnistui.');
+	} else alert('IP:n salliminen epäonnistui.');
 };
 
 // Bind enter keys for inputs
@@ -2931,7 +2931,7 @@ window.pmcSaveSubscribers = async (btn) => {
 	if (res.success) {
 		alert('Ilmoitusasetukset tallennettu onnistuneesti!');
 	} else {
-		alert('Ilmoitusasetusten tallennus epï¿½onnistui: ' + (res.data || 'Tuntematon virhe'));
+		alert('Ilmoitusasetusten tallennus epäonnistui: ' + (res.data || 'Tuntematon virhe'));
 	}
 
 	btn.disabled = false;
@@ -2941,13 +2941,13 @@ window.pmcSaveSubscribers = async (btn) => {
 window.pmcSendTestNotifications = async (btn) => {
 	btn.disabled = true;
 	const oldText = btn.textContent;
-	btn.textContent = 'Lï¿½hetetï¿½ï¿½n...';
+	btn.textContent = 'Lähetetään...';
 
 	const res = await pmcSec.post('pmc_security_send_test_notifications', {});
 	if (res.success) {
-		alert('Testisï¿½hkï¿½postit lï¿½hetetty onnistuneesti kaikille tilaajille!');
+		alert('Testisähköpostit lähetetty onnistuneesti kaikille tilaajille!');
 	} else {
-		alert('Testisï¿½hkï¿½postien lï¿½hetys epï¿½onnistui: ' + (res.data || 'Tuntematon virhe'));
+		alert('Testisähköpostien lähetys epäonnistui: ' + (res.data || 'Tuntematon virhe'));
 	}
 
 	btn.disabled = false;
@@ -2964,7 +2964,7 @@ window.pmcSaveActiveModules = async function() {
 		await pmcSec.post('pmc_security_save_active_modules', { modules: activeModules });
 		// We could show a toast here, but for toggles it's better to just save silently
 	} catch (e) {
-		console.error("Aktiivisten moduulien tallennus epÃ¤onnistui", e);
+		console.error("Aktiivisten moduulien tallennus epäonnistui", e);
 	}
 };
 

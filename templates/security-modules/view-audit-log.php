@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<tr>
 							<th style="width:130px;">Aika</th>
 							<th style="width:90px;">Vakavuus</th>
-							<th style="width:100px;">Käyttäjä</th>
+							<th style="width:100px;">Käyttöjä</th>
 							<th style="width:90px;">IP-osoite</th>
 							<th style="width:65px;">Maa</th>
 							<th style="width:80px;">Laite</th>

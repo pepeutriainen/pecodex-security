@@ -2,7 +2,7 @@
 /**
  * Pecodex Security WAF Core
  *
- * Tämä luokka suoritetaan erillään WordPressistä, jotta se voi torjua pyynnöt
+ * Tämä luokka suoritetaan erillöyn WordPressistä, jotta se voi torjua pyynnöt
  * ennen ytimen ja tietokantayhteyksien latautumista.
  */
 

@@ -1521,7 +1521,7 @@ final class PGM_Private_Gutenberg_Media {
 								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_NAME ); ?>[move_files_to_private_storage]" value="1" <?php checked( $options['move_files_to_private_storage'], 1 ); ?> />
 								<?php esc_html_e( 'Piilota yksityiset mediatiedostot julkisilta yksityiseen varastoon', 'private-gutenberg-media' ); ?>
 							</label>
-							<p class="description"><?php esc_html_e( 'Tietoturvan kannalta tämä on vahvin tila: tiedoston nimen tietävä käyttäjä ei saa sitä auki suorasta uploads-URLista. Tiedosto tallennetaan ensisijaisesti webrootin ulkopuolelle, tai tarvittaessa salattuun uploads-fallbackiin, ja puretaan vain lisäosan PHP-endpointin kautta. Jos samaa mediaa käytetään julkisessa Elementorissa, teemassa tai muussa builderissa, kyseinen julkinen käyttö voi lakata toimimasta.', 'private-gutenberg-media' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Tietoturvan kannalta tämä on vahvin tila: tiedoston nimen tietovä käyttäjä ei saa sitä auki suorasta uploads-URLista. Tiedosto tallennetaan ensisijaisesti webrootin ulkopuolelle, tai tarvittaessa salattuun uploads-fallbackiin, ja puretaan vain lisäosan PHP-endpointin kautta. Jos samaa mediaa käytetään julkisessa Elementorissa, teemassa tai muussa builderissa, kyseinen julkinen käyttö voi lakata toimimasta.', 'private-gutenberg-media' ); ?></p>
 						</td>
 					</tr>
 				</table>
@@ -2352,7 +2352,7 @@ final class PGM_Private_Gutenberg_Media {
 			'status' => __( 'Tarkista', 'private-gutenberg-media' ),
 			'detail' => sprintf(
 				/* translators: %d: post count. */
-				__( '%d sisällössä näyttää olevan suora nonce-latauslinkki. Vaihda se login-start-suojalinkiksi tai tallenna media uudelleen, jotta linkki ei vanhene.', 'private-gutenberg-media' ),
+				__( '%d sisällössä näyttäää olevan suora nonce-latauslinkki. Vaihda se login-start-suojalinkiksi tai tallenna media uudelleen, jotta linkki ei vanhene.', 'private-gutenberg-media' ),
 				$direct_count
 			),
 			'class'  => 'pgm-status-missing',
@@ -4032,7 +4032,7 @@ final class PGM_Private_Gutenberg_Media {
 		if ( false !== get_transient( $lock_key ) ) {
 			wp_send_json_error(
 				array(
-					'message' => __( 'Toimintoa käsitellään jo, odota hetki.', 'private-gutenberg-media' ),
+					'message' => __( 'Toimintoa käsitellöyn jo, odota hetki.', 'private-gutenberg-media' ),
 				),
 				429
 			);
@@ -4527,7 +4527,7 @@ final class PGM_Private_Gutenberg_Media {
 	}
 
 	/**
-	 * Palauttaa true, kun WordPressin generoima media-URL kannattaa näyttää
+	 * Palauttaa true, kun WordPressin generoima media-URL kannattaa näyttäää
 	 * suojattuna endpoint-linkkinä. Tietokannan canonical-polku säilyy silti
 	 * alkuperäisenä _wp_attached_file-arvona, jotta unlock ja migraatiot pysyvät
 	 * korjattavina.
@@ -5355,7 +5355,7 @@ final class PGM_Private_Gutenberg_Media {
 			return new WP_Error( 'pgm_bad_private_link', __( 'Virheellinen sisäinen linkki.', 'private-gutenberg-media' ) );
 		}
 
-		// "vero.fi" ilman skeemaa näyttää teknisesti suhteelliselta polulta.
+		// "vero.fi" ilman skeemaa näyttäää teknisesti suhteelliselta polulta.
 		// Turvallisempi oletus on jättää paljaat domainit käsittelemättä.
 		if ( $this->looks_like_bare_domain( $url ) ) {
 			return new WP_Error( 'pgm_external_private_link', __( 'Ulkoista linkkiä ei suojata tällä lisäosalla.', 'private-gutenberg-media' ) );
@@ -7681,7 +7681,7 @@ html,body{margin:0;background:#525659;color:#f8fafc;font-family:system-ui,-apple
 	 * Sovittaa tiedoston fyysisen sijainnin nykyiseen yhteensopivuusasetukseen.
 	 *
 	 * Linkkisuojaustilassa pidetään tai palautetaan tiedosto uploads-kansioon.
-	 * Tiukassa tilassa tiedosto siirretään yksityiseen varastoon. Tätä keskitettyä
+	 * Tiukassa tilassa tiedosto siirretään yksityiseen varastoon. Tätä keskitettyö
 	 * metodia käyttämällä vältetään vahingossa tapahtuvat siirrot eri koukuista.
 	 */
 	private function sync_attachment_storage_for_current_mode( $attachment_id, $metadata = null ) {
@@ -9189,7 +9189,7 @@ html,body{margin:0;background:#525659;color:#f8fafc;font-family:system-ui,-apple
 
 	private function decrypt_private_storage_payload( $data, $depth = 0 ) {
 		if ( $depth > 2 ) {
-			return new WP_Error( 'pgm_nested_private_file', __( 'Yksityinen varastotiedosto sisältää liian monta salauskerrosta.', 'private-gutenberg-media' ) );
+			return new WP_Error( 'pgm_nested_private_file', __( 'Yksityinen varastotiedosto sisältäää liian monta salauskerrosta.', 'private-gutenberg-media' ) );
 		}
 
 		$data = $this->normalize_private_storage_payload( $data );
@@ -9606,7 +9606,7 @@ html,body{margin:0;background:#525659;color:#f8fafc;font-family:system-ui,-apple
 			if ( $this->server_likely_uses_htaccess() ) {
 				return sprintf(
 					/* translators: 1: server software name. */
-					__( 'Lisäsuojaus: .htaccess on kirjoitettu ja palvelin näyttää käyttävän sitä (%1$s). Varsinainen suojaus on silti salattu .pgm-varasto ja PHP-endpoint.', 'private-gutenberg-media' ),
+					__( 'Lisäsuojaus: .htaccess on kirjoitettu ja palvelin näyttäää käyttävän sitä (%1$s). Varsinainen suojaus on silti salattu .pgm-varasto ja PHP-endpoint.', 'private-gutenberg-media' ),
 					$server
 				) . $iis_suffix;
 			}
@@ -9773,7 +9773,7 @@ html,body{margin:0;background:#525659;color:#f8fafc;font-family:system-ui,-apple
 	 * Muuntaa alkuperäisen uploads-polun salaisen varastopolun nimeksi.
 	 *
 	 * Alkuperäistä tiedostonimeä ei käytetä varastossa, jotta tiedoston nimen
-	 * tietävä käyttäjä ei voi päätellä uutta staattista URLia.
+	 * tietovä käyttäjä ei voi päätellä uutta staattista URLia.
 	 */
 	private function private_storage_relative_path( $relative_path ) {
 		$hash = hash_hmac( 'sha256', $relative_path, $this->private_storage_key() );

@@ -105,7 +105,7 @@ class Pecodex_Notifications {
 			'new_user',
 			'Uusi käyttäjä rekisteröitynyt',
 			sprintf(
-				"Sivustolle on rekisteröitynyt uusi käyttäjä.\n\nKäyttäjätunnus: %s\nSähköposti: %s",
+				"Sivustolle on rekisteröitynyt uusi käyttäjä.\n\nKäyttöjätunnus: %s\nSähköposti: %s",
 				$user->user_login,
 				$user->user_email
 			)
@@ -124,7 +124,7 @@ class Pecodex_Notifications {
 				'admin_login',
 				'Ylläpitäjän kirjautuminen havaittu',
 				sprintf(
-					"Ylläpitäjä on kirjautunut sisään sivustollesi.\n\nKäyttäjätunnus: %s\nIP-osoite: %s\nAika: %s",
+					"Ylläpitäjä on kirjautunut sisään sivustollesi.\n\nKäyttöjätunnus: %s\nIP-osoite: %s\nAika: %s",
 					$user_login,
 					$ip,
 					current_time( 'mysql' )

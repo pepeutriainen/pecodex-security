@@ -48,7 +48,7 @@ class Pecodex_Security_API {
 		add_action( 'deactivated_plugin',          array( $this, 'pmc_log_plugin_deactivated' ) );
 		add_action( 'switch_theme',                array( $this, 'pmc_log_theme_switch' ),         10, 3 );
 		add_action( 'upgrader_process_complete',   array( $this, 'pmc_log_upgrade' ),              10, 2 );
-		// Käyttäjät
+		// Käyttöjät
 		add_action( 'user_register',               array( $this, 'pmc_log_user_register' ) );
 		add_action( 'delete_user',                 array( $this, 'pmc_log_user_delete' ) );
 		add_action( 'profile_update',              array( $this, 'pmc_log_profile_update' ),       10, 2 );
@@ -953,7 +953,7 @@ class Pecodex_Security_API {
 				"plugin_update" => array("Lisäosa päivitetty (TESTI)", "Lisäosa Pecodex Security on päivitetty versioon 4.5.0."),
 				"theme_update"  => array("Teema päivitetty (TESTI)", "Teema Twenty Twenty-Four on päivitetty versioon 1.2."),
 				"new_user"      => array("Uusi käyttäjä rekisteröitynyt (TESTI)", "Uusi käyttäjä MattiMeikäläinen (matti@example.com) on rekisteröitynyt."),
-				"admin_login"   => array("Ylläpitäjän kirjautuminen havaittu (TESTI)", "Käyttäjä admin kirjautui sisään IP-osoitteesta 84.250.10.5.")
+				"admin_login"   => array("Ylläpitäjän kirjautuminen havaittu (TESTI)", "Käyttöjä admin kirjautui sisään IP-osoitteesta 84.250.10.5.")
 			);
 
 			foreach ($events as $type => $info) {
@@ -1093,7 +1093,7 @@ class Pecodex_Security_API {
 			header( 'Content-Disposition: attachment; filename="' . $filename . '.csv"' );
 			$out = fopen( 'php://output', 'w' );
 			fprintf( $out, chr(0xEF).chr(0xBB).chr(0xBF) ); // UTF-8 BOM
-			fputcsv( $out, array( 'Aika', 'Vakavuus', 'Käyttäjä', 'Roolit', 'IP', 'Maa', 'Laite', 'Selain', 'OS', 'Toiminto', 'Lisätiedot', 'User-Agent' ), ';' );
+			fputcsv( $out, array( 'Aika', 'Vakavuus', 'Käyttöjä', 'Roolit', 'IP', 'Maa', 'Laite', 'Selain', 'OS', 'Toiminto', 'Lisätiedot', 'User-Agent' ), ';' );
 			foreach ( $logs as $log ) {
 				fputcsv( $out, array(
 					$log['time']       ?? '',
@@ -1119,7 +1119,7 @@ class Pecodex_Security_API {
 			$lines[] = 'TARKASTUSLOKI — Pecodex Security';
 			$lines[] = 'Viety: ' . current_time( 'mysql' );
 			$lines[] = str_repeat( '-', 150 );
-			$lines[] = sprintf( '%-22s %-10s %-15s %-16s %-6s %-25s %s', 'Aika', 'Vakavuus', 'Käyttäjä', 'IP', 'Maa', 'Toiminto', 'Lisätiedot' );
+			$lines[] = sprintf( '%-22s %-10s %-15s %-16s %-6s %-25s %s', 'Aika', 'Vakavuus', 'Käyttöjä', 'IP', 'Maa', 'Toiminto', 'Lisätiedot' );
 			$lines[] = str_repeat( '-', 150 );
 			foreach ( $logs as $log ) {
 				$lines[] = sprintf(
@@ -1236,7 +1236,7 @@ class Pecodex_Security_API {
 			'action'     => $action,
 			'details'    => $details,
 			'severity'   => $severity, // info | warning | critical
-			// Käyttäjä
+			// Käyttöjä
 			'user'       => $ctx['user'],
 			'user_email' => $ctx['user_email'],
 			'user_roles' => $ctx['user_roles'],
@@ -1258,7 +1258,7 @@ class Pecodex_Security_API {
 
 		// Kirjataan myös PHP error_log kriittiset tapahtumat
 		if ( $severity === 'critical' ) {
-			error_log( "[Pecodex Security] KRIITTINEN: {$action} – {$details} | IP: {$ctx['ip']} | Käyttäjä: {$ctx['user']}" );
+			error_log( "[Pecodex Security] KRIITTINEN: {$action} – {$details} | IP: {$ctx['ip']} | Käyttöjä: {$ctx['user']}" );
 		}
 	}
 
@@ -1268,7 +1268,7 @@ class Pecodex_Security_API {
 		$this->pmc_append_audit_log( 'wp_login', "Kirjautuminen onnistui: {$user_login}", 'info', $ctx );
 	}
 	public function pmc_log_wp_logout() {
-		$this->pmc_append_audit_log( 'wp_logout', 'Käyttäjä kirjautui ulos', 'info' );
+		$this->pmc_append_audit_log( 'wp_logout', 'Käyttöjä kirjautui ulos', 'info' );
 	}
 	public function pmc_log_failed_login( $username ) {
 		$ctx = $this->pmc_get_forensic_context();
@@ -1307,7 +1307,7 @@ class Pecodex_Security_API {
 		}
 	}
 
-	// ── Käyttäjähallinta ────────────────────────────────────────────
+	// ── Käyttöjähallinta ────────────────────────────────────────────
 	public function pmc_log_user_register( $user_id ) {
 		$u = get_user_by( 'id', $user_id );
 		$name = $u ? $u->user_login : "ID:{$user_id}";
@@ -1316,7 +1316,7 @@ class Pecodex_Security_API {
 	public function pmc_log_user_delete( $user_id ) {
 		$u = get_user_by( 'id', $user_id );
 		$name = $u ? $u->user_login : "ID:{$user_id}";
-		$this->pmc_append_audit_log( 'delete_user', "Käyttäjä poistettu: {$name}", 'critical' );
+		$this->pmc_append_audit_log( 'delete_user', "Käyttöjä poistettu: {$name}", 'critical' );
 	}
 	public function pmc_log_profile_update( $user_id, $old_data ) {
 		$u = get_user_by( 'id', $user_id );

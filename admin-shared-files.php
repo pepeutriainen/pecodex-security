@@ -20,7 +20,7 @@ $ajax  = esc_url( admin_url( 'admin-ajax.php' ) );
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edistynyt Hallintapaneeli - Tiedostot & Käyttäjät</title>
+    <title>Edistynyt Hallintapaneeli - Tiedostot & Käyttöjät</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -246,7 +246,7 @@ $ajax  = esc_url( admin_url( 'admin-ajax.php' ) );
 						chip.style.opacity = "0";
 						setTimeout(() => {
 							chip.remove();
-							showToast(`Käyttäjän '${userName}' oikeus poistettu.`);
+							showToast(`Käyttöjän '${userName}' oikeus poistettu.`);
 							if (row.querySelectorAll('.pgm-chip').length === 0) {
 								row.classList.add('row-deleting');
 								setTimeout(() => row.remove(), 400);

@@ -293,7 +293,7 @@
 			currentFolderProtection: 'Kansion oma suojaus',
 			inheritedFolderProtection: 'Yläkansion suojaus',
 			effectiveFolderProtection: 'Voimassa oleva suojaus',
-			noInheritedProtection: 'Ei perittyä suojausta',
+			noInheritedProtection: 'Ei perittyö suojausta',
 			saveFolderProtection: 'Tallenna suojaus',
 			folderProtectionSaved: 'Kansion suojaus tallennettiin.',
 			removeFromFolder: 'Poista kansiosta',
@@ -5218,7 +5218,7 @@
 			var localAccess = currentAccess();
 			var effectiveAccess = strongestAccess( localAccess, inheritedAccess );
 			var inheritedLabel = inheritedAccess === 'public'
-				? t( 'noInheritedProtection', 'Ei perittyä suojausta' )
+				? t( 'noInheritedProtection', 'Ei perittyö suojausta' )
 				: folderAccessLabel( inheritedAccess, false );
 			var helperText = effectiveAccess === 'public'
 				? t( 'folderProtectionEffectivePublicHelp', 'Kansion tiedostot ovat julkisia, ellei yksittäinen tiedosto suojaa niitä.' )
@@ -6604,7 +6604,7 @@
 		var counts = diagnostics.counts;
 		var statusClass = diagnostics.enabled && diagnostics.health !== 'warning' ? 'is-ok' : 'is-warning';
 		var statusText = diagnostics.enabled
-			? ( diagnostics.health === 'warning' ? t( 'privateMediaDiagnosticsAttention', 'Tarkistettavia kohteita löytyi.' ) : t( 'privateMediaDiagnosticsHealthy', 'Suojaus näyttää hyvältä.' ) )
+			? ( diagnostics.health === 'warning' ? t( 'privateMediaDiagnosticsAttention', 'Tarkistettavia kohteita löytyi.' ) : t( 'privateMediaDiagnosticsHealthy', 'Suojaus näyttäää hyvältä.' ) )
 			: t( 'privateMediaDiagnosticsDisabled', 'Suojaus ei ole käytössä.' );
 		var $actions = $( '<div />', { 'class': 'pgm-mo-diagnostic-actions' } );
 
@@ -7281,7 +7281,7 @@
 		// uuden render()-kutsun kautta.
 		activeMediaLibrary = null;
 		// Pienetään viivettä: 150ms jotta AttachmentsBrowser-view
-		// ehtii renderöityä ja wp.media.view.* on saatavilla.
+		// ehtii renderöityö ja wp.media.view.* on saatavilla.
 		window.setTimeout( function() {
 			applyBodyClasses();
 			patchAttachmentsBrowser();
@@ -7452,7 +7452,7 @@
 				var html = '';
 				
 				html += '<div style="margin-bottom: 20px;">';
-				html += '<h4 style="margin-top:0;">Hae k�ytt�j�:</h4>';
+				html += '<h4 style="margin-top:0;">Hae käyttäjä:</h4>';
 				html += '<div class="pgm-mo-search-container" style="position:relative;">';
 				html += '<input type="text" class="pgm-mo-search-input" placeholder="Kirjoita nimi tai email..." style="width:100%;">';
 				html += '<div class="pgm-mo-search-results" style="position:absolute; top:100%; left:0; width:100%; background:#fff; border:1px solid #ccc; max-height:200px; overflow-y:auto; display:none; z-index:10000;"></div>';
@@ -7471,7 +7471,7 @@
 				html += '</div>';
 
 				html += '<div style="margin-bottom: 20px; display:flex; justify-content:flex-end;">';
-				html += '<button type="button" class="button button-primary pgm-mo-send-invite-btn" style="background-color: #e6005c; border-color: #e6005c;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> L�het�</button>';
+				html += '<button type="button" class="button button-primary pgm-mo-send-invite-btn" style="background-color: #e6005c; border-color: #e6005c;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Lähetä</button>';
 				html += '</div>';
 
 				if (this.shareLinks.length > 0) {
@@ -7493,7 +7493,7 @@
 						}
 						if (link.single_use == '1') {
 							if (expText) expText += ' - ';
-							expText += 'Kertak�ytt�inen' + (link.used == '1' ? ' (K�ytetty)' : '');
+							expText += 'Kertakäyttäinen' + (link.used == '1' ? ' (Käytetty)' : '');
 						}
 
 						html += '<div class="pgm-mo-share-item" style="display:flex; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">';
@@ -7542,7 +7542,7 @@
 						if (typeof refreshGridIfPossible === 'function') {
 							refreshGridIfPossible();
 						}
-						self.showToast('K�ytt�oikeus poistettu.');
+						self.showToast('Käyttöoikeus poistettu.');
 					}
 				}).fail(function() {
 					btn.prop('disabled', false).text('Poista');
@@ -7595,7 +7595,7 @@
 			onSendInvite: function(e) {
 				var email = this.selectedEmailToShare || this.$('.pgm-mo-search-input').val().trim();
 				if (!email) {
-					this.showToast('Sy�t� s�hk�posti ensin.');
+					this.showToast('Syötä sähköposti ensin.');
 					return;
 				}
 
@@ -7603,7 +7603,7 @@
 				var input = this.$('.pgm-mo-search-input');
 				var self = this;
 				
-				btn.prop('disabled', true).text('L�hetet��n...');
+				btn.prop('disabled', true).text('Lähetetään...');
 				input.prop('disabled', true);
 
 				var n = window.pecodexMediaLibraryAdmin ? window.pecodexMediaLibraryAdmin.nonce : config.nonce;
@@ -7621,10 +7621,10 @@
 							refreshGridIfPossible();
 						}
 					}
-					self.showToast('K�ytt�j� lis�tty ja kutsu l�hetetty!');
+					self.showToast('Käyttöjä lisätty ja kutsu lähetetty!');
 				}).fail(function() {
 					input.prop('disabled', false).focus();
-					btn.prop('disabled', false).html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> L�het�');
+					btn.prop('disabled', false).html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Lähetä');
 				});
 			},
 
@@ -7633,7 +7633,7 @@
 				
 				var self = this;
 				if (navigator.clipboard) {
-					navigator.clipboard.writeText(url).then(function() { self.showToast('Linkki kopioitu leikep�yd�lle!'); });
+					navigator.clipboard.writeText(url).then(function() { self.showToast('Linkki kopioitu leikepäydälle!'); });
 				} else {
 					var textArea = document.createElement("textarea");
 					textArea.value = url;
@@ -7641,7 +7641,7 @@
 					textArea.select();
 					try {
 						document.execCommand('copy');
-						self.showToast('Linkki kopioitu leikep�yd�lle!');
+						self.showToast('Linkki kopioitu leikepäydälle!');
 					} catch (err) {}
 					document.body.removeChild(textArea);
 				}
@@ -7707,7 +7707,7 @@
 				var html = '';
 				
 				html += '<div style="margin-bottom: 20px;">';
-				html += '<h4 style="margin-top:0;">Hae k�ytt�j�:</h4>';
+				html += '<h4 style="margin-top:0;">Hae käyttäjä:</h4>';
 				html += '<div class="pgm-mo-search-container" style="position:relative;">';
 				html += '<input type="text" class="pgm-mo-search-input" placeholder="Kirjoita nimi tai email..." style="width:100%;">';
 				html += '<div class="pgm-mo-search-results" style="position:absolute; top:100%; left:0; width:100%; background:#fff; border:1px solid #ccc; max-height:200px; overflow-y:auto; display:none; z-index:10000;"></div>';
@@ -7731,7 +7731,7 @@
 				html += '</div>';
 
 				html += '<div style="margin-bottom: 20px; display:flex; justify-content:flex-end;">';
-				html += '<button type="button" class="button button-primary pgm-mo-send-invite-btn" style="background-color: #e6005c; border-color: #e6005c;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> L�het�</button>';
+				html += '<button type="button" class="button button-primary pgm-mo-send-invite-btn" style="background-color: #e6005c; border-color: #e6005c;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Lähetä</button>';
 				html += '</div>';
 
 				if (this.shareLinks && this.shareLinks.length > 0) {
@@ -7740,7 +7740,7 @@
 					for (var i=0; i<this.shareLinks.length; i++) {
 						var link = this.shareLinks[i];
 						var isUser = !!link.user_id;
-						var identifier = isUser ? (link.user_email || link.user_login || 'K�ytt�j�') : 'Kaikki (Julkinen)';
+						var identifier = isUser ? (link.user_email || link.user_login || 'Käyttöjä') : 'Kaikki (Julkinen)';
 						var initials = '??';
 						if (isUser && link.user_email) {
 							initials = link.user_email.substring(0, 2).toUpperCase();
@@ -7753,7 +7753,7 @@
 						}
 						if (link.single_use == '1') {
 							if (expText) expText += ' - ';
-							expText += 'Kertak�ytt�inen' + (link.used == '1' ? ' (K�ytetty)' : '');
+							expText += 'Kertakäyttäinen' + (link.used == '1' ? ' (Käytetty)' : '');
 						}
 
 						html += '<div class="pgm-mo-share-item" style="display:flex; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">';
@@ -7808,7 +7808,7 @@
 						if (typeof refreshGridIfPossible === 'function') {
 							refreshGridIfPossible();
 						}
-						self.showToast('K�ytt�oikeus poistettu.');
+						self.showToast('Käyttöoikeus poistettu.');
 					}
 				}).fail(function() {
 					btn.prop('disabled', false).text('Poista');
@@ -7862,7 +7862,7 @@
 			onSendInvite: function(e) {
 				var email = this.selectedEmailToShare || this.$('.pgm-mo-search-input').val().trim();
 				if (!email) {
-					this.showToast('Sy�t� s�hk�posti ensin.');
+					this.showToast('Syötä sähköposti ensin.');
 					return;
 				}
 
@@ -7870,7 +7870,7 @@
 				var input = this.$('.pgm-mo-search-input');
 				var self = this;
 				
-				btn.prop('disabled', true).text('L�hetet��n...');
+				btn.prop('disabled', true).text('Lähetetään...');
 				input.prop('disabled', true);
 
 				window.jQuery.post(window.ajaxurl, {
@@ -7896,10 +7896,10 @@
 							refreshGridIfPossible();
 						}
 					}
-					self.showToast('K�ytt�j� lis�tty ja kutsu l�hetetty!');
+					self.showToast('Käyttöjä lisätty ja kutsu lähetetty!');
 				}).fail(function() {
 					input.prop('disabled', false).focus();
-					btn.prop('disabled', false).html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> L�het�');
+					btn.prop('disabled', false).html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Lähetä');
 				});
 			},
 
@@ -7908,7 +7908,7 @@
 				
 				var self = this;
 				if (navigator.clipboard) {
-					navigator.clipboard.writeText(url).then(function() { self.showToast('Linkki kopioitu leikep�yd�lle!'); });
+					navigator.clipboard.writeText(url).then(function() { self.showToast('Linkki kopioitu leikepäydälle!'); });
 				} else {
 					var textArea = document.createElement("textarea");
 					textArea.value = url;
@@ -7916,7 +7916,7 @@
 					textArea.select();
 					try {
 						document.execCommand('copy');
-						self.showToast('Linkki kopioitu leikep�yd�lle!');
+						self.showToast('Linkki kopioitu leikepäydälle!');
 					} catch (err) {}
 					document.body.removeChild(textArea);
 				}
@@ -7944,7 +7944,7 @@
 			}).done(function(res) {
 				if (res && res.success && res.data && res.data.remaining > 0) {
 					if (!$syncLoader) {
-						$syncLoader = window.jQuery('<div class="pgm-sync-loader" style="position:fixed; bottom:20px; right:20px; background:#2271b1; color:#fff; padding:15px 25px; border-radius:4px; z-index:999999; box-shadow:0 4px 12px rgba(0,0,0,0.15); font-weight:bold; display:flex; align-items:center; gap:10px;"><span class="spinner is-active" style="margin:0; float:none;"></span> Käsitellään tiedostojen suojauksia... <span class="pgm-sync-count">' + res.data.remaining + '</span> jäljellä</div>');
+						$syncLoader = window.jQuery('<div class="pgm-sync-loader" style="position:fixed; bottom:20px; right:20px; background:#2271b1; color:#fff; padding:15px 25px; border-radius:4px; z-index:999999; box-shadow:0 4px 12px rgba(0,0,0,0.15); font-weight:bold; display:flex; align-items:center; gap:10px;"><span class="spinner is-active" style="margin:0; float:none;"></span> Käsitellöyn tiedostojen suojauksia... <span class="pgm-sync-count">' + res.data.remaining + '</span> jäljellä</div>');
 						window.jQuery(document.body).append($syncLoader);
 					} else {
 						$syncLoader.find('.pgm-sync-count').text(res.data.remaining);

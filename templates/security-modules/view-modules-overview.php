@@ -41,7 +41,7 @@ $module_cards = [
 		'name'     => 'GeoIP-säännöt',
 		'badge'    => 'Määritettävissä',
 		'badge_color' => '#d97706',
-		'desc'     => 'Estää pääsyn sivustollesi tietyistä maista Cloudflaren IP-maarekisterin avulla. Hyödyllinen, jos sivustosi palvelee vain tiettyä aluetta. Käyttää CF-Ipcountry-otsikkoa.',
+		'desc'     => 'Estää pääsyn sivustollesi tietyistä maista Cloudflaren IP-maarekisterin avulla. Hyödyllinen, jos sivustosi palvelee vain tiettyö aluetta. Käyttöä CF-Ipcountry-otsikkoa.',
 		'settings' => '',
 	],
 	[
@@ -184,7 +184,7 @@ $module_cards = [
 		'name'     => 'Tietojen salaus',
 		'badge'    => 'Aktiivinen',
 		'badge_color' => '#16a34a',
-		'desc'     => 'Tarjoaa AES-256-GCM-salausalgoritmiin perustuvat encrypt() ja decrypt() -metodit arkaluonteisten tietojen turvalliseen tallennukseen. Käyttää wp-config.php:n AUTH_KEY-avainta.',
+		'desc'     => 'Tarjoaa AES-256-GCM-salausalgoritmiin perustuvat encrypt() ja decrypt() -metodit arkaluonteisten tietojen turvalliseen tallennukseen. Käyttöä wp-config.php:n AUTH_KEY-avainta.',
 		'settings' => '',
 	],
 	[
@@ -244,7 +244,7 @@ $module_cards = [
 			<span class="material-symbols-outlined" style="color: #3b82f6; font-size: 24px;">info</span>
 			<div>
 				<h4 style="margin: 0 0 4px 0; color: #1e3a8a; font-size: 15px;">Kaikki tietoturvamoduulit yhdellä sivulla</h4>
-				<p style="margin: 0; color: #1d4ed8; font-size: 13px; line-height: 1.5;">Täällä voit hallita kaikkia <?php echo count($module_cards); ?> tietoturvamoduulia. Jokainen kortti kertoo mitä moduuli tekee ja miten se suojaa sivustoasi. Käytä kytkintä ottaaksesi moduulin käyttöön tai poistaaksesi sen käytöstä. Klikkaa <strong>Asetukset</strong>-painiketta siirtyäksesi moduulin tarkempiin asetuksiin.</p>
+				<p style="margin: 0; color: #1d4ed8; font-size: 13px; line-height: 1.5;">Täällä voit hallita kaikkia <?php echo count($module_cards); ?> tietoturvamoduulia. Jokainen kortti kertoo mitä moduuli tekee ja miten se suojaa sivustoasi. Käytä kytkintä ottaaksesi moduulin käyttöön tai poistaaksesi sen käytöstä. Klikkaa <strong>Asetukset</strong>-painiketta siirtyöksesi moduulin tarkempiin asetuksiin.</p>
 			</div>
 		</div>
 
