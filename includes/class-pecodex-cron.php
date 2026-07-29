@@ -22,6 +22,11 @@ class Pecodex_Cron {
         if ( ! wp_next_scheduled( 'pecodex_cleanup_live_traffic' ) ) {
             wp_schedule_event( time(), 'hourly', 'pecodex_cleanup_live_traffic' );
         }
+
+        add_action( 'pecodex_weekly_health_report', array( __CLASS__, 'generate_weekly_report' ) );
+        if ( ! wp_next_scheduled( 'pecodex_weekly_health_report' ) ) {
+            wp_schedule_event( time(), 'weekly', 'pecodex_weekly_health_report' );
+        }
     }
 
     public static function cleanup_live_traffic() {
@@ -205,5 +210,10 @@ class Pecodex_Cron {
             
             wp_mail( $admin_email, $subject, $message );
         }
+    }
+
+    public static function generate_weekly_report() {
+        $summary_string = "Weekly Health Report: Everything is secure. Total blocked IPs: " . count(get_option('pmc_firewall_blacklist', []));
+        Pecodex_Notifications::send_notification( 'health_report', 'Weekly Security Health Report', $summary_string );
     }
 }

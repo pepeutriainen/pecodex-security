@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Pecodex_GeoIP {
 
 	public function __construct() {
-		add_action( 'login_init', array( $this, 'check_country_access' ) );
+		add_action( 'init', array( $this, 'check_country_access' ), 5 );
 	}
 
 	public static function get_location( $ip ) {
@@ -52,43 +52,27 @@ class Pecodex_GeoIP {
 	}
 
 	public function check_country_access() {
-		// Define blocked countries from settings
-		$settings = get_option( 'pmc_firewall_settings', array() );
-		$blocked_countries = isset( $settings['blocked_countries'] ) && is_array( $settings['blocked_countries'] ) ? $settings['blocked_countries'] : array();
-
-		if ( empty( $blocked_countries ) ) {
+		$blocked_countries = get_option( 'pmc_blocked_countries', array() );
+		
+		if ( empty( $blocked_countries ) || ! is_array( $blocked_countries ) ) {
 			return;
 		}
 
-		if ( class_exists( 'Pecodex_Firewall' ) && Pecodex_Firewall::is_ip_allowed( Pecodex_Firewall::get_client_ip() ) ) {
-			return;
-		}
-
-		$country = '';
-
-		// Check if Cloudflare IP Country header is set
-		if ( isset( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ) {
-			$country = $_SERVER['HTTP_CF_IPCOUNTRY'];
+		$ip = '';
+		if ( class_exists( 'Pecodex_Firewall' ) && method_exists( 'Pecodex_Firewall', 'get_client_ip' ) ) {
+			$ip = Pecodex_Firewall::get_client_ip();
 		} else {
-			// Fallback to IP-API
-			$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
-			if ( $ip ) {
-				$country = self::get_location( $ip );
-			}
+			$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 		}
+
+		if ( ! $ip ) {
+			return;
+		}
+
+		$country = self::get_location( $ip );
 
 		if ( $country && in_array( $country, $blocked_countries, true ) ) {
-			global $wpdb;
-			$table = $wpdb->prefix . 'pmc_lockout_log';
-			if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table ) ) === $table ) {
-				$wpdb->insert( $table, array(
-					'ip' => $ip,
-					'type' => 'geoip_block',
-					'reason' => 'Country blocked: ' . $country,
-					'date' => current_time( 'mysql' )
-				) );
-			}
-			wp_die( 'GeoIP Blocked', 'Access Denied', array( 'response' => 403 ) );
+			wp_die( 'Access denied from your country.', 'Access Denied', array( 'response' => 403 ) );
 		}
 	}
 }

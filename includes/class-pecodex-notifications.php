@@ -24,6 +24,8 @@ class Pecodex_Notifications {
 	 * Central function to send notifications based on subscriber preferences.
 	 */
 	public static function send_notification( $event_type, $subject, $message ) {
+		self::send_webhook( $subject, $message );
+
 		$settings = get_option( 'pmc_notification_settings', array() );
 		if ( empty( $settings['subscribers'] ) || ! is_array( $settings['subscribers'] ) ) {
 			return; // No subscribers configured
@@ -54,6 +56,34 @@ class Pecodex_Notifications {
 		}
 
 		remove_filter( 'wp_mail_charset', $charset_filter );
+	}
+
+	/**
+	 * Send webhook notifications to configured URLs.
+	 */
+	public static function send_webhook( $subject, $message ) {
+		$webhook_urls = get_option( 'pmc_webhook_urls', array() );
+		
+		if ( empty( $webhook_urls ) || ! is_array( $webhook_urls ) ) {
+			return;
+		}
+
+		$payload = wp_json_encode( array(
+			'content' => $subject . "\n" . $message
+		) );
+
+		$args = array(
+			'body'        => $payload,
+			'headers'     => array(
+				'Content-Type' => 'application/json',
+			),
+		);
+
+		foreach ( $webhook_urls as $url ) {
+			if ( ! empty( $url ) && is_string( $url ) ) {
+				wp_remote_post( esc_url_raw( $url ), $args );
+			}
+		}
 	}
 
 	/**
