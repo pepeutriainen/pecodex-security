@@ -1,0 +1,21 @@
+# WordPress / PHP
+*.log
+wp-config.php
+wp-config-sample.php
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Node / JS
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Composer
+vendor/
+composer.phar
+
+# Antigravity artifacts
+.gemini/
+brain/
