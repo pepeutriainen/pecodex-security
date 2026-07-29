@@ -71,6 +71,8 @@ class Pecodex_WebAuthn {
 						.then(data => {
 							if (!data.success) throw new Error('Challenge failed');
 							
+							// In a real implementation, decode the challenge from base64
+							// For this boilerplate, we use a dummy Uint8Array
 							const challenge = new Uint8Array(32); 
 							const requestOptions = {
 								challenge: challenge,
@@ -81,6 +83,7 @@ class Pecodex_WebAuthn {
 							return navigator.credentials.get({ publicKey: requestOptions });
 						})
 						.then(assertion => {
+							// In a real implementation, assertion needs to be parsed and encoded properly
 							return fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
 								method: 'POST',
 								headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -91,6 +94,8 @@ class Pecodex_WebAuthn {
 						.then(data => {
 							if (data.success) {
 								alert('Passkey verification successful! (Mock mode)');
+								// Redirect or reload
+								window.location.reload();
 							} else {
 								alert('Login failed.');
 							}
@@ -129,6 +134,7 @@ class Pecodex_WebAuthn {
 						.then(data => {
 							if (!data.success) throw new Error('Challenge failed');
 							
+							// In a real implementation, decode the challenge and user ID from base64
 							const challenge = new Uint8Array(32);
 							const userId = new Uint8Array(16);
 							
@@ -174,25 +180,46 @@ class Pecodex_WebAuthn {
 	}
 
 	public function ajax_login_challenge() {
-		wp_send_json_success(array('challenge' => 'dummy_challenge_string'));
+		// Generate a dummy challenge (in reality, store this in transient/session)
+		$challenge = wp_generate_password( 32, false );
+		wp_send_json_success(array('challenge' => $challenge));
 	}
 
 	public function ajax_login_verify() {
-		wp_send_json_success();
+		$assertion = isset( $_POST['assertion'] ) ? stripslashes( $_POST['assertion'] ) : '';
+		
+		// Pseudocode: Verify assertion using a WebAuthn library
+		if ( !empty($assertion) ) {
+			// wp_set_auth_cookie( $user_id );
+			wp_send_json_success();
+		} else {
+			wp_send_json_error( 'Missing assertion data.' );
+		}
 	}
 
 	public function ajax_register_challenge() {
 		if (!is_user_logged_in()) {
-			wp_send_json_error();
+			wp_send_json_error( 'Must be logged in to register.' );
 		}
-		wp_send_json_success(array('challenge' => 'dummy_challenge_string'));
+		// Generate a dummy challenge
+		$challenge = wp_generate_password( 32, false );
+		wp_send_json_success(array('challenge' => $challenge));
 	}
 
 	public function ajax_register_verify() {
 		if (!is_user_logged_in()) {
-			wp_send_json_error();
+			wp_send_json_error( 'Must be logged in to verify registration.' );
 		}
-		wp_send_json_success();
+		
+		$credential = isset( $_POST['credential'] ) ? stripslashes( $_POST['credential'] ) : '';
+		
+		// Pseudocode: Validate credential registration data and store public key in user meta
+		if ( !empty($credential) ) {
+			// update_user_meta( get_current_user_id(), 'webauthn_credentials', $parsed_data );
+			wp_send_json_success();
+		} else {
+			wp_send_json_error( 'Missing credential data.' );
+		}
 	}
 }
 

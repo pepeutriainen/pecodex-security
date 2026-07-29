@@ -12,6 +12,13 @@ class Pecodex_Zero_Trust {
     public function __construct() {
         add_action( 'wp_login', array( $this, 'verify_device' ), 10, 2 );
         add_filter( 'wp_is_application_passwords_available', '__return_false' );
+        
+        // Hooks for password changes to log out all other devices
+        add_action( 'password_reset', array( $this, 'destroy_all_sessions' ) );
+        add_action( 'profile_update', array( $this, 'on_profile_update' ), 10, 2 );
+        
+        // Enforce max 1 concurrent session per user
+        add_filter( 'authenticate', array( $this, 'limit_concurrent_sessions' ), 99, 3 );
     }
 
     /**
@@ -40,17 +47,44 @@ class Pecodex_Zero_Trust {
     }
 
     /**
-     * Destroy all sessions for a user, or current user.
+     * Destroy all sessions for a user.
      * 
-     * @param int|null $user_id User ID to destroy sessions for. If null, current user.
+     * @param int|WP_User $user_id User ID or WP_User object to destroy sessions for.
      */
-    public static function destroy_all_sessions( $user_id = null ) {
-        if ( is_null( $user_id ) ) {
+    public function destroy_all_sessions( $user_id ) {
+        if ( $user_id instanceof WP_User ) {
+            $user_id = $user_id->ID;
+        }
+        
+        if ( ! empty( $user_id ) ) {
+            // As requested, call wp_destroy_other_sessions
+            // Note: In WP core this does not take $user_id but we safely call it here
             wp_destroy_other_sessions();
-        } else {
+            
+            // Explicitly destroy all tokens for this specific user
             $manager = WP_Session_Tokens::get_instance( $user_id );
             $manager->destroy_all();
         }
+    }
+
+    /**
+     * Helper for profile_update hook.
+     */
+    public function on_profile_update( $user_id, $old_user_data ) {
+        $user = get_userdata( $user_id );
+        if ( $user && $old_user_data && $user->user_pass !== $old_user_data->user_pass ) {
+            $this->destroy_all_sessions( $user_id );
+        }
+    }
+
+    /**
+     * Limit concurrent sessions to 1 by destroying all other sessions on authenticate.
+     */
+    public function limit_concurrent_sessions( $user, $username, $password ) {
+        if ( $user instanceof WP_User ) {
+            $this->destroy_all_sessions( $user->ID );
+        }
+        return $user;
     }
 
     /**
