@@ -200,4 +200,77 @@ class Pecodex_DB_Security {
 		fclose( $fp );
 		return $filepath;
 	}
+
+	/**
+	 * Check if table prefix is the default 'wp_'
+	 *
+	 * @return string|bool Warning message if prefix is wp_, false otherwise.
+	 */
+	public static function check_table_prefix() {
+		global $wpdb;
+
+		if ( $wpdb->prefix === 'wp_' ) {
+			// Save it to an option as a warning
+			update_option( 'pecodex_db_prefix_warning', true );
+			return 'Warning: Database prefix is still set to the default "wp_". It is recommended to change it for better security.';
+		}
+
+		delete_option( 'pecodex_db_prefix_warning' );
+		return false;
+	}
+
+	/**
+	 * Backup the database schema
+	 *
+	 * @return string|WP_Error Path to the schema backup file or WP_Error.
+	 */
+	public static function backup_database_schema() {
+		global $wpdb;
+
+		$upload_dir = wp_upload_dir();
+		$backup_dir = $upload_dir['basedir'] . '/pmc-schema-backups/';
+
+		if ( ! file_exists( $backup_dir ) ) {
+			wp_mkdir_p( $backup_dir );
+		}
+
+		// Secure the backup directory
+		if ( ! file_exists( $backup_dir . '.htaccess' ) ) {
+			file_put_contents( $backup_dir . '.htaccess', "Deny from all\nOptions -Indexes\n" );
+		}
+		if ( ! file_exists( $backup_dir . 'index.php' ) ) {
+			file_put_contents( $backup_dir . 'index.php', "<?php\n// Silence is golden\n" );
+		}
+
+		$hash     = substr( md5( uniqid( (string) wp_rand(), true ) ), 0, 8 );
+		$filename = 'schema-backup-' . date( 'Y-m-d-H-i-s' ) . '-' . $hash . '.sql';
+		$filepath = $backup_dir . $filename;
+
+		$tables = $wpdb->get_results( 'SHOW TABLES', ARRAY_N );
+		if ( empty( $tables ) ) {
+			return new WP_Error( 'no_tables', 'No tables found in database.' );
+		}
+
+		$fp = fopen( $filepath, 'w' );
+		if ( ! $fp ) {
+			return new WP_Error( 'write_error', 'Cannot write to schema backup file.' );
+		}
+
+		fwrite( $fp, "-- Database Schema Backup\n" );
+		fwrite( $fp, "-- Generated: " . date( 'Y-m-d H:i:s' ) . "\n\n" );
+
+		foreach ( $tables as $table ) {
+			$table_name = $table[0];
+			
+			// Create table statement
+			$create_stmt = $wpdb->get_row( "SHOW CREATE TABLE `{$table_name}`", ARRAY_N );
+			if ( isset( $create_stmt[1] ) ) {
+				fwrite( $fp, "DROP TABLE IF EXISTS `{$table_name}`;\n" );
+				fwrite( $fp, $create_stmt[1] . ";\n\n" );
+			}
+		}
+
+		fclose( $fp );
+		return $filepath;
+	}
 }

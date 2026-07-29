@@ -34,6 +34,9 @@ class Pecodex_Advanced_Security {
 
 		// Session Protection Hook
 		add_filter( 'auth_cookie_expiration', array( $this, 'modify_cookie_expiration' ), 99, 3 );
+		
+		// Protect wp-admin
+		add_action( 'init', array( $this, 'protect_wp_admin' ) );
 	}
 
 	/**
@@ -55,12 +58,7 @@ class Pecodex_Advanced_Security {
 			return;
 		}
 
-		$mask_url = isset( $settings['mask_url'] ) ? sanitize_text_field( $settings['mask_url'] ) : '';
-		$mask_redirect = ! empty( $settings['mask_redirect'] ) ? sanitize_text_field( $settings['mask_redirect'] ) : home_url( '/404' );
-
-		if ( empty( $mask_url ) ) {
-			return;
-		}
+		$mask_url = ! empty( $settings['mask_url'] ) ? sanitize_text_field( $settings['mask_url'] ) : 'secret-login';
 
 		// Allow logout action to bypass the mask
 		if ( isset( $_GET['action'] ) && 'logout' === $_GET['action'] ) {
@@ -69,16 +67,61 @@ class Pecodex_Advanced_Security {
 
 		// Check if the custom URL parameter is present in the request
 		if ( ! isset( $_GET[ $mask_url ] ) ) {
-			// Prevent infinite redirect loop
-			$redirect_path = wp_parse_url( $mask_redirect, PHP_URL_PATH );
-			$current_path  = wp_parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+			$mask_redirect = ! empty( $settings['mask_redirect'] ) ? sanitize_text_field( $settings['mask_redirect'] ) : '';
 
-			if ( $redirect_path && $current_path && untrailingslashit( $redirect_path ) === untrailingslashit( $current_path ) ) {
+			if ( empty( $mask_redirect ) ) {
+				global $wp_query;
+				if ( ! isset( $wp_query ) ) {
+					$wp_query = new WP_Query();
+				}
+				$wp_query->set_404();
+				status_header( 404 );
+				nocache_headers();
+				include( get_query_template( '404' ) );
+				exit;
+			} else {
+				// Prevent infinite redirect loop
+				$redirect_path = wp_parse_url( $mask_redirect, PHP_URL_PATH );
+				$current_path  = wp_parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+
+				if ( $redirect_path && $current_path && untrailingslashit( $redirect_path ) === untrailingslashit( $current_path ) ) {
+					return;
+				}
+
+				wp_safe_redirect( $mask_redirect );
+				exit;
+			}
+		}
+	}
+
+	/**
+	 * Protect wp-admin by redirecting unauthorized access to the mask redirect or 404 page.
+	 */
+	public function protect_wp_admin() {
+		if ( is_admin() && ! is_user_logged_in() && ! wp_doing_ajax() ) {
+			$settings = get_option( 'pmc_advanced_settings', array() );
+			$is_enabled = isset( $settings['mask_enabled'] ) ? filter_var( $settings['mask_enabled'], FILTER_VALIDATE_BOOLEAN ) : false;
+			
+			if ( ! $is_enabled ) {
 				return;
 			}
-
-			wp_safe_redirect( $mask_redirect );
-			exit;
+			
+			$mask_redirect = ! empty( $settings['mask_redirect'] ) ? sanitize_text_field( $settings['mask_redirect'] ) : '';
+			
+			if ( empty( $mask_redirect ) ) {
+				global $wp_query;
+				if ( ! isset( $wp_query ) ) {
+					$wp_query = new WP_Query();
+				}
+				$wp_query->set_404();
+				status_header( 404 );
+				nocache_headers();
+				include( get_query_template( '404' ) );
+				exit;
+			} else {
+				wp_safe_redirect( $mask_redirect );
+				exit;
+			}
 		}
 	}
 
