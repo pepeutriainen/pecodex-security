@@ -38,6 +38,11 @@ class Pecodex_Security_API {
 		add_action( 'wp_ajax_pmc_export_audit_log',        array( $this, 'ajax_export_audit_log' ) );
 		add_action( 'wp_ajax_pmc_instant_block',           array( $this, 'ajax_instant_block' ) );
 
+		// New Settings Endpoints
+		add_action( 'wp_ajax_pmc_save_advanced_settings',  array( $this, 'ajax_save_advanced_settings' ) );
+		add_action( 'wp_ajax_pmc_save_geoip_settings',     array( $this, 'ajax_save_geoip_settings' ) );
+		add_action( 'wp_ajax_pmc_save_notification_settings', array( $this, 'ajax_save_notification_settings' ) );
+
 		// ── Forensinen Tarkastusloki – Hookit ──────────────────────────────
 		// Kirjautumiset
 		add_action( 'wp_login',                    array( $this, 'pmc_log_wp_login' ),            10, 2 );
@@ -1081,9 +1086,22 @@ class Pecodex_Security_API {
 			wp_send_json_error( 'Ei oikeuksia.' );
 		}
 
-		$logs = get_transient( 'pmc_security_audit_log' );
-		if ( ! is_array( $logs ) ) $logs = array();
-		$logs = array_reverse( $logs );
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'pmc_audit_log';
+		$db_logs = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY id DESC LIMIT 1000", ARRAY_A );
+		if ( ! is_array( $db_logs ) ) $db_logs = array();
+		
+		$logs = array();
+		foreach( $db_logs as $l ) {
+			$details = json_decode( $l['details'], true );
+			if ( is_array( $details ) ) {
+				$merged = array_merge( $l, $details );
+				$merged['details'] = isset($details['message']) ? $details['message'] : wp_json_encode($details);
+				$logs[] = $merged;
+			} else {
+				$logs[] = $l;
+			}
+		}
 
 		$format = isset( $_POST['format'] ) ? sanitize_text_field( $_POST['format'] ) : 'txt';
 		$filename = 'tarkastusloki-' . date('Y-m-d-His');
@@ -1125,9 +1143,11 @@ class Pecodex_Security_API {
 				$lines[] = sprintf(
 					'%-22s %-10s %-15s %-16s %-6s %-25s %s',
 					substr( $log['time'] ?? '', 0, 22 ),
-					substr( $log['user'] ?? '', 0, 20 ),
-					substr( $log['ip'] ?? '', 0, 18 ),
-					substr( $log['action'] ?? '', 0, 28 ),
+					substr( $log['severity'] ?? 'info', 0, 10 ),
+					substr( $log['user'] ?? '', 0, 15 ),
+					substr( $log['ip'] ?? '', 0, 16 ),
+					substr( $log['country'] ?? '', 0, 6 ),
+					substr( $log['action'] ?? '', 0, 25 ),
 					$log['details'] ?? ''
 				);
 			}
@@ -1224,39 +1244,37 @@ class Pecodex_Security_API {
 	}
 
 	private function pmc_append_audit_log( $action, $details, $severity = 'info', $ctx = null ) {
-		$logs = get_transient( 'pmc_security_audit_log' );
-		if ( ! is_array( $logs ) ) $logs = array();
-
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'pmc_audit_log';
+		
 		if ( $ctx === null ) $ctx = $this->pmc_get_forensic_context();
 
-		$logs[] = array(
-			// Aika
-			'time'       => current_time( 'mysql' ),
-			// Toiminto
-			'action'     => $action,
-			'details'    => $details,
-			'severity'   => $severity, // info | warning | critical
-			// Käyttöjä
-			'user'       => $ctx['user'],
+		$data = array(
+			'severity'   => $severity,
 			'user_email' => $ctx['user_email'],
 			'user_roles' => $ctx['user_roles'],
-			// Verkko
-			'ip'         => $ctx['ip'],
 			'country'    => $ctx['country'],
 			'referer'    => $ctx['referer'],
 			'session'    => $ctx['session'],
-			// Laite
 			'device'     => $ctx['device'],
 			'browser'    => $ctx['browser'],
 			'os'         => $ctx['os'],
 			'ua'         => $ctx['ua'],
+			'message'    => $details
 		);
 
-		// Säilytetään enintään 500 tapahtumaa
-		if ( count( $logs ) > 500 ) array_shift( $logs );
-		set_transient( 'pmc_security_audit_log', $logs, 90 * DAY_IN_SECONDS );
+		$wpdb->insert(
+			$table_name,
+			array(
+				'time'    => current_time( 'mysql' ),
+				'user'    => $ctx['user'],
+				'ip'      => $ctx['ip'],
+				'action'  => $action,
+				'details' => wp_json_encode( $data ),
+			),
+			array( '%s', '%s', '%s', '%s', '%s' )
+		);
 
-		// Kirjataan myös PHP error_log kriittiset tapahtumat
 		if ( $severity === 'critical' ) {
 			error_log( "[Pecodex Security] KRIITTINEN: {$action} – {$details} | IP: {$ctx['ip']} | Käyttöjä: {$ctx['user']}" );
 		}
@@ -1569,6 +1587,49 @@ class Pecodex_Security_API {
 		}
 
 		wp_send_json_success( $events );
+	}
+
+	public function ajax_save_advanced_settings() {
+		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+
+		$settings = get_option( 'pmc_advanced_settings', array() );
+		if ( isset( $_POST['login_masking'] ) ) {
+			$settings['login_masking'] = sanitize_text_field( wp_unslash( $_POST['login_masking'] ) );
+		}
+		if ( isset( $_POST['redirect_url'] ) ) {
+			$settings['redirect_url'] = esc_url_raw( wp_unslash( $_POST['redirect_url'] ) );
+		}
+
+		update_option( 'pmc_advanced_settings', $settings );
+		wp_send_json_success( 'Advanced settings saved' );
+	}
+
+	public function ajax_save_geoip_settings() {
+		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+
+		$countries = isset( $_POST['countries'] ) ? (array) wp_unslash( $_POST['countries'] ) : array();
+		$sanitized_countries = array_map( 'sanitize_text_field', $countries );
+
+		update_option( 'pmc_blocked_countries', $sanitized_countries );
+		wp_send_json_success( 'GeoIP settings saved' );
+	}
+
+	public function ajax_save_notification_settings() {
+		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+
+		$webhook_urls = isset( $_POST['webhook_urls'] ) ? wp_unslash( $_POST['webhook_urls'] ) : '';
+		
+		if ( is_array( $webhook_urls ) ) {
+			$sanitized_urls = array_map( 'esc_url_raw', $webhook_urls );
+		} else {
+			$sanitized_urls = esc_url_raw( $webhook_urls );
+		}
+
+		update_option( 'pmc_webhook_urls', $sanitized_urls );
+		wp_send_json_success( 'Notification settings saved' );
 	}
 
 }

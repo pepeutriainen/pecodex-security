@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Security Dashboard Template
  * Pecodex Security ä?" Cybersecurity dashboard rendered inside WordPress admin.
@@ -2816,9 +2816,10 @@ window.pmcSaveAdvancedSettings = async (btn) => {
 	btn.textContent = 'Tallennetaan...';
 
 	try {
-		const res = await pmcSec.post('pmc_security_save_advanced', {
+		const res = await pmcSec.post('pmc_save_advanced_settings', {
 			mask_enabled: maskEnabled,
 			mask_url: maskUrl,
+			mask_redirect: maskRedirect,
 			tfa_enabled: tfaEnabled,
 			strong_pw: strongPwEnabled,
 			session_enabled: sessionEnabled
@@ -2848,11 +2849,30 @@ window.pmcSaveFirewall = async () => {
 
 	const res = await pmcSec.post('pmc_security_save_firewall', payload);
 	if (res.success) {
-		console.log('Palomuurin asetukset tallennettu onnistuneesti.');
+		alert("Palomuuriasetukset tallennettu!");
 		pmcSec.fetchMasterData();
 	} else {
-		alert('Palomuurin asetusten tallennus epäonnistui: ' + (res.data || 'Tuntematon virhe'));
+		alert("Tallennus epäonnistui: " + res.data);
 	}
+};
+
+window.pmcSaveGeoIPSettings = async (btn) => {
+	const countries = document.getElementById('fw-geoip-countries').value;
+	btn.disabled = true;
+	const oldText = btn.textContent;
+	btn.textContent = 'Tallennetaan...';
+
+	const res = await pmcSec.post('pmc_save_geoip_settings', {
+		geoip_countries: countries
+	});
+	if (res.success) {
+		alert('GeoIP-asetukset tallennettu onnistuneesti!');
+	} else {
+		alert('GeoIP-asetusten tallennus epäonnistui: ' + (res.data || 'Tuntematon virhe'));
+	}
+
+	btn.disabled = false;
+	btn.textContent = oldText;
 };
 
 window.pmcBanIp = async () => {
@@ -2948,6 +2968,25 @@ window.pmcSendTestNotifications = async (btn) => {
 		alert('Testisähköpostit lähetetty onnistuneesti kaikille tilaajille!');
 	} else {
 		alert('Testisähköpostien lähetys epäonnistui: ' + (res.data || 'Tuntematon virhe'));
+	}
+
+	btn.disabled = false;
+	btn.textContent = oldText;
+};
+
+window.pmcSaveWebhookSettings = async (btn) => {
+	const webhookUrl = document.getElementById('notif-webhook-url').value;
+	btn.disabled = true;
+	const oldText = btn.textContent;
+	btn.textContent = 'Tallennetaan...';
+
+	const res = await pmcSec.post('pmc_save_notification_settings', {
+		webhook_url: webhookUrl
+	});
+	if (res.success) {
+		alert('Webhook-asetukset tallennettu onnistuneesti!');
+	} else {
+		alert('Webhook-asetusten tallennus epäonnistui: ' + (res.data || 'Tuntematon virhe'));
 	}
 
 	btn.disabled = false;

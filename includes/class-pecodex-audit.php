@@ -21,6 +21,9 @@ class Pecodex_Audit {
 		add_action( 'updated_option', array( $this, 'log_updated_option' ), 10, 3 );
 		add_action( 'user_register', array( $this, 'log_user_register' ), 10, 1 );
 		add_action( 'delete_user', array( $this, 'log_delete_user' ), 10, 1 );
+		add_action( 'wp_login', array( $this, 'log_wp_login' ), 10, 2 );
+		add_action( 'wp_logout', array( $this, 'log_wp_logout' ) );
+		add_action( 'wp_login_failed', array( $this, 'log_wp_login_failed' ) );
 	}
 
 	/**
@@ -112,6 +115,20 @@ class Pecodex_Audit {
 		$user = get_userdata( $id );
 		$username = $user ? $user->user_login : "ID {$id}";
 		$this->log_event( 'delete_user', "User deleted: {$username}" );
+	}
+
+	public function log_wp_login( $user_login, $user ) {
+		$this->log_event( 'wp_login', "User logged in: {$user_login}" );
+	}
+
+	public function log_wp_logout() {
+		$current_user = wp_get_current_user();
+		$user_login = ( $current_user && $current_user->exists() ) ? $current_user->user_login : 'Unknown';
+		$this->log_event( 'wp_logout', "User logged out: {$user_login}" );
+	}
+
+	public function log_wp_login_failed( $username ) {
+		$this->log_event( 'wp_login_failed', "Failed login attempt for: {$username}" );
 	}
 
 	public function log_action( $action, $details ) {

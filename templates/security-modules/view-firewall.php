@@ -80,6 +80,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<input type="number" id="fw-404-attempts" onchange="window.pmcSaveFirewall()" value="20" min="1">
 				</div>
 			</div>
+
+			<div class="ps-card mt-4">
+				<h3>GeoIP-esto</h3>
+				<p class="ps-desc">Estä liikenne tietyistä maista (esim. RU, CN).</p>
+				<div class="ps-input-group" style="margin-top: 10px;">
+					<label>Maatunnukset (pilkulla erotettuna, esim. RU,CN,KP)</label>
+					<input type="text" id="fw-geoip-countries" class="ps-input" style="width: 100%; margin-bottom: 10px;" placeholder="RU,CN">
+					<button class="ps-btn ps-btn-primary" onclick="window.pmcSaveGeoIPSettings(this)">Tallenna GeoIP-asetukset</button>
+				</div>
+			</div>
 		</div>
 
 		<div class="ps-tab-content" id="tab-fw-ips">

@@ -84,6 +84,16 @@ $available_events = array(
 			</div>
 		</div>
 
+		<div class="ps-card mt-4">
+			<h3>Webhooks (Discord/Slack)</h3>
+			<p class="ps-desc">Lähetä ilmoitukset suoraan tiimisi viestintäkanavalle webhookin kautta.</p>
+			<div class="ps-form-group" style="margin-bottom: 16px; max-width: 500px;">
+				<label style="font-weight: 600; color: #334155;">Webhook URL</label>
+				<input type="url" id="notif-webhook-url" placeholder="https://discord.com/api/webhooks/..." style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 6px;">
+			</div>
+			<button class="ps-btn ps-btn-primary" onclick="window.pmcSaveWebhookSettings(this)">Tallenna Webhook</button>
+		</div>
+
 	</div>
 </div>
 
