@@ -25,6 +25,20 @@ class Pecodex_GeoIP {
 				$country = $cached_country;
 			}
 		} else {
+			// If localhost, mock a location for local testing
+			if ( $ip === '127.0.0.1' || $ip === '::1' ) {
+				$mock = array(
+					'status'      => 'success',
+					'countryCode' => 'US',
+					'city'        => 'New York (Local Test)',
+					'lat'         => 40.7128,
+					'lon'         => -74.0060,
+					'query'       => $ip
+				);
+				set_transient( $transient_key, $mock, DAY_IN_SECONDS );
+				return 'US';
+			}
+
 			$response = wp_remote_get( 'http://ip-api.com/json/' . $ip );
 			if ( ! is_wp_error( $response ) ) {
 				$body = json_decode( wp_remote_retrieve_body( $response ), true );
