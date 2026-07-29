@@ -13,6 +13,30 @@ class Pecodex_GeoIP {
 		add_action( 'login_init', array( $this, 'check_country_access' ) );
 	}
 
+	public static function get_location( $ip ) {
+		$country = '';
+		$transient_key = 'pmc_geoip_' . md5( $ip );
+		$cached_country = get_transient( $transient_key );
+		
+		if ( false !== $cached_country ) {
+			if ( is_array( $cached_country ) && isset( $cached_country['countryCode'] ) ) {
+				$country = $cached_country['countryCode'];
+			} else {
+				$country = $cached_country;
+			}
+		} else {
+			$response = wp_remote_get( 'http://ip-api.com/json/' . $ip );
+			if ( ! is_wp_error( $response ) ) {
+				$body = json_decode( wp_remote_retrieve_body( $response ), true );
+				if ( ! empty( $body['countryCode'] ) ) {
+					$country = $body['countryCode'];
+					set_transient( $transient_key, $country, DAY_IN_SECONDS );
+				}
+			}
+		}
+		return $country;
+	}
+
 	public function check_country_access() {
 		// Define blocked countries from settings
 		$settings = get_option( 'pmc_firewall_settings', array() );
@@ -35,21 +59,7 @@ class Pecodex_GeoIP {
 			// Fallback to IP-API
 			$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
 			if ( $ip ) {
-				$transient_key = 'pmc_geoip_' . md5( $ip );
-				$cached_country = get_transient( $transient_key );
-				
-				if ( false !== $cached_country ) {
-					$country = $cached_country;
-				} else {
-					$response = wp_remote_get( 'http://ip-api.com/json/' . $ip );
-					if ( ! is_wp_error( $response ) ) {
-						$body = json_decode( wp_remote_retrieve_body( $response ), true );
-						if ( ! empty( $body['countryCode'] ) ) {
-							$country = $body['countryCode'];
-							set_transient( $transient_key, $country, DAY_IN_SECONDS );
-						}
-					}
-				}
+				$country = self::get_location( $ip );
 			}
 		}
 

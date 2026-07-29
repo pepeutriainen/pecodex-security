@@ -272,11 +272,6 @@ final class PGM_Private_Gutenberg_Media {
 		Pecodex_Rate_Limit::init();
 		Pecodex_Cron::init();
 		Pecodex_Vulnerabilities::init();
-		Pecodex_Hardening::init();
-		Pecodex_Bot_Protection::init();
-		Pecodex_Captcha::init();
-		Pecodex_Honeypot::init();
-		Pecodex_Zero_Trust::init();
 
 		$active_modules = get_option('pmc_active_modules', array());
 		// Treat as first run if empty or if it's a numeric array instead of associative
@@ -293,6 +288,11 @@ final class PGM_Private_Gutenberg_Media {
 		if ($is_active('advanced'))    new Pecodex_Advanced_Security();
 		if ($is_active('scanner'))     new Pecodex_Scanner();
 		if ($is_active('bot'))         new Pecodex_Bot_Protection();
+		
+		// Unconditional security modules
+		new Pecodex_Captcha();
+		new Pecodex_Honeypot();
+		new Pecodex_Zero_Trust();
 		if ($is_active('auth'))        new Pecodex_Authentication();
 		if ($is_active('audit'))       new Pecodex_Audit();
 		if ($is_active('waf'))         new Pecodex_WAF();
