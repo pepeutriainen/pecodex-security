@@ -695,28 +695,28 @@ class Pecodex_Security_API {
 			);
 
 			if ( $event['isBlocked'] || $is_locked ) {
-				$event['status']      = 'Blocked';
+				$event['status']      = __( 'Blocked', 'pecodex-security' );
 				$event['statusClass'] = 'critical';
 			} elseif ( $event['isTracked'] ) {
-				$event['status']      = 'Tracked';
+				$event['status']      = __( 'Tracked', 'pecodex-security' );
 				$event['statusClass'] = 'tracked';
 			} else {
-				$event['status']      = 'Active';
+				$event['status']      = __( 'Active', 'pecodex-security' );
 				$event['statusClass'] = 'warning';
 			}
 
 			if ( strpos( $type, 'auth' ) !== false ) {
-				$event['attack'] = 'Login Attempt';
+				$event['attack'] = __( 'Login Attempt', 'pecodex-security' );
 			} elseif ( strpos( $type, '404' ) !== false ) {
-				$event['attack'] = 'Probing / Recon';
+				$event['attack'] = __( 'Probing / Recon', 'pecodex-security' );
 			} elseif ( 'terminated' === $type ) {
-				$event['attack'] = 'Connection Terminated';
+				$event['attack'] = __( 'Connection Terminated', 'pecodex-security' );
 			} elseif ( in_array( $type, array( 'blacklist', 'manual_ban' ), true ) ) {
-				$event['attack'] = 'Manual Ban';
+				$event['attack'] = __( 'Manual Ban', 'pecodex-security' );
 			} elseif ( strpos( $type, 'waf' ) !== false ) {
-				$event['attack'] = 'WAF Block';
+				$event['attack'] = __( 'WAF Block', 'pecodex-security' );
 			} else {
-				$event['attack'] = 'Malicious Traffic';
+				$event['attack'] = __( 'Malicious Traffic', 'pecodex-security' );
 			}
 
 			$event['target']  = $site_host ? $site_host : 'Local Server';

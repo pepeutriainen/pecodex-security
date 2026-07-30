@@ -3897,9 +3897,9 @@ final class PGM_Media_Organizer {
 				try {
 					var res = JSON.parse(xhr.responseText);
 					if (res && res.data && res.data.serverDebug) {
-						console.log('%c--- Pecodex Media Control: Live Server Directory Debug Logs ---', 'color: #0073aa; font-weight: bold;');
-						console.log(res.data.serverDebug);
-						console.log('%c---------------------------------------------------------------', 'color: #0073aa; font-weight: bold;');
+						// console.log('%c--- Pecodex Media Control: Live Server Directory Debug Logs ---', 'color: #0073aa; font-weight: bold;');
+						// console.log(res.data.serverDebug);
+						// console.log('%c---------------------------------------------------------------', 'color: #0073aa; font-weight: bold;');
 					}
 				} catch(e) {}
 			}

@@ -7,7 +7,7 @@
  * Author: Pepe Utriainen / Pecodex
  * Author URI: https://pecodex.fi/
  * Company: Pecodex
- * Text Domain: private-gutenberg-media
+ * Text Domain: pecodex-security
  * Requires at least: 6.2
  * Requires PHP: 7.4
  */
@@ -519,7 +519,7 @@ final class PGM_Private_Gutenberg_Media {
 			'context' => $this->debug_clean_context( $context ),
 		);
 
-		error_log( '[Pecodex Media Control DEBUG] ' . wp_json_encode( $payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+		// error_log( '[Pecodex Media Control DEBUG] ' . wp_json_encode( $payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
 	}
 
 	private function debug_clean_context( $context ) {

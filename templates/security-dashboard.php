@@ -705,8 +705,8 @@ if ( ! defined( 'ABSPATH' ) ) {
         <?php echo get_avatar( get_current_user_id(), 76 ); ?>
       </div>
       <div class="sidebar-brand-text">
-        <h2>Operaattorin<br>Konsoli</h2>
-        <p>Tason 4 Oikeudet</p>
+        <h2><?php echo wp_kses_post( __( 'Operaattorin<br>Konsoli', 'pecodex-security' ) ); ?></h2>
+        <p><?php esc_html_e( 'Tason 4 Oikeudet', 'pecodex-security' ); ?></p>
       </div>
     </div>
 
@@ -715,55 +715,55 @@ if ( ! defined( 'ABSPATH' ) ) {
         <li>
           <a href="#" class="active" onclick="psOpenModule('none'); return false;">
             <span class="material-symbols-outlined">dashboard</span>
-            <span class="nav-label">Ohjausnäkymä</span>
+            <span class="nav-label"><?php esc_html_e( 'Ohjausnäkymä', 'pecodex-security' ); ?></span>
           </a>
         </li>
         <li>
           <a href="#" onclick="psOpenModule('firewall'); return false;">
             <span class="material-symbols-outlined">shield</span>
-            <span class="nav-label">Palomuuri & Sulut</span>
+            <span class="nav-label"><?php esc_html_e( 'Palomuuri & Sulut', 'pecodex-security' ); ?></span>
           </a>
         </li>
         <li>
           <a href="#" onclick="psOpenModule('hardening'); return false;">
             <span class="material-symbols-outlined">health_and_safety</span>
-            <span class="nav-label">Järjestelmän Suojaus</span>
+            <span class="nav-label"><?php esc_html_e( 'Järjestelmän Suojaus', 'pecodex-security' ); ?></span>
           </a>
         </li>
         <li>
           <a href="#" onclick="psOpenModule('scanner'); return false;">
             <span class="material-symbols-outlined">search_check</span>
-            <span class="nav-label">Haittaohjelmien Skanneri</span>
+            <span class="nav-label"><?php esc_html_e( 'Haittaohjelmien Skanneri', 'pecodex-security' ); ?></span>
           </a>
         </li>
         <li>
           <a href="#" onclick="psOpenModule('advanced'); return false;">
             <span class="material-symbols-outlined">settings_suggest</span>
-            <span class="nav-label">Lisätyökalut</span>
+            <span class="nav-label"><?php esc_html_e( 'Lisätyökalut', 'pecodex-security' ); ?></span>
           </a>
         </li>
         <li>
           <a href="#" onclick="psOpenModule('headers'); return false;">
             <span class="material-symbols-outlined">http</span>
-            <span class="nav-label">Tietoturvaotsikot</span>
+            <span class="nav-label"><?php esc_html_e( 'Tietoturvaotsikot', 'pecodex-security' ); ?></span>
           </a>
         </li>
         <li>
           <a href="#" onclick="psOpenModule('audit-log'); return false;">
             <span class="material-symbols-outlined">list_alt</span>
-            <span class="nav-label">Tarkastusloki</span>
+            <span class="nav-label"><?php esc_html_e( 'Tarkastusloki', 'pecodex-security' ); ?></span>
           </a>
         </li>
         <li>
           <a href="#" onclick="psOpenModule('notifications'); return false;">
             <span class="material-symbols-outlined">notifications</span>
-            <span class="nav-label">Ilmoitukset</span>
+            <span class="nav-label"><?php esc_html_e( 'Ilmoitukset', 'pecodex-security' ); ?></span>
           </a>
         </li>
         <li>
           <a href="#" onclick="psOpenModule('modules-overview'); return false;" id="nav-modules-overview">
             <span class="material-symbols-outlined">extension</span>
-            <span class="nav-label">Tietoturvamoduulit</span>
+            <span class="nav-label"><?php esc_html_e( 'Tietoturvamoduulit', 'pecodex-security' ); ?></span>
           </a>
         </li>
       </ul>
@@ -772,16 +772,16 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div class="sidebar-footer">
       <button class="btn-incident">
         <span class="material-symbols-outlined" style="font-size:15px;">add</span>
-        <span class="incident-label">Poikkeamaraportti</span>
+        <span class="incident-label"><?php esc_html_e( 'Poikkeamaraportti', 'pecodex-security' ); ?></span>
       </button>
       <div class="sidebar-footer-links">
         <a href="#">
           <span class="material-symbols-outlined">help_center</span>
-          <span class="footer-label">Tuki</span>
+          <span class="footer-label"><?php esc_html_e( 'Tuki', 'pecodex-security' ); ?></span>
         </a>
         <a href="#">
           <span class="material-symbols-outlined">terminal</span>
-          <span class="footer-label">Järjestelmäloki</span>
+          <span class="footer-label"><?php esc_html_e( 'Järjestelmäloki', 'pecodex-security' ); ?></span>
         </a>
       </div>
     </div>
