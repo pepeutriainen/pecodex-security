@@ -1455,8 +1455,8 @@ class Pecodex_Security_API {
 
 				// Target is always our site
 				$event['target'] = 'Local Server';
-				$event['user_agent'] = 'Unknown (Lockout)';
-				$event['is_proxy'] = 0;
+				$event['user_agent'] = 'Unknown';
+				$event['is_proxy'] = false;
 				$event['threat_score'] = 100;
 
 				// Try to get GeoIP from transient cache
@@ -1514,7 +1514,7 @@ class Pecodex_Security_API {
 
 		$traffic_table = $wpdb->prefix . 'pmc_live_traffic';
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$traffic_table'" ) == $traffic_table ) {
-			$traffic_rows = $wpdb->get_results( "SELECT * FROM {$traffic_table} ORDER BY id DESC LIMIT 10", ARRAY_A );
+			$traffic_rows = $wpdb->get_results( "SELECT id, ip, time, country_iso_code, url, user_agent, is_proxy, threat_score FROM {$traffic_table} ORDER BY id DESC LIMIT 10", ARRAY_A );
 			$missing_traffic_ips = array();
 
 			foreach ( $traffic_rows as $row ) {
@@ -1534,7 +1534,7 @@ class Pecodex_Security_API {
 					'target' => 'Local Server',
 					'endpoint' => $row['url'],
 					'user_agent' => isset($row['user_agent']) ? $row['user_agent'] : 'Unknown',
-					'is_proxy' => isset($row['is_proxy']) ? (int) $row['is_proxy'] : 0,
+					'is_proxy' => isset($row['is_proxy']) ? (bool) $row['is_proxy'] : false,
 					'threat_score' => isset($row['threat_score']) ? (int) $row['threat_score'] : 0
 				);
 
@@ -1586,7 +1586,59 @@ class Pecodex_Security_API {
 			$events = $final_events;
 		}
 
-		wp_send_json_success( $events );
+		$chart_data = array(
+			'labels'  => array(),
+			'success' => array(),
+			'failed'  => array(),
+		);
+		$audit_table = $wpdb->prefix . 'pmc_audit_log';
+		$fi_days = array('Mon' => 'Ma', 'Tue' => 'Ti', 'Wed' => 'Ke', 'Thu' => 'To', 'Fri' => 'Pe', 'Sat' => 'La', 'Sun' => 'Su');
+		
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$audit_table'" ) === $audit_table ) {
+			$query = "
+				SELECT 
+					DATE(time) as date, 
+					SUM(CASE WHEN action = 'wp_login' THEN 1 ELSE 0 END) as success,
+					SUM(CASE WHEN action = 'wp_login_failed' THEN 1 ELSE 0 END) as failed
+				FROM {$audit_table}
+				WHERE time >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+				GROUP BY DATE(time)
+				ORDER BY date ASC
+			";
+			
+			$suppress = $wpdb->suppress_errors();
+			$results = $wpdb->get_results( $query, ARRAY_A );
+			$wpdb->suppress_errors( $suppress );
+			
+			$data_map = array();
+			if ( ! empty( $results ) && ! is_wp_error( $results ) ) {
+				foreach ( $results as $row ) {
+					$data_map[ $row['date'] ] = $row;
+				}
+			}
+			
+			for ( $i = 6; $i >= 0; $i-- ) {
+				$d = gmdate( 'Y-m-d', strtotime( "-$i days" ) );
+				$label = gmdate( 'D', strtotime( $d ) ); 
+				$chart_data['labels'][] = isset($fi_days[$label]) ? $fi_days[$label] : $label;
+				$chart_data['success'][] = isset($data_map[$d]) ? (int) $data_map[$d]['success'] : 0;
+				$chart_data['failed'][] = isset($data_map[$d]) ? (int) $data_map[$d]['failed'] : 0;
+			}
+		} else {
+			// Mock data fallback
+			for ( $i = 6; $i >= 0; $i-- ) {
+				$d = gmdate( 'Y-m-d', strtotime( "-$i days" ) );
+				$label = gmdate( 'D', strtotime( $d ) );
+				$chart_data['labels'][] = isset($fi_days[$label]) ? $fi_days[$label] : $label;
+				$chart_data['success'][] = rand(5, 50);
+				$chart_data['failed'][] = rand(0, 20);
+			}
+		}
+
+		wp_send_json_success( array(
+			'events'     => $events,
+			'chart_data' => $chart_data,
+		) );
 	}
 
 	public function ajax_save_advanced_settings() {

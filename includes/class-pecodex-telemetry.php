@@ -106,9 +106,9 @@ class Pecodex_Telemetry {
 			method varchar(10) NOT NULL,
 			time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 			country_iso_code varchar(2) NOT NULL,
-			user_agent text,
+			user_agent varchar(255),
 			is_proxy tinyint(1) DEFAULT 0,
-			threat_score int(11) DEFAULT 0,
+			threat_score int DEFAULT 0,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -153,6 +153,7 @@ class Pecodex_Telemetry {
 		$url = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'GET';
 		$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : 'Unknown';
+		$user_agent = substr( $user_agent, 0, 255 );
 
 		// Check for proxy
 		$is_proxy = 0;
@@ -167,13 +168,13 @@ class Pecodex_Telemetry {
 		// Calculate Threat Score
 		$threat_score = 0;
 		if ( $is_proxy ) {
-			$threat_score += 20;
+			$threat_score += 30;
 		}
 
 		$bad_ua_patterns = array( 'curl', 'python', 'wget', 'nikto', 'headless', 'phantomjs', 'bot', 'spider' );
 		$ua_lower = strtolower( $user_agent );
 		if ( $user_agent === 'Unknown' || empty( trim( $user_agent ) ) ) {
-			$threat_score += 30;
+			$threat_score += 20;
 		} else {
 			foreach ( $bad_ua_patterns as $pattern ) {
 				if ( strpos( $ua_lower, $pattern ) !== false ) {
@@ -192,6 +193,10 @@ class Pecodex_Telemetry {
 			}
 		}
 		
+		if ( $threat_score > 100 ) {
+			$threat_score = 100;
+		}
+
 		$wpdb->insert(
 			$table_name,
 			array(
