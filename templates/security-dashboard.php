@@ -540,6 +540,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 .badge-active { background: rgba(184,0,72,0.10); color: #b80048; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; display: flex; align-items: center; gap: 5px; }
 .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #b80048; animation: blink 1.2s ease infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.75)} }
 .log-table-wrap { flex: 1; overflow-y: auto; }
 .log-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .log-table thead th { padding: 7px 12px; font-size: 11px; font-weight: 600; color: #9ca3af; text-align: left; background: rgba(255,255,255,0.8); position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #f3f4f6; }
@@ -856,6 +857,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
     <!-- Map + Widget area -->
     <div id="ps-map-area">
+
+      <!-- LIVE RADAR badge overlay -->
+      <div id="ps-live-badge" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:800;display:flex;align-items:center;gap:8px;background:rgba(15,23,42,0.82);backdrop-filter:blur(8px);padding:6px 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);pointer-events:none;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulse-dot 1.5s ease-in-out infinite;"></span>
+        <span style="font-size:12px;font-weight:600;color:#f1f5f9;letter-spacing:0.05em;">LIVE RADAR</span>
+        <span id="live-event-count" style="font-size:11px;background:rgba(99,102,241,0.3);color:#a5b4fc;padding:1px 8px;border-radius:999px;font-weight:700;">0</span>
+        <span style="font-size:11px;color:#94a3b8;">events</span>
+      </div>
 
       <!-- Leaflet map -->
       <div id="security-map"></div>
@@ -1800,19 +1809,28 @@ async function fetchLiveEvents() {
   try {
     const formData = new FormData();
     formData.append('action', 'pmc_security_live_map_data');
+    // Add nonce for authenticated AJAX
+    if (typeof pmcSecurityConfig !== 'undefined' && pmcSecurityConfig.nonce) {
+      formData.append('nonce', pmcSecurityConfig.nonce);
+    }
     const response = await fetch(ajaxurl, {
       method: 'POST',
       body: formData
     });
     const res = await response.json();
-    if (res.success && Array.isArray(res.data)) {
-      activeMapEvents = res.data;
-      updateEventLogTable(activeMapEvents);
-      updateMapMarkers(activeMapEvents);
-      drawAttackLines();
-    }
+    // Handler now returns { events: [...] } inside res.data
+    const events = (res.success && res.data && Array.isArray(res.data.events))
+      ? res.data.events
+      : (res.success && Array.isArray(res.data) ? res.data : []);
+    activeMapEvents = events;
+    updateEventLogTable(activeMapEvents);
+    updateMapMarkers(activeMapEvents);
+    drawAttackLines();
+    // Update live badge counter
+    const badge = document.getElementById('live-event-count');
+    if (badge) badge.textContent = activeMapEvents.length;
   } catch (err) {
-    console.error('Live-tapahtumien nouto epäonnistui:', err);
+    console.error('Live-tapahtumien nouto ep\u00e4onnistui:', err);
   }
 }
 
@@ -2993,6 +3011,12 @@ window.pmcSaveWebhookSettings = async (btn) => {
 	btn.textContent = oldText;
 };
 
+// Init on load
+pmcSec.init();
+
+}); // end DOMContentLoaded
+
+// ── Global helpers (must be outside DOMContentLoaded so inline onchange attributes can access them) ──
 window.pmcSaveActiveModules = async function() {
 	const checkboxes = document.querySelectorAll('.module-toggle-checkbox');
 	const activeModules = {};
@@ -3001,16 +3025,10 @@ window.pmcSaveActiveModules = async function() {
 	});
 	try {
 		await pmcSec.post('pmc_security_save_active_modules', { modules: activeModules });
-		// We could show a toast here, but for toggles it's better to just save silently
 	} catch (e) {
-		console.error("Aktiivisten moduulien tallennus epäonnistui", e);
+		console.error('Aktiivisten moduulien tallennus ep\u00e4onnistui', e);
 	}
 };
-
-// Init on load
-pmcSec.init();
-
-}); // end DOMContentLoaded
 </script>
 
 

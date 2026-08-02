@@ -42,6 +42,7 @@ class Pecodex_Security_API {
 		add_action( 'wp_ajax_pmc_save_advanced_settings',  array( $this, 'ajax_save_advanced_settings' ) );
 		add_action( 'wp_ajax_pmc_save_geoip_settings',     array( $this, 'ajax_save_geoip_settings' ) );
 		add_action( 'wp_ajax_pmc_save_notification_settings', array( $this, 'ajax_save_notification_settings' ) );
+		add_action( 'wp_ajax_pmc_save_widget_layout',      array( $this, 'ajax_save_widget_layout' ) );
 
 		// ── Forensinen Tarkastusloki – Hookit ──────────────────────────────
 		// Kirjautumiset
@@ -117,6 +118,23 @@ class Pecodex_Security_API {
 	/**
 	 * Master data aggregator — returns all dashboard data in one request.
 	 */
+	public function ajax_save_widget_layout() {
+		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Unauthorized' ) );
+		}
+
+		$layout = isset( $_POST['layout'] ) ? stripslashes( $_POST['layout'] ) : '';
+		$decoded = json_decode( $layout, true );
+
+		if ( is_array( $decoded ) ) {
+			update_user_meta( get_current_user_id(), 'pmc_security_widget_layout', $decoded );
+			wp_send_json_success();
+		} else {
+			wp_send_json_error();
+		}
+	}
+
 	public function ajax_security_dashboard_data() {
 		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -235,7 +253,20 @@ class Pecodex_Security_API {
 			}
 		}
 
+		$top_attackers = array();
+		if ( $has_tables ) {
+			$log_table  = $wpdb->prefix . 'pmc_lockout_log';
+			$top_attackers = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT country_iso_code, COUNT(*) as hits FROM {$log_table} WHERE date > %s AND country_iso_code != '' AND country_iso_code IS NOT NULL GROUP BY country_iso_code ORDER BY hits DESC LIMIT 4",
+					gmdate( 'Y-m-d H:i:s', strtotime( '-30 days' ) )
+				),
+				ARRAY_A
+			);
+		}
+
 		wp_send_json_success( array(
+			'top_attackers' => $top_attackers,
 			'login_stats' => array(
 				'failed_24h'       => $failed_24h,
 				'failed_7d'        => $failed_7d,
@@ -723,9 +754,9 @@ class Pecodex_Security_API {
 			$event['endpoint'] = strpos( $type, '404' ) !== false ? '404 Probe' : ( strpos( $type, 'auth' ) !== false ? '/wp-login.php' : '/' );
 
 			$geo = get_transient( 'pmc_geoip_' . md5( $ip ) );
-			if ( is_array( $geo ) && isset( $geo['lat'], $geo['lon'] ) ) {
-				$event['lat']     = $geo['lat'];
-				$event['lng']     = $geo['lon'];
+			if ( is_array( $geo ) && isset( $geo['lat'] ) && ( isset( $geo['lng'] ) || isset( $geo['lon'] ) ) ) {
+				$event['lat']     = (float) $geo['lat'];
+				$event['lng']     = isset( $geo['lng'] ) ? (float) $geo['lng'] : (float) $geo['lon'];
 				$event['city']    = isset( $geo['city'] ) ? $geo['city'] : 'Unknown';
 				$event['country'] = isset( $geo['countryCode'] ) ? $geo['countryCode'] : $event['country'];
 			} elseif ( ! isset( $missing_ips[ $ip ] ) ) {
@@ -737,32 +768,39 @@ class Pecodex_Security_API {
 
 		$ips_to_fetch = array_slice( array_keys( $missing_ips ), 0, 15 );
 		if ( ! empty( $ips_to_fetch ) ) {
-			$response = wp_remote_post(
-				'http://ip-api.com/batch?fields=status,countryCode,city,lat,lon,query',
-				array(
-					'body'    => wp_json_encode( $ips_to_fetch ),
-					'timeout' => 5,
-				)
-			);
-			if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
-				$data = json_decode( wp_remote_retrieve_body( $response ), true );
-				if ( is_array( $data ) ) {
-					foreach ( $data as $res ) {
-						if ( isset( $res['status'] ) && 'success' === $res['status'] ) {
-							$ip = $res['query'];
-							set_transient( 'pmc_geoip_' . md5( $ip ), $res, 30 * DAY_IN_SECONDS );
-							foreach ( $events as &$e ) {
-								if ( $e['ip'] === $ip ) {
-									$e['lat']     = $res['lat'];
-									$e['lng']     = $res['lon'];
-									$e['city']    = $res['city'];
-									$e['country'] = $res['countryCode'];
-								}
-							}
-							unset( $e );
-						}
+			foreach ( $ips_to_fetch as $fetch_ip ) {
+				// Skip private/local IPs — ipwho.is cannot geolocate these
+				if ( filter_var( $fetch_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false ) {
+					continue;
+				}
+				$resp = wp_remote_get(
+					'https://ipwho.is/' . rawurlencode( $fetch_ip ) . '?output=json',
+					array( 'timeout' => 3, 'sslverify' => true )
+				);
+				if ( is_wp_error( $resp ) || wp_remote_retrieve_response_code( $resp ) !== 200 ) {
+					continue;
+				}
+				$geo_data = json_decode( wp_remote_retrieve_body( $resp ), true );
+				if ( ! is_array( $geo_data ) || empty( $geo_data['success'] ) ) {
+					continue;
+				}
+				// Normalise to a unified shape stored in transient
+				$normalised = array(
+					'lat'         => (float) $geo_data['latitude'],
+					'lng'         => (float) $geo_data['longitude'],
+					'city'        => isset( $geo_data['city'] )         ? $geo_data['city']         : 'Unknown',
+					'countryCode' => isset( $geo_data['country_code'] ) ? $geo_data['country_code'] : 'Unknown',
+				);
+				set_transient( 'pmc_geoip_' . md5( $fetch_ip ), $normalised, 30 * DAY_IN_SECONDS );
+				foreach ( $events as &$e ) {
+					if ( $e['ip'] === $fetch_ip ) {
+						$e['lat']     = $normalised['lat'];
+						$e['lng']     = $normalised['lng'];
+						$e['city']    = $normalised['city'];
+						$e['country'] = $normalised['countryCode'];
 					}
 				}
+				unset( $e );
 			}
 		}
 
@@ -1388,21 +1426,23 @@ class Pecodex_Security_API {
 
 	public static function get_server_location() {
 		$geo = get_transient( 'pmc_server_location' );
-		if ( $geo && is_array( $geo ) ) {
+		if ( $geo && is_array( $geo ) && isset( $geo['lat'], $geo['lng'] ) && $geo['lat'] != 60.17 ) {
 			return $geo;
 		}
+		// Delete stale/fallback transient so we always retry on broken data
+		delete_transient( 'pmc_server_location' );
 
-		$geo = array( 'lat' => 60.17, 'lng' => 24.94, 'city' => 'Unknown', 'country' => 'Unknown' ); // Default fallback
-		$response = wp_remote_get( 'http://ip-api.com/json/?fields=status,countryCode,city,lat,lon', array( 'timeout' => 5 ) );
-		
+		$geo = array( 'lat' => 60.17, 'lng' => 24.94, 'city' => 'Unknown', 'country' => 'Unknown' ); // Helsinki fallback
+		$response = wp_remote_get( 'https://ipwho.is/?output=json', array( 'timeout' => 5, 'sslverify' => true ) );
+
 		if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
 			$data = json_decode( wp_remote_retrieve_body( $response ), true );
-			if ( is_array( $data ) && isset( $data['status'] ) && $data['status'] === 'success' ) {
+			if ( is_array( $data ) && ! empty( $data['success'] ) ) {
 				$geo = array(
-					'lat'     => $data['lat'],
-					'lng'     => $data['lon'],
-					'city'    => $data['city'],
-					'country' => $data['countryCode']
+					'lat'     => (float) $data['latitude'],
+					'lng'     => (float) $data['longitude'],
+					'city'    => isset( $data['city'] ) ? $data['city'] : 'Unknown',
+					'country' => isset( $data['country_code'] ) ? $data['country_code'] : 'Unknown',
 				);
 				set_transient( 'pmc_server_location', $geo, 30 * DAY_IN_SECONDS );
 			}
@@ -1412,232 +1452,26 @@ class Pecodex_Security_API {
 	}
 
 	public function ajax_live_map_data() {
-		// check_ajax_referer( 'pmc_security_nonce', 'nonce' ); // Sometimes frontend doesn't send it correctly for periodic polls, let's keep it safe.
 		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
 
 		global $wpdb;
 		$events = array();
 
+		// Use pmc_lockout_log (the authoritative security event table)
+		// which is already processed correctly by pmc_format_map_events()
 		if ( $this->pmc_has_lockout_tables() ) {
 			$table = $wpdb->prefix . 'pmc_lockout_log';
-			$logs = $wpdb->get_results( "SELECT * FROM {$table} ORDER BY id DESC LIMIT 20", ARRAY_A );
-
-			$missing_ips = array();
-			
-			// First pass: collect missing IPs and format basic data
-			foreach ( $logs as $log ) {
-				$ip = $log['ip'];
-				if ( empty( $ip ) ) continue;
-
-				$event = array(
-					'id'        => $log['id'],
-					'ip'        => $ip,
-					'timestamp' => $log['date'] ? gmdate( 'H:i:s', (int) strtotime( $log['date'] ) ) : '',
-					'type'      => $log['type'],
-					'country'   => isset($log['country_iso_code']) && $log['country_iso_code'] ? $log['country_iso_code'] : 'Unknown',
-					'lat'       => null,
-					'lng'       => null,
-					'city'      => 'Unknown',
-				);
-
-				// Determine status and attack string
-				if ( strpos( $log['type'], 'lock' ) !== false || $log['type'] === 'blacklist' ) {
-					$event['status'] = 'Blocked';
-					$event['statusClass'] = 'critical';
-				} else {
-					$event['status'] = 'Warning';
-					$event['statusClass'] = 'warning';
-				}
-
-				if ( strpos( $log['type'], 'auth' ) !== false ) $event['attack'] = 'Login Attempt';
-				elseif ( strpos( $log['type'], '404' ) !== false ) $event['attack'] = 'Probing / Recon';
-				else $event['attack'] = 'Malicious Traffic';
-
-				// Target is always our site
-				$event['target'] = 'Local Server';
-				$event['user_agent'] = 'Unknown';
-				$event['is_proxy'] = false;
-				$event['threat_score'] = 100;
-
-				// Try to get GeoIP from transient cache
-				$geo = get_transient( 'pmc_geoip_' . md5( $ip ) );
-				if ( $geo && is_array( $geo ) ) {
-					$event['lat']     = $geo['lat'];
-					$event['lng']     = $geo['lon'];
-					$event['city']    = $geo['city'];
-					$event['country'] = $geo['countryCode'];
-				} elseif ( ! isset( $missing_ips[ $ip ] ) ) {
-					$missing_ips[ $ip ] = true;
-				}
-
-				$events[] = $event;
-			}
-
-			// Batch lookup missing IPs (max 15 to be safe)
-			$ips_to_fetch = array_slice( array_keys( $missing_ips ), 0, 15 );
-			if ( ! empty( $ips_to_fetch ) ) {
-				$response = wp_remote_post( 'http://ip-api.com/batch?fields=status,countryCode,city,lat,lon,query', array(
-					'body' => wp_json_encode( $ips_to_fetch ),
-					'timeout' => 5,
-				) );
-				if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
-					$data = json_decode( wp_remote_retrieve_body( $response ), true );
-					if ( is_array( $data ) ) {
-						foreach ( $data as $res ) {
-							if ( isset( $res['status'] ) && $res['status'] === 'success' ) {
-								$ip = $res['query'];
-								set_transient( 'pmc_geoip_' . md5( $ip ), $res, 30 * DAY_IN_SECONDS );
-								// Update events that match this IP
-								foreach ( $events as &$e ) {
-									if ( $e['ip'] === $ip ) {
-										$e['lat']     = $res['lat'];
-										$e['lng']     = $res['lon'];
-										$e['city']    = $res['city'];
-										$e['country'] = $res['countryCode'];
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			// Filter out events that still have no coordinates (so they don't break the map)
-			$valid_events = array();
-			foreach ( $events as $e ) {
-				if ( $e['lat'] !== null && $e['lng'] !== null ) {
-					$valid_events[] = $e;
-				}
-			}
-			$events = $valid_events;
-		}
-
-		$traffic_table = $wpdb->prefix . 'pmc_live_traffic';
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$traffic_table'" ) == $traffic_table ) {
-			$traffic_rows = $wpdb->get_results( "SELECT id, ip, time, country_iso_code, url, user_agent, is_proxy, threat_score FROM {$traffic_table} ORDER BY id DESC LIMIT 10", ARRAY_A );
-			$missing_traffic_ips = array();
-
-			foreach ( $traffic_rows as $row ) {
-				$ip = $row['ip'];
-				$event = array(
-					'id' => 'traffic_' . $row['id'],
-					'ip' => $ip,
-					'timestamp' => $row['time'] ? gmdate( 'H:i:s', (int) strtotime( $row['time'] ) ) : '',
-					'type' => 'traffic',
-					'country' => $row['country_iso_code'] ? $row['country_iso_code'] : 'Unknown',
-					'lat' => null,
-					'lng' => null,
-					'city' => 'Unknown',
-					'status' => 'Active',
-					'statusClass' => 'info',
-					'attack' => 'Normal Traffic',
-					'target' => 'Local Server',
-					'endpoint' => $row['url'],
-					'user_agent' => isset($row['user_agent']) ? $row['user_agent'] : 'Unknown',
-					'is_proxy' => isset($row['is_proxy']) ? (bool) $row['is_proxy'] : false,
-					'threat_score' => isset($row['threat_score']) ? (int) $row['threat_score'] : 0
-				);
-
-				$geo = get_transient( 'pmc_geoip_' . md5( $ip ) );
-				if ( $geo && is_array( $geo ) ) {
-					$event['lat']     = $geo['lat'];
-					$event['lng']     = $geo['lon'];
-					$event['city']    = $geo['city'];
-					$event['country'] = $geo['countryCode'];
-				} elseif ( ! isset( $missing_traffic_ips[ $ip ] ) ) {
-					$missing_traffic_ips[ $ip ] = true;
-				}
-				$events[] = $event;
-			}
-
-			$ips_to_fetch_traffic = array_slice( array_keys( $missing_traffic_ips ), 0, 15 );
-			if ( ! empty( $ips_to_fetch_traffic ) ) {
-				$response = wp_remote_post( 'http://ip-api.com/batch?fields=status,countryCode,city,lat,lon,query', array(
-					'body' => wp_json_encode( $ips_to_fetch_traffic ),
-					'timeout' => 5,
-				) );
-				if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
-					$data = json_decode( wp_remote_retrieve_body( $response ), true );
-					if ( is_array( $data ) ) {
-						foreach ( $data as $res ) {
-							if ( isset( $res['status'] ) && $res['status'] === 'success' ) {
-								$ip = $res['query'];
-								set_transient( 'pmc_geoip_' . md5( $ip ), $res, 30 * DAY_IN_SECONDS );
-								foreach ( $events as &$e ) {
-									if ( $e['ip'] === $ip && $e['type'] === 'traffic' ) {
-										$e['lat']     = $res['lat'];
-										$e['lng']     = $res['lon'];
-										$e['city']    = $res['city'];
-										$e['country'] = $res['countryCode'];
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			$final_events = array();
-			foreach ( $events as $e ) {
-				if ( $e['lat'] !== null && $e['lng'] !== null ) {
-					$final_events[] = $e;
-				}
-			}
-			$events = $final_events;
-		}
-
-		$chart_data = array(
-			'labels'  => array(),
-			'success' => array(),
-			'failed'  => array(),
-		);
-		$audit_table = $wpdb->prefix . 'pmc_audit_log';
-		$fi_days = array('Mon' => 'Ma', 'Tue' => 'Ti', 'Wed' => 'Ke', 'Thu' => 'To', 'Fri' => 'Pe', 'Sat' => 'La', 'Sun' => 'Su');
-		
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$audit_table'" ) === $audit_table ) {
-			$query = "
-				SELECT 
-					DATE(time) as date, 
-					SUM(CASE WHEN action = 'wp_login' THEN 1 ELSE 0 END) as success,
-					SUM(CASE WHEN action = 'wp_login_failed' THEN 1 ELSE 0 END) as failed
-				FROM {$audit_table}
-				WHERE time >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
-				GROUP BY DATE(time)
-				ORDER BY date ASC
-			";
-			
-			$suppress = $wpdb->suppress_errors();
-			$results = $wpdb->get_results( $query, ARRAY_A );
-			$wpdb->suppress_errors( $suppress );
-			
-			$data_map = array();
-			if ( ! empty( $results ) && ! is_wp_error( $results ) ) {
-				foreach ( $results as $row ) {
-					$data_map[ $row['date'] ] = $row;
-				}
-			}
-			
-			for ( $i = 6; $i >= 0; $i-- ) {
-				$d = gmdate( 'Y-m-d', strtotime( "-$i days" ) );
-				$label = gmdate( 'D', strtotime( $d ) ); 
-				$chart_data['labels'][] = isset($fi_days[$label]) ? $fi_days[$label] : $label;
-				$chart_data['success'][] = isset($data_map[$d]) ? (int) $data_map[$d]['success'] : 0;
-				$chart_data['failed'][] = isset($data_map[$d]) ? (int) $data_map[$d]['failed'] : 0;
-			}
-		} else {
-			// Mock data fallback
-			for ( $i = 6; $i >= 0; $i-- ) {
-				$d = gmdate( 'Y-m-d', strtotime( "-$i days" ) );
-				$label = gmdate( 'D', strtotime( $d ) );
-				$chart_data['labels'][] = isset($fi_days[$label]) ? $fi_days[$label] : $label;
-				$chart_data['success'][] = rand(5, 50);
-				$chart_data['failed'][] = rand(0, 20);
+			$logs  = $wpdb->get_results(
+				"SELECT * FROM {$table} ORDER BY id DESC LIMIT 200",
+				ARRAY_A
+			);
+			if ( $logs ) {
+				$events = $this->pmc_format_map_events( $logs );
 			}
 		}
 
 		wp_send_json_success( array(
-			'events'     => $events,
-			'chart_data' => $chart_data,
+			'events' => $events,
 		) );
 	}
 
@@ -1685,3 +1519,4 @@ class Pecodex_Security_API {
 	}
 
 }
+
