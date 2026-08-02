@@ -329,13 +329,13 @@ if ( ! defined( 'ABSPATH' ) ) {
   pointer-events: stroke;
   cursor: pointer;
   transition: stroke-width 0.2s, filter 0.2s;
-  opacity: 0.3;
 }
-.attack-line:hover { stroke-width: 5 !important; filter: drop-shadow(0 0 6px currentColor); opacity: 0.8; }
-.attack-line.critical { stroke: #dc2626; stroke-width: 2.8; }
-.attack-line.warning  { stroke: #f59e0b; stroke-width: 2.8; }
-.attack-line.safe     { stroke: #22c55e; stroke-width: 2.8; }
-.attack-line.info     { stroke: #3b82f6; stroke-width: 2.8; }
+.attack-line:hover { stroke-width: 3 !important; opacity: 1 !important; filter: drop-shadow(0 0 4px currentColor); }
+.attack-line.critical { stroke: #ef4444; stroke-width: 1.5; stroke-dasharray: 8 5; opacity: 0.75; }
+.attack-line.warning  { stroke: #f59e0b; stroke-width: 1.5; opacity: 0.65; }
+.attack-line.safe,
+.attack-line.success  { stroke: #22c55e; stroke-width: 1.5; opacity: 0.65; }
+.attack-line.info     { stroke: #3b82f6; stroke-width: 1.5; opacity: 0.65; }
 
 /* Flight Blip (plane) */
 .flight-blip {
@@ -541,6 +541,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #b80048; animation: blink 1.2s ease infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.75)} }
+@keyframes hub-pulse { 0%{transform:scale(1);opacity:0.6} 100%{transform:scale(2.2);opacity:0} }
 .log-table-wrap { flex: 1; overflow-y: auto; }
 .log-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .log-table thead th { padding: 7px 12px; font-size: 11px; font-weight: 600; color: #9ca3af; text-align: left; background: rgba(255,255,255,0.8); position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #f3f4f6; }
@@ -609,7 +610,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 .leaflet-tooltip.map-label-tooltip.critical { color: #dc2626; border-color: rgba(220,38,38,0.3); }
 .leaflet-tooltip.map-label-tooltip.info { color: #3b82f6; border-color: rgba(59,130,246,0.3); }
-.leaflet-tooltip.map-label-tooltip.hub { color: #1d4ed8; border-color: rgba(29,78,216,0.3); }
+.leaflet-tooltip.map-label-tooltip.hub {
+  font-weight: 700;
+  font-size: 12px;
+  color: #1e40af;
+  border-color: rgba(29,78,216,0.4);
+  background: rgba(255,255,255,0.95);
+  padding: 4px 10px;
+  box-shadow: 0 2px 8px rgba(29,78,216,0.2);
+}
 .leaflet-tooltip.map-label-tooltip::before { display: none; }
 
 /* ä"?ä"? Threat modal ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
@@ -1645,125 +1654,129 @@ L.control.zoom({ position: 'bottomright' }).addTo(map);
 /* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    MAP MARKERS + TOOLTIPS
 ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
-function makeIcon(color) {
+/* ═══════════════════════════════════════
+   HUB MARKER — premium blue dot
+═══════════════════════════════════════ */
+function makeHubIcon() {
   return L.divIcon({
     className: '',
-    html: `<svg width="14" height="14" viewBox="0 0 14 14">
-             <circle cx="7" cy="7" r="5" fill="${color}" opacity="0.9"/>
-             <circle cx="7" cy="7" r="5" fill="none" stroke="${color}" stroke-width="2" opacity="0.3">
-               <animate attributeName="r" from="5" to="10" dur="1.6s" repeatCount="indefinite"/>
-               <animate attributeName="opacity" from="0.5" to="0" dur="1.6s" repeatCount="indefinite"/>
-             </circle>
-           </svg>`,
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
+    html: `<div style="position:relative;width:22px;height:22px;">
+      <div style="position:absolute;inset:0;border-radius:50%;background:#1d4ed8;border:3px solid #fff;box-shadow:0 0 0 2px #1d4ed8,0 4px 12px rgba(29,78,216,0.5);"></div>
+      <div style="position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(29,78,216,0.35);animation:hub-pulse 2s ease-out infinite;"></div>
+      <div style="position:absolute;inset:-14px;border-radius:50%;border:1.5px solid rgba(29,78,216,0.15);animation:hub-pulse 2s ease-out 0.7s infinite;"></div>
+    </div>`,
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
   });
 }
 
-// Hub marker
-L.marker(locations.hub, { icon: makeIcon('#2563eb'), interactive: false })
+/* ═══════════════════════════════════════
+   CONNECTION DOT ICON
+═══════════════════════════════════════ */
+function makeConnectionIcon(cls) {
+  const c = {
+    critical: '#ef4444',
+    warning:  '#f59e0b',
+    success:  '#22c55e',
+    info:     '#3b82f6',
+    tracked:  '#8b5cf6',
+  }[cls] || '#22c55e';
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:12px;height:12px;border-radius:50%;background:${c};border:2.5px solid #fff;box-shadow:0 0 0 1.5px ${c},0 2px 6px ${c}88;"></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
+  });
+}
+
+// Hub marker — prominent blue dot with "Main Node" label
+L.marker(locations.hub, { icon: makeHubIcon(), interactive: false, zIndexOffset: 1000 })
   .addTo(map)
-  .bindTooltip('<?php echo esc_js($server_city); ?>', {
-    permanent: true, direction: 'right', offset: [10, 0],
-    className: 'map-label-tooltip hub'
+  .bindTooltip('Main Node (<?php echo esc_js($server_city); ?>)', {
+    permanent: true,
+    direction: 'top',
+    offset: [0, -18],
+    className: 'map-label-tooltip hub',
   });
 
 let activeMapEvents = [];
-let activeMarkers = [];
+let activeMarkers   = [];
+let activePolylines = [];
 
 function updateMapMarkers(events) {
   activeMarkers.forEach(m => map.removeLayer(m));
   activeMarkers = [];
-  
+  activePolylines.forEach(p => map.removeLayer(p));
+  activePolylines = [];
+
+  const seen = new Set();
+
   events.forEach(e => {
     if (!e.lat || !e.lng) return;
-    const color = e.statusClass === 'critical' ? '#dc2626' : (e.statusClass === 'info' ? '#3b82f6' : '#f59e0b');
-    const marker = L.marker([e.lat, e.lng], { icon: makeIcon(color), interactive: false })
-      .addTo(map)
-      .bindTooltip(`${e.country} ä?" ${e.city}`, {
-        permanent: false, direction: 'right', offset: [10, 0],
-        className: 'map-label-tooltip ' + (e.statusClass === 'critical' ? 'critical' : (e.statusClass === 'info' ? 'info' : ''))
+    const cls = e.statusClass || 'success';
+    const lineColor = {
+      critical: '#ef4444', warning: '#f59e0b',
+      info: '#3b82f6', tracked: '#8b5cf6',
+    }[cls] || '#22c55e';
+
+    // Geo-accurate polyline from hub to attacker
+    const polyline = L.polyline(
+      [locations.hub, [e.lat, e.lng]],
+      {
+        color: lineColor,
+        weight: 1.6,
+        opacity: cls === 'critical' ? 0.72 : 0.60,
+        dashArray: cls === 'critical' ? '8 5' : null,
+        interactive: true,
+      }
+    ).addTo(map);
+
+    polyline.on('click', () => {
+      if (typeof openModal === 'function') {
+        openModal({
+          origin: `${e.country||'?'} \u2014 ${e.city||'?'}`,
+          ip: e.ip, attack: e.attack||'Unknown',
+          host: e.target||'', endpoint: (e.type&&e.type.includes('404'))?'404 Probe':'N/A',
+          status: e.status, statusClass: cls,
+          user_agent: e.user_agent||'Unknown',
+          is_proxy: e.is_proxy||false, threat_score: e.threat_score||0,
+        });
+      }
+    });
+    activePolylines.push(polyline);
+
+    // One dot per unique IP
+    const ipKey = e.ip + ':' + e.lat + ':' + e.lng;
+    if (!seen.has(ipKey)) {
+      seen.add(ipKey);
+      const dot = L.marker([e.lat, e.lng], {
+        icon: makeConnectionIcon(cls),
+        zIndexOffset: 100, interactive: true,
+      }).addTo(map);
+
+      dot.bindTooltip(
+        `<b>${e.ip}</b><br>${e.country||''} ${e.city?'\u2014 '+e.city:''}<br><span style="color:${lineColor};font-weight:600">${e.attack||e.status||''}</span>`,
+        { direction: 'top', offset: [0, -8], className: 'map-label-tooltip ' + cls }
+      );
+      dot.on('click', () => {
+        if (typeof openModal === 'function') {
+          openModal({
+            origin: `${e.country||'?'} \u2014 ${e.city||'?'}`,
+            ip: e.ip, attack: e.attack||'Unknown',
+            host: e.target||'', endpoint: (e.type&&e.type.includes('404'))?'404 Probe':'N/A',
+            status: e.status, statusClass: cls,
+            user_agent: e.user_agent||'Unknown',
+            is_proxy: e.is_proxy||false, threat_score: e.threat_score||0,
+          });
+        }
       });
-    activeMarkers.push(marker);
+      activeMarkers.push(dot);
+    }
   });
 }
 
-/* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
-   ATTACK SVG LINES (screen coords)
-   Drawn after map is ready so lat/lng ä?' px is accurate
-ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
-function latLngToSvgPoint(latlng) {
-  const pt = map.latLngToContainerPoint(L.latLng(latlng));
-  return { x: pt.x, y: pt.y };
-}
-
-function drawAttackLines() {
-  const svg = document.getElementById('attack-svg');
-  // Clear existing paths (not defs)
-  Array.from(svg.querySelectorAll('path.attack-line, circle.atk-dot, circle.flight-blip, animateMotion, mpath')).forEach(el => el.remove());
-
-  const hub = latLngToSvgPoint(locations.hub);
-
-  activeMapEvents.forEach((data) => {
-    if (!data.lat || !data.lng) return;
-    
-    const from = latLngToSvgPoint([data.lat, data.lng]);
-    const cls = data.statusClass;
-    
-    const cx = (from.x + hub.x) / 2;
-    const cy = (from.y + hub.y) / 2 - Math.abs(hub.x - from.x) * 0.15;
-
-    const pathId = 'path-' + Math.random().toString(36).substr(2, 9);
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', `M${from.x},${from.y} Q${cx},${cy} ${hub.x},${hub.y}`);
-    path.setAttribute('id', pathId);
-    path.setAttribute('class', `attack-line ${cls}`);
-    path.style.pointerEvents = 'stroke';
-    
-    const modalData = {
-        origin: `${data.country} ä?" ${data.city}`,
-        ip: data.ip,
-        attack: data.attack,
-        host: data.target,
-                endpoint: data.type.includes('404') ? '404 Probe' : 'N/A',
-        status: data.status,
-        statusClass: data.statusClass,
-        user_agent: data.user_agent,
-        is_proxy: data.is_proxy,
-        threat_score: data.threat_score
-    };
-    path.addEventListener('click', () => openModal(modalData));
-    svg.appendChild(path);
-
-    // Flight radar style blip (airplane dot)
-    const plane = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    plane.setAttribute('r', '5');
-    plane.setAttribute('fill', cls === 'critical' ? '#dc2626' : (cls === 'info' ? '#3b82f6' : '#f59e0b'));
-    plane.setAttribute('class', 'flight-blip');
-    plane.style.filter = 'drop-shadow(0 0 6px currentColor)';
-    
-    const motion = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
-    motion.setAttribute('dur', '1.8s');
-    motion.setAttribute('repeatCount', 'indefinite');
-    
-    const mpath = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
-    mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + pathId);
-    
-    motion.appendChild(mpath);
-    plane.appendChild(motion);
-    svg.appendChild(plane);
-
-    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    dot.setAttribute('class', 'atk-dot');
-    dot.setAttribute('cx', from.x);
-    dot.setAttribute('cy', from.y);
-    dot.setAttribute('r', 4);
-    dot.setAttribute('fill', cls === 'critical' ? '#dc2626' : (cls === 'info' ? '#3b82f6' : '#f59e0b'));
-    dot.style.opacity = '0.8';
-    svg.appendChild(dot);
-  });
-}
+// drawAttackLines is a no-op — lines are now geo-accurate L.polylines
+function drawAttackLines() {}
 
 window.refreshSecurityMap = function () {
   const mapArea = document.getElementById('ps-map-area');
