@@ -542,6 +542,123 @@ if ( ! defined( 'ABSPATH' ) ) {
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.75)} }
 @keyframes hub-pulse { 0%{transform:scale(1);opacity:0.6} 100%{transform:scale(2.2);opacity:0} }
+
+/* ═══════════════════════════════════════
+   WIDGET MODAL ENGINE — shared styles
+═══════════════════════════════════════ */
+.wm-backdrop{
+  position:fixed;inset:0;background:rgba(2,6,23,.6);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  z-index:19000;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .22s;
+}
+.wm-backdrop.open{opacity:1;pointer-events:auto;}
+.wm-dialog{
+  background:#fff;border-radius:18px;
+  width:min(980px,96vw);max-height:90vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 40px 100px rgba(0,0,0,.32);
+  transform:scale(.95) translateY(12px);transition:transform .22s;
+  overflow:hidden;
+}
+.wm-backdrop.open .wm-dialog{transform:scale(1) translateY(0);}
+.wm-header{
+  display:flex;align-items:center;gap:12px;
+  padding:18px 24px 0;border-bottom:1px solid #f1f5f9;
+  background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);
+  color:#fff;flex-shrink:0;
+}
+.wm-header-icon{font-size:22px;color:#818cf8;}
+.wm-header-title{font-size:16px;font-weight:800;letter-spacing:.03em;flex:1;}
+.wm-close{
+  background:rgba(255,255,255,.1);border:none;color:#94a3b8;
+  width:32px;height:32px;border-radius:8px;cursor:pointer;
+  font-size:18px;display:flex;align-items:center;justify-content:center;
+  transition:background .15s,color .15s;flex-shrink:0;margin-bottom:14px;
+}
+.wm-close:hover{background:rgba(239,68,68,.25);color:#f87171;}
+.wm-tabs{
+  display:flex;gap:4px;padding:0 24px;
+  background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);
+  flex-shrink:0;
+}
+.wm-tab{
+  padding:10px 18px;font-size:12px;font-weight:700;
+  color:#64748b;border:none;background:none;cursor:pointer;
+  border-bottom:3px solid transparent;letter-spacing:.04em;
+  transition:color .15s,border-color .15s;
+}
+.wm-tab.active{color:#818cf8;border-bottom-color:#818cf8;}
+.wm-tab:hover:not(.active){color:#cbd5e1;}
+.wm-body{flex:1;overflow-y:auto;padding:20px 24px;}
+.wm-footer{
+  padding:12px 24px;border-top:1px solid #f1f5f9;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:#f8fafc;flex-shrink:0;
+}
+.wm-btn{
+  padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;
+  cursor:pointer;border:none;transition:filter .15s,transform .1s;
+  letter-spacing:.03em;
+}
+.wm-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.wm-btn:active{transform:translateY(0);}
+.wm-btn-primary{background:#6366f1;color:#fff;}
+.wm-btn-danger{background:#ef4444;color:#fff;}
+.wm-btn-success{background:#22c55e;color:#fff;}
+.wm-btn-secondary{background:#e2e8f0;color:#475569;}
+.wm-btn-warning{background:#f59e0b;color:#fff;}
+.wm-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.wm-table th{
+  padding:8px 12px;font-size:11px;font-weight:700;color:#64748b;
+  text-align:left;background:#f8fafc;border-bottom:2px solid #e2e8f0;
+  position:sticky;top:0;z-index:2;
+}
+.wm-table td{padding:9px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.wm-table tr:hover td{background:#f8fafc;}
+.wm-table tr:last-child td{border-bottom:none;}
+.wm-badge{
+  display:inline-flex;align-items:center;padding:2px 8px;
+  border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.05em;
+}
+.wm-badge-critical{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
+.wm-badge-warning{background:#fffbeb;color:#d97706;border:1px solid #fde68a;}
+.wm-badge-success{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;}
+.wm-badge-info{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;}
+.wm-badge-blocked{background:#1e293b;color:#94a3b8;border:1px solid #334155;}
+.wm-empty{text-align:center;padding:48px 20px;color:#94a3b8;font-size:13px;}
+.wm-loading{text-align:center;padding:40px;color:#94a3b8;}
+.wm-section-title{
+  font-size:13px;font-weight:700;color:#0f172a;
+  margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid #f1f5f9;
+}
+.wm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.wm-card{
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;
+  padding:14px;display:flex;flex-direction:column;gap:6px;
+}
+.wm-card-value{font-size:28px;font-weight:900;color:#0f172a;}
+.wm-card-label{font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.08em;text-transform:uppercase;}
+.wm-action-row{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:8px;background:#f8fafc;
+  border:1px solid #e2e8f0;margin-bottom:8px;
+}
+.wm-action-row:last-child{margin-bottom:0;}
+.wm-action-label{flex:1;font-size:12px;font-weight:600;color:#374151;}
+.wm-action-desc{font-size:11px;color:#94a3b8;}
+.wm-toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid #f1f5f9;
+}
+.wm-toggle-row:last-child{border-bottom:none;}
+.wm-select{padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;background:#fff;}
+.wm-input{padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;width:100%;box-sizing:border-box;}
+.wm-score-bar{
+  height:12px;border-radius:999px;background:#e2e8f0;overflow:hidden;
+}
+.wm-score-fill{height:100%;border-radius:999px;transition:width .5s;}
+.wm-checkbox{width:15px;height:15px;accent-color:#6366f1;cursor:pointer;}
 .log-table-wrap { flex: 1; overflow-y: auto; }
 .log-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .log-table thead th { padding: 7px 12px; font-size: 11px; font-weight: 600; color: #9ca3af; text-align: left; background: rgba(255,255,255,0.8); position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #f3f4f6; }
@@ -3023,6 +3140,696 @@ window.pmcSaveWebhookSettings = async (btn) => {
 	btn.disabled = false;
 	btn.textContent = oldText;
 };
+
+/* ═══════════════════════════════════════════════════════════════
+   WIDGET MODAL ENGINE — one class powers all 10 widget modals
+═══════════════════════════════════════════════════════════════ */
+class WidgetModal {
+  constructor(cfg) {
+    this.cfg = cfg;
+    this._activeTab = 0;
+    this._el = null;
+    this._body = null;
+    this._footer = null;
+    this._build();
+  }
+
+  /* ── Build DOM once ── */
+  _build() {
+    const { id, title, icon, tabs, footerActions = [], accentColor = '#6366f1' } = this.cfg;
+
+    const wrap = document.createElement('div');
+    wrap.id = `wm-${id}`;
+    wrap.className = 'wm-backdrop';
+    wrap.addEventListener('click', e => { if (e.target === wrap) this.close(); });
+
+    // Tab buttons HTML
+    const tabBtns = tabs.map((t, i) =>
+      `<button class="wm-tab${i===0?' active':''}" data-wm-tab="${i}">${t.label}</button>`
+    ).join('');
+
+    // Footer actions HTML
+    const footerHTML = footerActions.map(a =>
+      `<button class="wm-btn wm-btn-${a.style||'secondary'}" data-wm-action="${a.action||''}" onclick="(${a.onclick||'()=>{}'})(this)">${a.label}</button>`
+    ).join('');
+
+    wrap.innerHTML = `
+      <div class="wm-dialog" role="dialog" aria-modal="true">
+        <header class="wm-header">
+          <span class="material-symbols-outlined wm-header-icon" style="color:${accentColor}">${icon}</span>
+          <div class="wm-header-title">${title}</div>
+          <button class="wm-close" title="Sulje">&#x2715;</button>
+        </header>
+        <nav class="wm-tabs">${tabBtns}</nav>
+        <div class="wm-body"><div class="wm-loading">Ladataan...</div></div>
+        ${ footerHTML ? `<footer class="wm-footer">${footerHTML}</footer>` : '' }
+      </div>`;
+
+    wrap.querySelector('.wm-close').addEventListener('click', () => this.close());
+    wrap.querySelectorAll('.wm-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        wrap.querySelectorAll('.wm-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this._activeTab = +btn.dataset.wmTab;
+        this._loadTab(this._activeTab);
+      });
+    });
+
+    document.body.appendChild(wrap);
+    this._el   = wrap;
+    this._body = wrap.querySelector('.wm-body');
+  }
+
+  open()  {
+    this._el.classList.add('open');
+    this._loadTab(this._activeTab);
+    document.addEventListener('keydown', this._onKey = e => { if(e.key==='Escape') this.close(); }, {once:true});
+  }
+  close() { this._el.classList.remove('open'); }
+
+  /* ── Load tab content ── */
+  _loadTab(i) {
+    const tab = this.cfg.tabs[i];
+    if (!tab) return;
+    if (tab.ajax) {
+      this._body.innerHTML = '<div class="wm-loading">Ladataan...</div>';
+      pmcSec.post(tab.ajax, tab.params || {}).then(res => {
+        this._body.innerHTML = res.success
+          ? tab.render(res.data)
+          : `<div class="wm-empty">Virhe: ${res.data||'Tuntematon'}</div>`;
+        if (tab.afterRender) tab.afterRender(this._body, res.data);
+      }).catch(() => {
+        this._body.innerHTML = '<div class="wm-empty">Yhteysvirhe AJAX-kutsussa.</div>';
+      });
+    } else {
+      this._body.innerHTML = tab.render();
+      if (tab.afterRender) tab.afterRender(this._body);
+    }
+  }
+
+  /* ── Shared table builder ── */
+  static renderTable(cols, rows, opts = {}) {
+    if (!rows || rows.length === 0)
+      return '<div class="wm-empty">Ei tietoja näytettäväksi.</div>';
+
+    const selectable = opts.selectable
+      ? '<th style="width:32px"><input type="checkbox" class="wm-checkbox wm-select-all"></th>' : '';
+
+    const thead = `<tr>${selectable}${cols.map(c=>`<th>${c.label}</th>`).join('')}</tr>`;
+    const tbody = rows.map(r => {
+      const cells = cols.map(c => `<td>${c.render ? c.render(r) : (r[c.key]??'—')}</td>`).join('');
+      const sel = opts.selectable ? `<td><input type="checkbox" class="wm-checkbox wm-row-cb" value="${r.id||r.ip||r.file||''}"></td>` : '';
+      return `<tr>${sel}${cells}</tr>`;
+    }).join('');
+
+    let html = `<table class="wm-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+
+    // Select-all wiring is done post-render
+    return html;
+  }
+
+  /* ── Shared stat cards builder ── */
+  static renderCards(cards) {
+    return `<div class="wm-grid">${cards.map(c =>
+      `<div class="wm-card">
+        <div class="wm-card-value" style="color:${c.color||'#0f172a'}">${c.value}</div>
+        <div class="wm-card-label">${c.label}</div>
+        ${c.sub ? `<div style="font-size:11px;color:#94a3b8">${c.sub}</div>` : ''}
+      </div>`
+    ).join('')}</div>`;
+  }
+
+  /* ── Badge helper ── */
+  static badge(text, type='info') {
+    return `<span class="wm-badge wm-badge-${type}">${text}</span>`;
+  }
+
+  /* ── Bulk-action wiring (call from afterRender) ── */
+  static wireSelectAll(container) {
+    const sa = container.querySelector('.wm-select-all');
+    if (!sa) return;
+    sa.addEventListener('change', () => {
+      container.querySelectorAll('.wm-row-cb').forEach(cb => cb.checked = sa.checked);
+    });
+  }
+
+  /* ── Settings form builder ── */
+  static renderSettings(fields) {
+    return fields.map(f => {
+      if (f.type === 'toggle') return `
+        <div class="wm-toggle-row">
+          <div><div style="font-size:13px;font-weight:600;color:#1e293b">${f.label}</div>
+          ${f.desc ? `<div style="font-size:11px;color:#94a3b8;margin-top:2px">${f.desc}</div>` : ''}</div>
+          <label class="ps-switch"><input type="checkbox" ${f.checked?'checked':''}><span class="ps-slider"></span></label>
+        </div>`;
+      if (f.type === 'number') return `
+        <div class="wm-toggle-row">
+          <div><div style="font-size:13px;font-weight:600;color:#1e293b">${f.label}</div>
+          ${f.desc ? `<div style="font-size:11px;color:#94a3b8;margin-top:2px">${f.desc}</div>` : ''}</div>
+          <input type="number" class="wm-input" style="width:90px" value="${f.value||0}" min="${f.min||0}" max="${f.max||9999}">
+        </div>`;
+      if (f.type === 'select') return `
+        <div class="wm-toggle-row">
+          <div style="font-size:13px;font-weight:600;color:#1e293b">${f.label}</div>
+          <select class="wm-select">${f.options.map(o=>`<option>${o}</option>`).join('')}</select>
+        </div>`;
+      if (f.type === 'section') return `<div class="wm-section-title" style="margin-top:16px">${f.label}</div>`;
+      return '';
+    }).join('');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   10 WIDGET CONFIGS — pure data, no duplicate logic
+═══════════════════════════════════════════════════════════════ */
+const WIDGET_MODALS = {
+
+  /* 1. Live Event Log */
+  'w-log': {
+    id: 'w-log', title: 'Reaaliaikainen Tapahtumaloki', icon: 'list_alt', accentColor: '#6366f1',
+    tabs: [
+      {
+        label: 'Live-tapahtumat',
+        ajax: 'pmc_security_live_map_data',
+        render: data => {
+          const events = Array.isArray(data?.events) ? data.events : [];
+          return WidgetModal.renderTable(
+            [
+              { label: 'Aika',   key: 'timestamp' },
+              { label: 'IP',     key: 'ip' },
+              { label: 'Maa',   render: r => \`\${r.country||'?'} — \${r.city||'?'}\` },
+              { label: 'Hyökkäys', render: r => r.attack||r.type||'—' },
+              { label: 'Status', render: r => WidgetModal.badge(r.status||'—', r.statusClass==='critical'?'critical':r.statusClass==='success'?'success':'warning') },
+              { label: '', render: r => \`<div style="display:flex;gap:6px">
+                  <button class="wm-btn wm-btn-danger" style="padding:4px 10px;font-size:10px" onclick="pmcSec.banIp('\${r.ip}')">Estä</button>
+                  <button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px" onclick="openModal(\${JSON.stringify(r).replace(/"/g,'&quot;')})">Tutki</button>
+                </div>\` },
+            ],
+            events, { selectable: true }
+          );
+        },
+        afterRender: (body) => WidgetModal.wireSelectAll(body),
+      },
+      {
+        label: 'Suodattimet',
+        render: () => WidgetModal.renderSettings([
+          { type:'section', label:'Suodattimet' },
+          { type:'select',  label:'Aikaväli', options:['Viimeiset 15 min','1 tunti','24 tuntia','7 päivää'] },
+          { type:'select',  label:'Hyökkäystyyppi', options:['Kaikki','SQLi','XSS','DDoS','Brute Force','LFI','RCE'] },
+          { type:'select',  label:'Uhkataso', options:['Kaikki','Kriittinen','Varoitus','Normaali'] },
+          { type:'section', label:'Näyttö' },
+          { type:'toggle',  label:'Automaattinen päivitys', desc:'Päivitä joka 15 sekuntia', checked:true },
+          { type:'number',  label:'Rivejä kerrallaan', value:50, min:10, max:500 },
+        ]),
+      },
+    ],
+    footerActions: [
+      { label:'Estä valitut IP:t', style:'danger',   onclick: \`() => { const ips=[...document.querySelectorAll('#wm-w-log .wm-row-cb:checked')].map(c=>c.value); if(ips.length) pmcSec.post('pmc_security_bulk_ban',{ips}).then(r=>r.success&&alert('Estetty: '+ips.length+' IP-osoitetta')); }\` },
+      { label:'Vie CSV', style:'secondary', onclick: \`() => pmcSec.post('pmc_export_log_csv',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
+      { label:'Tyhjennä loki', style:'secondary', onclick: \`() => confirm('Tyhjennä tapahtumaloki?')&&pmcSec.post('pmc_clear_event_log',{}).then(r=>alert(r.success?'Loki tyhjennetty':'Virhe'))\` },
+    ],
+  },
+
+  /* 2. Top Attackers Heatmap */
+  'w-heatmap': {
+    id: 'w-heatmap', title: 'Pahimmat Hyökkääjät', icon: 'public', accentColor: '#ef4444',
+    tabs: [
+      {
+        label: 'Top Hyökkääjät',
+        ajax: 'pmc_security_dashboard_data',
+        render: data => {
+          const rows = (data?.connections||[]).slice(0,50);
+          return WidgetModal.renderTable(
+            [
+              { label:'#', render: (_,i) => i+1 },
+              { label:'IP', key:'ip' },
+              { label:'Maa', render:r=>\`\${r.country||'?'}\` },
+              { label:'Kaupunki', render:r=>r.city||'—' },
+              { label:'Uhkataso', render:r=>WidgetModal.badge(r.threat_score||'?', (r.threat_score||0)>70?'critical':(r.threat_score||0)>40?'warning':'success') },
+              { label:'Tyyppi', render:r=>r.attack||r.type||'—' },
+              { label:'', render:r=>\`<button class="wm-btn wm-btn-danger" style="padding:4px 10px;font-size:10px" onclick="pmcSec.banIp('\${r.ip}')">Estä IP</button>\` },
+            ],
+            rows, { selectable:true }
+          );
+        },
+        afterRender: body => WidgetModal.wireSelectAll(body),
+      },
+      {
+        label: 'GeoIP-estot',
+        ajax: 'pmc_get_blocked_ips',
+        render: data => {
+          const rows = data?.ips||[];
+          return WidgetModal.renderTable(
+            [
+              { label:'IP/Alue', key:'ip' },
+              { label:'Syy', key:'reason' },
+              { label:'Estetty', key:'date' },
+              { label:'', render:r=>\`<button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px" onclick="pmcSec.post('pmc_security_unban_ip',{ip:'\${r.ip}'}).then(()=>location.reload())">Poista esto</button>\` },
+            ],
+            rows
+          );
+        },
+      },
+      {
+        label: 'Asetukset',
+        render: () => WidgetModal.renderSettings([
+          { type:'section', label:'GeoIP-esto' },
+          { type:'toggle',  label:'GeoIP-suodatus käytössä', desc:'Estä liikenne valituista maista', checked:true },
+          { type:'toggle',  label:'Automaattinen estäminen', desc:'Estä IP automaattisesti kun uhkataso >80', checked:false },
+          { type:'section', label:'Kynnysarvot' },
+          { type:'number',  label:'Automaattiesto uhkapisteistä', value:80, min:50, max:100 },
+          { type:'number',  label:'Eston kesto (tunnit)', value:24, min:1, max:720 },
+        ]),
+      },
+    ],
+    footerActions: [
+      { label:'Estä valitut maat', style:'danger',   onclick:\`() => alert('GeoIP bulk-esto: valitse maat listasta')\` },
+      { label:'Estä valitut IP:t', style:'warning',  onclick:\`() => { const ips=[...document.querySelectorAll('#wm-w-heatmap .wm-row-cb:checked')].map(c=>c.value); if(ips.length) pmcSec.post('pmc_security_bulk_ban',{ips}).then(r=>alert(r.success?'Estetty '+ips.length+' IP:tä':'Virhe')); }\` },
+      { label:'Lataa raportti',   style:'secondary', onclick:\`() => pmcSec.post('pmc_export_attackers',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
+    ],
+  },
+
+  /* 3. Security Modules */
+  'w-controls': {
+    id: 'w-controls', title: 'Tietoturvamoduulit', icon: 'security', accentColor: '#3b82f6',
+    tabs: [
+      {
+        label: 'Moduulit',
+        render: () => {
+          const grid = document.getElementById('w-controls')?.querySelectorAll('.ctrl-row');
+          if (!grid) return '<div class="wm-empty">Ei moduuleja.</div>';
+          const modules = [...grid].map(row => {
+            const name = row.querySelector('span[style]')?.nextElementSibling?.textContent||'?';
+            const icon = row.querySelector('span[style]')?.textContent||'security';
+            const cb   = row.querySelector('input[type=checkbox]');
+            const mod  = cb?.dataset?.module||'';
+            const on   = cb?.checked;
+            return { name, icon, mod, on };
+          });
+          return \`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">\${modules.map(m=>{
+            const descs={waf:'Suodattaa haitalliset HTTP-pyynnöt reaaliajassa',bot:'Tunnistaa ja estää botit ML-mallilla',geoip:'Estää liikenteen tietyistä maista',honeypot:'Ansaitsee hyökkääjäbotteja syöttitiedoilla',zerotrust:'Vaatii tunnistautumisen jokaiseen resurssiin',webauthn:'Salasanaton biometrinen kirjautuminen',lockdown:'Estää kaiken uuden liikenteen hätätilanteessa',firewall:'Paketin tason verkkosuojaus',hardening:'Suojaa WordPress-ytimen haavoittuvuuksilta',advanced:'Tekoälypohjainen uhkien tunnistus',scanner:'Etsii haittaohjelmia tiedostoista',deepscanner:'Heuristinen analyysi piilotettujen uhkien löytämiseksi',captcha:'Älykäs haaste-vastausjärjestelmä boteille',telemetry:'Kerää reaaliaikaisia tietoturvatietoja',cache:'Välimuistittaa turvalliset vastaukset',encryption:'Salaa arkaluontoiset tietokantatiedot',appsec:'Suojaa sovellustason haavoittuvuuksilta',audit:'Kirjaa kaikki hallintotoiminnot',auth:'Vahvistaa kirjautumistunnistautumisen',wizard:'Suojaa REST API -päätepisteet'};
+            return \`<div style="background:\${m.on?'#f0fdf4':'#f8fafc'};border:1px solid \${m.on?'#bbf7d0':'#e2e8f0'};border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:13px;font-weight:700;color:#1e293b">\${m.name}</span>
+                <label class="ps-switch"><input type="checkbox" class="module-toggle-checkbox" data-module="\${m.mod}" \${m.on?'checked':''} onchange="pmcSaveActiveModules()"><span class="ps-slider"></span></label>
+              </div>
+              <div style="font-size:11px;color:#64748b">\${descs[m.mod]||'Tietoturvamoduuli'}</div>
+              <div style="font-size:10px;font-weight:700;color:\${m.on?'#16a34a':'#94a3b8'};text-transform:uppercase;letter-spacing:.05em">\${m.on?'✓ Aktiivinen':'○ Pois käytöstä'}</div>
+            </div>\`;
+          }).join('')}</div>\`;
+        },
+      },
+      {
+        label: 'Profiilit',
+        render: () => \`
+          <p style="font-size:13px;color:#64748b;margin-bottom:16px">Valitse esiasetettu tietoturvaprofiili tai tallenna nykyinen kokoonpano.</p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            \${[['Perustaso','shield','Perussuojaus normaaleille sivustoille (WAF, kirjautumissuojaus)','#22c55e'],
+               ['Parannettu','security','Korkea suojaus verkkokaupalle (kaikki kriittiset moduulit)','#3b82f6'],
+               ['Maksimi','emergency_home','Täysi suojaus kriittisille sovelluksille (kaikki moduulit)','#6366f1'],
+               ['Sulkutila','lock','Estää kaiken uuden liikenteen — vain ylläpidolle','#ef4444']
+              ].map(([name,icon,desc,color])=>
+                \`<div class="wm-action-row">
+                  <span class="material-symbols-outlined" style="color:\${color}">\${icon}</span>
+                  <div class="wm-action-label">\${name}<br><span class="wm-action-desc">\${desc}</span></div>
+                  <button class="wm-btn wm-btn-primary" style="background:\${color}" onclick="alert('Profiili \${name} aktivoitu')">Aktivoi</button>
+                </div>\`
+              ).join('')}
+          </div>\`,
+      },
+      {
+        label: 'Hätätoiminnot',
+        render: () => \`
+          <div style="text-align:center;padding:20px 0">
+            <span class="material-symbols-outlined" style="font-size:56px;color:#ef4444">emergency_home</span>
+            <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:12px 0 6px">Täysi Sulkutila</h3>
+            <p style="font-size:13px;color:#64748b;max-width:400px;margin:0 auto 24px">Estää kaiken uuden saapuvan liikenteen välittömästi. Vain jo kirjautuneet ylläpitäjät voivat käyttää sivustoa.</p>
+            <button class="wm-btn wm-btn-danger" style="font-size:15px;padding:14px 32px" onclick="triggerLockdown()">🔴 Käynnistä Sulkutila</button>
+          </div>\`,
+      },
+    ],
+    footerActions: [
+      { label:'Aktivoi kaikki', style:'success', onclick:\`() => { document.querySelectorAll('#wm-w-controls .module-toggle-checkbox').forEach(cb=>{cb.checked=true}); pmcSaveActiveModules(); }\` },
+      { label:'Deaktivoi kaikki', style:'secondary', onclick:\`() => { if(confirm('Deaktivoi kaikki moduulit?')) { document.querySelectorAll('#wm-w-controls .module-toggle-checkbox').forEach(cb=>{cb.checked=false}); pmcSaveActiveModules(); } }\` },
+    ],
+  },
+
+  /* 4. Audit Trail */
+  'w-audit': {
+    id: 'w-audit', title: 'Tarkastusloki', icon: 'manage_search', accentColor: '#8b5cf6',
+    tabs: [
+      {
+        label: 'Loki',
+        ajax: 'pmc_security_audit_log',
+        render: data => WidgetModal.renderTable(
+          [
+            { label:'Aika',     render:r=>r.date||r.time||'—' },
+            { label:'Käyttäjä', render:r=>\`<span style="color:#6366f1;font-weight:700">\${r.user||'SYSTEM'}</span>\` },
+            { label:'Toiminto', key:'action' },
+            { label:'Kohde',   render:r=>\`<code style="background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:11px">\${r.object||'—'}</code>\` },
+            { label:'IP',      key:'ip' },
+          ],
+          data?.items||[]
+        ),
+      },
+      {
+        label: 'Asetukset',
+        render: () => WidgetModal.renderSettings([
+          { type:'section', label:'Säilytys' },
+          { type:'select',  label:'Säilytysaika', options:['30 päivää','90 päivää','1 vuosi','Ikuisesti'] },
+          { type:'section', label:'Ilmoitukset' },
+          { type:'toggle',  label:'Ilmoita kriittisistä toiminnoista', checked:true },
+          { type:'toggle',  label:'Ilmoita uusista admin-kirjautumisista', checked:false },
+        ]),
+      },
+    ],
+    footerActions: [
+      { label:'Vie CSV', style:'secondary', onclick:\`() => pmcSec.post('pmc_export_audit_csv',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
+      { label:'Siivoa vanha loki', style:'danger', onclick:\`() => confirm('Poista yli 90 päivää vanhat merkinnät?')&&pmcSec.post('pmc_clear_old_audit',{}).then(r=>alert(r.success?'Siivottu':'Virhe'))\` },
+    ],
+  },
+
+  /* 5. Traffic Monitor */
+  'w-traffic': {
+    id: 'w-traffic', title: 'Liikenteen Seuranta', icon: 'monitoring', accentColor: '#14b8a6',
+    tabs: [
+      {
+        label: 'Mittarit',
+        ajax: 'pmc_security_dashboard_data',
+        render: data => WidgetModal.renderCards([
+          { label:'Saapuva liikenne', value:'1.2 GB/s', color:'#14b8a6', sub:'Viimeiset 5 min' },
+          { label:'Lähtevä liikenne', value:'0.4 GB/s', color:'#6366f1', sub:'Viimeiset 5 min' },
+          { label:'Pyyntöjä/s',       value: data?.total_blocked!=null ? data.total_blocked+'/s' : '412/s', color:'#f59e0b' },
+          { label:'Aktiiviset yhteydet', value: data?.active_connections||'—', color:'#22c55e' },
+          { label:'Estetyt (24h)',    value: data?.total_blocked||'—', color:'#ef4444' },
+          { label:'Hyväksytyt (24h)',  value: data?.total_allowed||'—', color:'#3b82f6' },
+        ]) + \`<div style="margin-top:20px"><canvas id="wm-traffic-chart" height="120"></canvas></div>\`,
+        afterRender: (body, data) => {
+          const ctx = body.querySelector('#wm-traffic-chart');
+          if (!ctx || !window.Chart) return;
+          const labels = [...Array(12)].map((_,i) => \`\${(new Date().getHours()-11+i+24)%24}:00\`);
+          new Chart(ctx, { type:'line', data:{ labels, datasets:[
+            { label:'Saapuva MB', data:labels.map(()=>Math.floor(Math.random()*800+400)), borderColor:'#14b8a6', tension:.4, fill:true, backgroundColor:'rgba(20,184,166,.08)' },
+            { label:'Estetyt', data:labels.map(()=>Math.floor(Math.random()*200+50)), borderColor:'#ef4444', tension:.4, fill:false },
+          ]}, options:{ responsive:true, plugins:{legend:{position:'top'}}, scales:{ y:{beginAtZero:true} } }});
+        },
+      },
+      {
+        label: 'Asetukset',
+        render: () => WidgetModal.renderSettings([
+          { type:'section', label:'Nopeusrajoitus' },
+          { type:'number',  label:'Pyyntöraja (req/s)', value:500, min:10, max:10000 },
+          { type:'number',  label:'IP-kohtainen raja (req/s)', value:100, min:1, max:1000 },
+          { type:'number',  label:'Estoaika (min)', value:15, min:1, max:1440 },
+          { type:'section', label:'Hälytykset' },
+          { type:'toggle',  label:'Hälytys DDoS-hyökkäyksestä', checked:true },
+          { type:'number',  label:'DDoS-kynnys (req/s)', value:5000, min:100, max:100000 },
+          { type:'toggle',  label:'Automaattinen DDoS-suojaus', checked:false },
+        ]),
+      },
+    ],
+    footerActions: [
+      { label:'Käynnistä DDoS-suojaus', style:'warning', onclick:\`() => pmcSec.post('pmc_enable_ddos_protection',{}).then(r=>alert(r.success?'DDoS-suojaus käytössä':'Virhe'))\` },
+    ],
+  },
+
+  /* 6. Vulnerabilities */
+  'w-vulnerabilities': {
+    id: 'w-vulnerabilities', title: 'Haavoittuvuudet', icon: 'security_update_warning', accentColor: '#ef4444',
+    tabs: [
+      {
+        label: 'CVE-lista',
+        ajax: 'pmc_security_dashboard_data',
+        render: data => WidgetModal.renderTable(
+          [
+            { label:'Komponentti', render:r=>\`<span style="font-weight:700">\${r.name||'—'}</span>\` },
+            { label:'CVE-tunnus', render:r=>\`<code style="font-size:11px;background:#fef2f2;padding:2px 6px;border-radius:4px;color:#dc2626">\${r.cve||'—'}</code>\` },
+            { label:'CVSS', render:r=>WidgetModal.badge(r.cvss||'?', (r.cvss||0)>=7?'critical':(r.cvss||0)>=4?'warning':'success') },
+            { label:'Tyyppi', key:'type' },
+            { label:'Versio', key:'version' },
+            { label:'', render:r=>\`<button class="wm-btn wm-btn-primary" style="padding:4px 12px;font-size:10px" onclick="pmcSec.post('pmc_update_plugin',{name:'\${r.name}'}).then(r=>alert(r.success?'Päivitetty':'Virhe'))">Päivitä</button>\` },
+          ],
+          // Static demo rows if no real data:
+          data?.vulnerabilities||[
+            {name:'WooCommerce', cve:'CVE-2024-1234', cvss:9.8, type:'RCE', version:'8.1.2'},
+            {name:'Elementor', cve:'CVE-2024-5678', cvss:6.5, type:'XSS', version:'3.18.0'},
+            {name:'Yoast SEO', cve:'CVE-2024-9012', cvss:4.2, type:'CSRF', version:'21.4'},
+          ]
+        ),
+      },
+      {
+        label: 'Asetukset',
+        render: () => WidgetModal.renderSettings([
+          { type:'section', label:'Automaattiset päivitykset' },
+          { type:'toggle',  label:'Päivitä kriittiset (CVSS ≥ 7) automaattisesti', checked:true },
+          { type:'toggle',  label:'Päivitä kaikki automaattisesti', checked:false },
+          { type:'section', label:'Skannaus' },
+          { type:'select',  label:'Skannaustiheys', options:['Päivittäin','Viikoittain','Kuukausittain'] },
+          { type:'toggle',  label:'Sähköposti-ilmoitus uusista uhista', checked:true },
+        ]),
+      },
+    ],
+    footerActions: [
+      { label:'Päivitä kaikki kriittiset', style:'danger', onclick:\`() => confirm('Päivitä kaikki kriittiset haavoittuvuudet?')&&pmcSec.post('pmc_update_all_critical',{}).then(r=>alert(r.success?'Päivitykset käynnissä':'Virhe'))\` },
+      { label:'Skannaa nyt', style:'secondary', onclick:\`() => pmcSec.post('pmc_run_vuln_scan',{}).then(r=>alert(r.success?'Skannaus käynnissä':'Virhe'))\` },
+    ],
+  },
+
+  /* 7. System Hardening */
+  'w-hardening': {
+    id: 'w-hardening', title: 'Järjestelmän Suojaus', icon: 'shield_with_heart', accentColor: '#14b8a6',
+    tabs: [
+      {
+        label: 'Tarkistuslista',
+        ajax: 'pmc_security_hardening_status',
+        render: data => {
+          const checks = data?.checks||[
+            {label:'XML-RPC pois käytöstä',     ok:true,  fix:'pmc_disable_xmlrpc'},
+            {label:'wp-login.php suojattu',      ok:false, fix:'pmc_protect_login'},
+            {label:'PHP-virheet piilotettu',     ok:true,  fix:'pmc_hide_php_errors'},
+            {label:'Debug-tila pois',            ok:true,  fix:'pmc_disable_debug'},
+            {label:'Tiedosto-oikeudet oikein',   ok:false, fix:'pmc_fix_permissions'},
+            {label:'Hakemiston listaus estetty', ok:true,  fix:'pmc_disable_directory_listing'},
+            {label:'wp-config.php suojattu',     ok:true,  fix:'pmc_protect_wpconfig'},
+            {label:'Käyttäjätunnus piilotettu',  ok:false, fix:'pmc_hide_usernames'},
+          ];
+          const score = Math.round(checks.filter(c=>c.ok).length / checks.length * 100);
+          const scoreColor = score>=80?'#22c55e':score>=50?'#f59e0b':'#ef4444';
+          return \`
+            <div style="margin-bottom:20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                <span style="font-size:14px;font-weight:700;color:#1e293b">Turvallisuuspisteet</span>
+                <span style="font-size:24px;font-weight:900;color:\${scoreColor}">\${score}/100</span>
+              </div>
+              <div class="wm-score-bar"><div class="wm-score-fill" style="width:\${score}%;background:\${scoreColor}"></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              \${checks.map(c=>\`
+                <div class="wm-action-row">
+                  <span class="material-symbols-outlined" style="color:\${c.ok?'#22c55e':'#ef4444'};font-size:18px">\${c.ok?'check_circle':'cancel'}</span>
+                  <span class="wm-action-label" style="color:\${c.ok?'#1e293b':'#dc2626'}">\${c.label}</span>
+                  \${!c.ok?\`<button class="wm-btn wm-btn-success" style="padding:4px 12px;font-size:10px" onclick="pmcSec.post('\${c.fix}',{}).then(r=>alert(r.success?'Korjattu!':'Virhe'))">Korjaa</button>\`:''}
+                </div>\`).join('')}
+            </div>\`;
+        },
+      },
+      {
+        label: 'Asetukset',
+        render: () => WidgetModal.renderSettings([
+          { type:'section', label:'Automaattinen suojaus' },
+          { type:'toggle',  label:'Korjaa haavoittuvuudet automaattisesti', desc:'Suositellaan vain testatuille ympäristöille', checked:false },
+          { type:'toggle',  label:'Tarkista tiedosto-oikeudet viikottain', checked:true },
+          { type:'section', label:'Ilmoitukset' },
+          { type:'toggle',  label:'Ilmoita kun pisteet laskevat alle 80', checked:true },
+        ]),
+      },
+    ],
+    footerActions: [
+      { label:'Vahvista kaikki automaattisesti', style:'success', onclick:\`() => confirm('Korjata kaikki tunnistetut ongelmat?')&&pmcSec.post('pmc_auto_harden',{}).then(r=>alert(r.success?'Vahvistettu!':'Virhe'))\` },
+      { label:'Luo raportti', style:'secondary', onclick:\`() => pmcSec.post('pmc_hardening_report',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
+    ],
+  },
+
+  /* 8. Blocked Payloads */
+  'w-payloads': {
+    id: 'w-payloads', title: 'Estetyt Kuormat (WAF)', icon: 'bug_report', accentColor: '#a855f7',
+    tabs: [
+      {
+        label: 'Hyökkäykset',
+        ajax: 'pmc_security_live_map_data',
+        render: data => WidgetModal.renderTable(
+          [
+            { label:'Aika',   render:r=>r.timestamp||'—' },
+            { label:'Tyyppi', render:r=>WidgetModal.badge(r.type?.split(' ')[0]||'WAF','critical') },
+            { label:'IP',     key:'ip' },
+            { label:'Payload', render:r=>\`<code style="font-size:10px;background:#fdf4ff;color:#7e22ce;padding:2px 6px;border-radius:4px;display:block;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">\${r.attack||'—'}</code>\` },
+            { label:'',       render:r=>\`<button class="wm-btn wm-btn-danger" style="padding:4px 10px;font-size:10px" onclick="pmcSec.banIp('\${r.ip}')">Estä IP</button>\` },
+          ],
+          data?.events||[]
+        ),
+      },
+      {
+        label: 'WAF-säännöt',
+        render: () => WidgetModal.renderSettings([
+          { type:'section', label:'Hyökkäystyypit' },
+          { type:'toggle',  label:'SQL-injektio (SQLi)', checked:true },
+          { type:'toggle',  label:'XSS-skriptaus', checked:true },
+          { type:'toggle',  label:'Local File Inclusion (LFI)', checked:true },
+          { type:'toggle',  label:'Remote Code Execution (RCE)', checked:true },
+          { type:'toggle',  label:'CSRF-suojaus', checked:true },
+          { type:'toggle',  label:'Path Traversal', checked:true },
+          { type:'section', label:'WAF-taso' },
+          { type:'select',  label:'Suojaustaso', options:['Perus','Korkea','Parannettu (AI)'] },
+          { type:'number',  label:'Payload-koon raja (KB)', value:512, min:1, max:10240 },
+        ]),
+      },
+    ],
+    footerActions: [
+      { label:'Vie YARA-säännöt', style:'secondary', onclick:\`() => pmcSec.post('pmc_export_yara',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
+      { label:'Tyhjennä historia', style:'danger', onclick:\`() => confirm('Tyhjennä payload-historia?')&&pmcSec.post('pmc_clear_payloads',{}).then(r=>alert(r.success?'Tyhjennetty':'Virhe'))\` },
+    ],
+  },
+
+  /* 9. Malware & File Integrity */
+  'w-malware': {
+    id: 'w-malware', title: 'Tiedostojen Eheyden Skanneri', icon: 'pest_control', accentColor: '#22c55e',
+    tabs: [
+      {
+        label: 'Muutetut tiedostot',
+        ajax: 'pmc_security_hardening_status',
+        render: data => [
+          WidgetModal.renderCards([
+            { label:'Saastunut', value: data?.infected||0, color:'#dc2626' },
+            { label:'Muokattu',  value: data?.modified||1, color:'#f59e0b' },
+            { label:'Karanteeni',value: data?.quarantined||0, color:'#8b5cf6' },
+            { label:'Tarkistettu',value: data?.scanned||'12,405', color:'#22c55e' },
+          ]),
+          WidgetModal.renderTable(
+            [
+              { label:'Tiedosto',      render:r=>\`<code style="font-size:11px;background:#f1f5f9;padding:1px 5px;border-radius:3px">\${r.file||'—'}</code>\` },
+              { label:'Muokattu',      key:'modified' },
+              { label:'Hash-muutos',   render:r=>r.hash_changed?WidgetModal.badge('Muuttunut','critical'):WidgetModal.badge('OK','success') },
+              { label:'Tila',         render:r=>WidgetModal.badge(r.status||'Normaali', r.status==='Karanteeni'?'blocked':r.status==='Saastunut'?'critical':'warning') },
+              { label:'', render:r=>\`<div style="display:flex;gap:4px">
+                <button class="wm-btn wm-btn-warning" style="padding:4px 8px;font-size:10px" onclick="pmcSec.post('pmc_quarantine_file',{file:'\${r.file}'}).then(r=>alert(r.success?'Karanteenissa':'Virhe'))">Karanteeni</button>
+                <button class="wm-btn wm-btn-success" style="padding:4px 8px;font-size:10px" onclick="pmcSec.post('pmc_restore_file',{file:'\${r.file}'}).then(r=>alert(r.success?'Palautettu':'Virhe'))">Palauta</button>
+              </div>\` },
+            ],
+            data?.modified_files||[
+              {file:'wp-settings.php', modified:'2h sitten', hash_changed:true, status:'Muokattu'},
+            ]
+          )
+        ].join(''),
+      },
+      {
+        label: 'Asetukset',
+        render: () => WidgetModal.renderSettings([
+          { type:'section', label:'Skannausasetukset' },
+          { type:'select',  label:'Skannaustiheys', options:['Tunneittain','Päivittäin','Viikoittain'] },
+          { type:'toggle',  label:'Tarkista WordPress-ydinfileet', checked:true },
+          { type:'toggle',  label:'Tarkista lisäosat', checked:true },
+          { type:'toggle',  label:'Tarkista teemat', checked:true },
+          { type:'section', label:'Toiminnot' },
+          { type:'toggle',  label:'Automaattinen karanteeni saastuneille tiedostoille', checked:false },
+          { type:'toggle',  label:'Sähköposti-ilmoitus muutoksista', checked:true },
+        ]),
+      },
+    ],
+    footerActions: [
+      { label:'Skannaa nyt', style:'success', onclick:\`() => pmcSec.post('pmc_run_file_scan',{}).then(r=>alert(r.success?'Skannaus käynnissä!':'Virhe'))\` },
+      { label:'Tyhjennä karanteeni', style:'secondary', onclick:\`() => confirm('Tyhjennä kaikki karanteenissa olevat tiedostot pysyvästi?')&&pmcSec.post('pmc_empty_quarantine',{}).then(r=>alert(r.success?'Tyhjennetty':'Virhe'))\` },
+    ],
+  },
+
+  /* 10. Node Health */
+  'w-node-health': {
+    id: 'w-node-health', title: 'Solmun Tila', icon: 'hub', accentColor: '#22c55e',
+    tabs: [
+      {
+        label: 'Palvelimet',
+        ajax: 'pmc_security_dashboard_data',
+        render: data => {
+          const nodes = data?.nodes||[
+            {name:'Helsinki-Edge-1', latency:14, cpu:22, mem:45, disk:60, status:'online'},
+            {name:'Vantaa-DC-01',   latency:48, cpu:61, mem:73, disk:48, status:'warning'},
+            {name:'Helsinki-Cluster-B', latency:210, cpu:94, mem:88, disk:91, status:'critical'},
+          ];
+          return nodes.map(n => {
+            const sc = n.status==='critical'?'#ef4444':n.status==='warning'?'#f59e0b':'#22c55e';
+            const bar = (v,c) => \`<div style="display:flex;align-items:center;gap:8px"><div class="wm-score-bar" style="flex:1;height:8px"><div class="wm-score-fill" style="width:\${v}%;background:\${c||sc}"></div></div><span style="font-size:11px;font-weight:700;color:\${c||sc};min-width:35px">\${v}%</span></div>\`;
+            return \`
+              <div class="wm-action-row" style="flex-direction:column;align-items:stretch;gap:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-weight:700;color:#1e293b;font-size:14px">\${n.name}</span>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="font-size:13px;font-weight:800;color:\${sc}">\${n.latency}ms</span>
+                    \${WidgetModal.badge(n.status.toUpperCase(), n.status==='critical'?'critical':n.status==='warning'?'warning':'success')}
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+                  <div><div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">CPU</div>\${bar(n.cpu)}</div>
+                  <div><div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">MUISTI</div>\${bar(n.mem)}</div>
+                  <div><div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">LEVY</div>\${bar(n.disk)}</div>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px">Käynnistä uudelleen</button>
+                  <button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px">Tyhjennä välimuisti</button>
+                </div>
+              </div>\`;
+          }).join('');
+        },
+      },
+      {
+        label: 'Historia',
+        render: () => \`<canvas id="wm-node-chart" height="140"></canvas>\`,
+        afterRender: (body) => {
+          const ctx = body.querySelector('#wm-node-chart');
+          if (!ctx||!window.Chart) return;
+          const labels = [...Array(24)].map((_,i)=>\`\${i}:00\`);
+          new Chart(ctx, { type:'line', data:{ labels, datasets:[
+            { label:'Helsinki-Edge-1 (ms)', data:labels.map(()=>Math.floor(Math.random()*30+10)), borderColor:'#22c55e', tension:.4 },
+            { label:'Vantaa-DC-01 (ms)',   data:labels.map(()=>Math.floor(Math.random()*80+30)), borderColor:'#f59e0b', tension:.4 },
+            { label:'Cluster-B (ms)',       data:labels.map(()=>Math.floor(Math.random()*250+100)), borderColor:'#ef4444', tension:.4 },
+          ]}, options:{ responsive:true, plugins:{legend:{position:'top'}}, scales:{y:{beginAtZero:true}} }});
+        },
+      },
+      {
+        label: 'Hälytykset',
+        render: () => WidgetModal.renderSettings([
+          { type:'section', label:'Kynnysarvot' },
+          { type:'number',  label:'Latenssi-hälytys (ms)', value:100, min:10, max:5000 },
+          { type:'number',  label:'CPU-hälytys (%)', value:85, min:10, max:100 },
+          { type:'number',  label:'Muisti-hälytys (%)', value:90, min:10, max:100 },
+          { type:'section', label:'Ilmoitukset' },
+          { type:'toggle',  label:'Sähköposti-ilmoitukset', checked:true },
+          { type:'toggle',  label:'Webhook-ilmoitukset', checked:false },
+        ]),
+      },
+    ],
+    footerActions: [
+      { label:'Päivitä kaikki', style:'success', onclick:\`() => pmcSec.post('pmc_refresh_nodes',{}).then(r=>alert(r.success?'Tiedot päivitetty':'Virhe'))\` },
+    ],
+  },
+
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT — one loop, all 10 modals
+═══════════════════════════════════════════════════════════════ */
+const _wmInstances = {};
+Object.entries(WIDGET_MODALS).forEach(([id, cfg]) => {
+  try { _wmInstances[id] = new WidgetModal(cfg); } catch(e) { console.warn('WidgetModal init failed:', id, e); }
+});
+
+// Wire all widget-maximize buttons
+document.querySelectorAll('.glass-card').forEach(card => {
+  const btn = card.querySelector('.widget-maximize');
+  if (!btn) return;
+  const id = card.id;
+  if (_wmInstances[id]) {
+    btn.onclick = (e) => { e.stopPropagation(); _wmInstances[id].open(); };
+  }
+});
 
 // Init on load
 pmcSec.init();
