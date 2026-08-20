@@ -3813,7 +3813,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <button class="tl-date-btn" ${activeAttr} data-offset="${i * 24}">
           <span class="tl-date-day">${days[d.getDay()]}</span>
           <span class="tl-date-val">${months[d.getMonth()]} ${d.getDate()}</span>
-        </button>
+            <span class="tl-date-badge" style="background:#e2e8f0; color:#475569; font-size:10px; border-radius:10px; padding:2px 6px; margin-top:4px; font-weight:700; display:inline-block; line-height:1;">-</span>
+          </button>
       `;
     }
     
