@@ -514,6 +514,7 @@ function FilterBar({ filters, setFilters, total, page, pageSize, onPageChange, o
 /* ──────────────── IpDetailsModal ──────────────── */
 function IpDetailsModal({ isOpen, onClose, connectionDetails }) {
   const [loading, setLoading] = useState(true);
+    const [clientLoading, setClientLoading] = useState(false);
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -965,6 +966,7 @@ export default function SecurityApp() {
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+    const [clientLoading, setClientLoading] = useState(false);
   const [updatedAt, setUpdatedAt] = useState(null);
 
   // Reset page to 1 on filter changes
