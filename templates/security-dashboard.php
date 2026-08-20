@@ -3915,7 +3915,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const offset = i * 30 * 24; 
           const isCurrent = (i === 0);
           monthHtml += `
-            <button class="tl-month-option ${isCurrent ? 'active-month' : ''}" data-offset="${offset}" style="background:${isCurrent ? '#f1f5f9' : 'transparent'}; font-weight:${isCurrent ? '700' : '400'}; border:none; text-align:left; padding:6px 12px; font-size:12px; color:#334155; cursor:pointer; border-radius:4px; transition:0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="if(!this.classList.contains('active-month')) this.style.background='transparent'">
+            <button class="tl-month-option ${isCurrent ? 'active-month' : ''}" data-offset="${offset}" style="background:${isCurrent ? '#b80048' : 'transparent'}; font-weight:${isCurrent ? '700' : '400'}; border:none; text-align:left; padding:6px 12px; font-size:12px; color:${isCurrent ? '#ffffff' : '#334155'}; cursor:pointer; border-radius:4px; transition:0.2s;" onmouseover="if(!this.classList.contains('active-month')) this.style.background='#f1f5f9'" onmouseout="if(!this.classList.contains('active-month')) this.style.background='transparent'">
               ${mName} ${yName}
             </button>
           `;
