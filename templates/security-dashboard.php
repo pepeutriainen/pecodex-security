@@ -1171,6 +1171,10 @@ body.admin-bar {
       </style>
       
       <div id="ps-timeline-panel" style="position: relative; z-index: 9999;">
+          <div id=\"tl-loader\" style=\"display:none; position:absolute; inset:0; z-index:100; background:rgba(255,255,255,0.6); backdrop-filter:blur(1px); align-items:center; justify-content:center;\">
+            <div style=\"width:24px; height:24px; border:3px solid #4f46e5; border-top-color:transparent; border-radius:50%; animation: tl-spin 1s linear infinite;\"></div>
+          </div>
+          <style>@keyframes tl-spin { 100% { transform: rotate(360deg); } }</style>
         <!-- Date Carousel Wrapper -->
         <div class="tl-carousel-wrapper" style="display:flex; align-items:center; position:relative; padding: 0 10px; margin-top: 5px; gap: 4px;">
           
@@ -4211,7 +4215,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
   // Draw markers on timeline track (Left = Past, Right = Now)
-  window.addEventListener('pmcRadarDataLoaded', (e) => {
+  window.addEventListener('pmcRadarDataLoading', () => {
+      const l = document.getElementById('tl-loader');
+      if(l) l.style.display = 'flex';
+    });
+    window.addEventListener('pmcRadarDataLoaded', (e) => {
+      const l = document.getElementById('tl-loader');
+      if(l) l.style.display = 'none';
     const data = e.detail;
     if (!data || !data.event_summary) return;
 

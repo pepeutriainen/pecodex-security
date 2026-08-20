@@ -69,7 +69,7 @@ function RiskBar({ score }) {
 }
 
 /* ─── Radar Map ──────────────────────────────────────────────── */
-function RadarMap({ events, server, hoveredId, onHover, onSelect }) {
+function RadarMap({ events, server, hoveredId, onHover, onSelect, loading }) {
   const mapElement = useRef(null);
   const map = useRef(null);
   const layer = useRef(null);
@@ -284,6 +284,16 @@ function RadarMap({ events, server, hoveredId, onHover, onSelect }) {
 
   return (
     <section className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md" style={{ boxShadow: '0 4px 24px 0 rgba(0,0,0,0.07)' }}>
+      {loading && (
+        <div className="absolute inset-0 z-[2000] bg-white/40 backdrop-blur-[1px] flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+      {loading && (
+        <div className="absolute inset-0 z-[2000] bg-white/40 backdrop-blur-[1px] flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       {/* Otsikkopaneeli */}
       <div className="absolute left-3 top-3 z-[500] rounded-xl border border-white/80 bg-white/90 px-3 py-2 text-xs backdrop-blur-sm shadow-sm">
         <div className="flex items-center gap-1.5 font-semibold text-slate-800">
@@ -639,13 +649,18 @@ function IpDetailsModal({ isOpen, onClose, connectionDetails }) {
 }
 
 /* ─── Connection Table ───────────────────────────────────────── */
-function ConnectionTable({ connections, currentIp, adminIps, hoveredId, onHover, onSelect, onAction, onViewDetails }) {
+function ConnectionTable({ connections, currentIp, adminIps, hoveredId, onHover, onSelect, onAction, onViewDetails, loading }) {
   const ownIp = (currentIp || window.pmcSecurityConfig?.currentIp || '').trim();
   const knownAdmins = adminIps || window.pmcSecurityConfig?.adminIps || {};
   const isLocal = (ip) => ['127.0.0.1', '::1', 'localhost'].includes(ip);
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto relative min-h-[300px]">
+      {loading && (
+        <div className="absolute inset-0 z-[20] bg-white/40 backdrop-blur-[1px] flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       <table className="w-full min-w-[960px] text-left text-sm">
         <thead className="sticky top-0 bg-white/95 backdrop-blur-sm text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100">
           <tr>
@@ -958,7 +973,7 @@ export default function SecurityApp() {
   }, [filters, pageSize]);
 
   const loadRadar = async (quiet = false) => {
-    if (!quiet) setLoading(true);
+    if (!quiet) { setLoading(true); window.dispatchEvent(new Event('pmcRadarDataLoading')); }
     try {
       const offsetHours = window.pmcSecurityHistoryOffset || 0;
       const showAllDay = !!window.pmcSecurityShowAllDay;
@@ -1141,14 +1156,6 @@ export default function SecurityApp() {
 
   return (
     <main className="min-h-full bg-slate-50 p-4 text-slate-900 md:p-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-      {loading && (
-        <div className="fixed inset-0 z-[9999] bg-white/40 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white px-8 py-6 rounded-2xl shadow-2xl border border-slate-200 flex flex-col items-center space-y-4">
-            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-            <div className="text-base font-semibold text-slate-700">Haetaan tietoja...</div>
-          </div>
-        </div>
-      )}
       <div className="mx-auto max-w-[1680px]">
 
         {/* ── Header ── */}
@@ -1212,6 +1219,7 @@ export default function SecurityApp() {
 
         {/* ── Kartta ── */}
         <RadarMap
+          loading={loading}
           events={mapEvents}
           server={radar.server}
           hoveredId={hoveredId}
@@ -1234,6 +1242,7 @@ export default function SecurityApp() {
             onPageSizeChange={setPageSize}
           />
           <ConnectionTable
+            loading={loading}
             connections={paginatedConnections}
             currentIp={radar.current_ip || window.pmcSecurityConfig?.currentIp || ''}
             adminIps={radar.admin_ips || window.pmcSecurityConfig?.adminIps || {}}
