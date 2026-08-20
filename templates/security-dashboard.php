@@ -3816,7 +3816,31 @@ document.addEventListener('DOMContentLoaded', () => {
         </button>
       `;
     }
-    dateCarousel.innerHTML = html;
+    
+      dateCarousel.innerHTML = html;
+      
+      // Fetch daily counts
+      fetch((window.pmcSecurityConfig ? window.pmcSecurityConfig.ajaxUrl : '/wp-admin/admin-ajax.php') + '?action=pmc_security_daily_counts')
+        .then(res => res.json())
+        .then(res => {
+            if (res.success && res.data) {
+                const btns = dateCarousel.querySelectorAll('.tl-date-btn');
+                btns.forEach((btn, idx) => {
+                    const badge = btn.querySelector('.tl-date-badge');
+                    if (badge && res.data[idx] !== undefined) {
+                        badge.textContent = res.data[idx];
+                        if (res.data[idx] > 50) {
+                            badge.style.background = '#fee2e2';
+                            badge.style.color = '#b91c1c';
+                        } else if (res.data[idx] > 0) {
+                            badge.style.background = '#fef3c7';
+                            badge.style.color = '#b45309';
+                        }
+                    }
+                });
+            }
+        });
+
 
     // Scroll to end (today)
     setTimeout(() => {
@@ -3990,7 +4014,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (dateCarousel) {
         const btns = dateCarousel.querySelectorAll('.tl-date-btn');
         btns.forEach(b => b.setAttribute('data-active', 'false'));
-        if (btns.length) btns[btns.length - 1].setAttribute('data-active', 'true');
+        if (btns.length) btns[0].setAttribute('data-active', 'true');
         dateCarousel.scrollLeft = 0;
       }
       
