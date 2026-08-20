@@ -1059,7 +1059,7 @@ export default function SecurityApp() {
     
     const handleClearFilters = () => {
       setFilters({ status: 'all', source: 'all', score: 'all', query: '' });
-      setPagination(p => ({ ...p, page: 1 }));
+      setPage(1);
     };
     
     window.addEventListener('pmcFilterIp', handleFilterIp);
