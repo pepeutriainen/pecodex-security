@@ -1088,7 +1088,13 @@ export default function SecurityApp() {
     };
   }, []);
 
-  const filteredConnections = useMemo(() => radar.connections.filter((connection) => {
+  useEffect(() => {
+      setClientLoading(true);
+      const t = setTimeout(() => setClientLoading(false), 200);
+      return () => clearTimeout(t);
+    }, [filters, page]);
+
+    const filteredConnections = useMemo(() => radar.connections.filter((connection) => {
     const status = String(connection.statusClass || connection.status || '').toLowerCase();
     const normal = status === 'active' || status === 'tracked';
     const suspicious = status === 'warning' || status === 'suspicious';
@@ -1205,7 +1211,12 @@ export default function SecurityApp() {
         </section>
 
         {/* ── Pyynnöt / minuutti ── */}
-        <div className="mb-5 flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm">
+        <div className="relative overflow-hidden mb-5 flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm">
+            {(loading || clientLoading) && (
+              <div className="absolute inset-0 z-[10] bg-white/40 backdrop-blur-[1px] flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
           <div className="rounded-lg bg-blue-50 p-1.5">
             <Server className="h-4 w-4 text-blue-600" />
           </div>
