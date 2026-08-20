@@ -596,6 +596,8 @@ class Pecodex_Security_API {
 		$hours = isset( $_POST['hours'] ) ? max( 1, min( 72, (int) $_POST['hours'] ) ) : 24;
 		$offset_hours = isset( $_POST['offset_hours'] ) ? (int) $_POST['offset_hours'] : 0;
 		$limit = isset( $_POST['limit'] ) ? max( 10, min( 500, (int) $_POST['limit'] ) ) : 200;
+		
+		$time_range = isset( $_POST['time_range'] ) ? sanitize_text_field( $_POST['time_range'] ) : '';
 
 		global $wpdb;
 		$events = array();
@@ -618,27 +620,27 @@ class Pecodex_Security_API {
 						ARRAY_A
 					);
 				} else {
-					// Timeline mode: Fetch a window around the target time (e.g., +/- 2 hours)
-					$target_time = time() - ( $offset_hours * HOUR_IN_SECONDS );
-					$start_time  = $target_time - ( 2 * HOUR_IN_SECONDS );
-					$end_time    = $target_time + ( 2 * HOUR_IN_SECONDS );
-					
-					$since = gmdate( 'Y-m-d H:i:s', $start_time );
-					$until = gmdate( 'Y-m-d H:i:s', $end_time );
-					
-					$logs = $wpdb->get_results(
-						$wpdb->prepare(
-							"SELECT * FROM {$table} WHERE date BETWEEN %s AND %s ORDER BY date ASC LIMIT %d",
-							$since,
-							$until,
-							$limit
-						),
-						ARRAY_A
-					);
-				}
-			} else {
-				// Standard mode: Fetch all since X hours ago
-				$since = gmdate( 'Y-m-d H:i:s', time() - ( $hours * HOUR_IN_SECONDS ) );
+				if ($time_range) {
+				    $range_hours = 24;
+				    if ($time_range === '1y') $range_hours = 8760;
+				    elseif ($time_range === '6m') $range_hours = 4380;
+				    elseif ($time_range === '3m') $range_hours = 2190;
+				    elseif ($time_range === '2m') $range_hours = 1460;
+				    elseif ($time_range === '1m') $range_hours = 730;
+				    elseif ($time_range === '2w') $range_hours = 336;
+				    elseif ($time_range === 'now') $range_hours = 1;
+				    
+				    $since = gmdate( 'Y-m-d H:i:s', time() - ( $range_hours * HOUR_IN_SECONDS ) );
+				    $logs = $wpdb->get_results(
+					    $wpdb->prepare(
+						    "SELECT * FROM {$table} WHERE date > %s ORDER BY date ASC LIMIT %d",
+						    $since,
+						    $limit
+					    ),
+					    ARRAY_A
+				    );
+				} else {
+$since = gmdate( 'Y-m-d H:i:s', time() - ( $hours * HOUR_IN_SECONDS ) );
 				$logs = $wpdb->get_results(
 					$wpdb->prepare(
 						"SELECT * FROM {$table} WHERE date > %s ORDER BY date ASC LIMIT %d",
@@ -647,15 +649,19 @@ class Pecodex_Security_API {
 					),
 					ARRAY_A
 				);
-			}
 
-			$events = $this->pmc_format_map_events( $logs );
+				}
+			}
+$events = $this->pmc_format_map_events( $logs );
 		}
 
 		// --- MOCK DATA FOR RADAR TIMELINE DEMONSTRATION ---
 		// If in timeline mode, generate some mock flights to demonstrate the radar capability
 		$event_summary = array();
-		if ( $offset_hours > 0 ) {
+		if ( $offset_hours > 0 || !empty($_POST['time_range']) || !empty($_POST['show_all_day']) ) {
+			
+			$seed = $offset_hours > 0 ? $offset_hours * 1000 : (empty($_POST['time_range']) ? 9999 : crc32($_POST['time_range']));
+			mt_srand( $seed );
 			mt_srand( $offset_hours * 1000 );
 			
 			$mock_locations = array(

@@ -3820,27 +3820,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Date click handling
     dateCarousel.addEventListener('click', (e) => {
-      const btn = e.target.closest('.tl-date-btn');
-      if (!btn) return;
-      
-      // Update UI
-      dateCarousel.querySelectorAll('.tl-date-btn').forEach(b => b.setAttribute('data-active', 'false'));
-      btn.setAttribute('data-active', 'true');
-      
-      // Calculate offset based on selected date and current slider time
-      const dayOffset = parseInt(btn.getAttribute('data-offset'));
-      
-      if (!isTimelineMode) {
-        btnHistory.click();
-      }
-      
-      // In a full implementation, we'd combine dayOffset with slider hours
-      // For now, let's just trigger a fetch based on the day offset
-      const mappedSliderVal = hoursAgoToSlider(Math.min(dayOffset, 72));
-      slider.value = mappedSliderVal;
-      fetchTimelineData(dayOffset);
-      updateTimeDisplay(mappedSliderVal);
-    });
+        const btn = e.target.closest('.tl-date-btn');
+        if (!btn) return;
+        
+        // Update UI
+        dateCarousel.querySelectorAll('.tl-date-btn').forEach(b => b.setAttribute('data-active', 'false'));
+        btn.setAttribute('data-active', 'true');
+        
+        // Clear Range buttons
+        const rangeBtns = document.querySelectorAll('.tl-range-btn');
+        rangeBtns.forEach(b => {
+          b.classList.remove('active');
+          b.style.background = '#ffffff';
+          b.style.borderColor = '#cbd5e1';
+        });
+        window.pmcSecurityTimeRange = '';
+        
+        const dayOffset = parseInt(btn.getAttribute('data-offset'));
+        window.pmcSecurityHistoryOffset = dayOffset;
+        
+        if (!isTimelineMode) {
+          btnHistory.click();
+        }
+        
+        if (dayOffset > 72) {
+            slider.disabled = true;
+            slider.style.opacity = '0.5';
+            timeDisplay.textContent = btn.querySelector('.tl-date-val').textContent.toUpperCase();
+        } else {
+            slider.disabled = false;
+            slider.style.opacity = '1';
+            const mappedSliderVal = hoursAgoToSlider(dayOffset);
+            slider.value = mappedSliderVal;
+            updateTimeDisplay(mappedSliderVal);
+        }
+        
+        window.dispatchEvent(new Event('pmcTimeRangeChanged'));
+        fetchTimelineData(dayOffset, '');
+      });
 
     // Left / Right Scroll Buttons
     const btnLeft = document.getElementById('tl-nav-left');
@@ -3862,19 +3879,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (monthToggle && monthDropdown && monthList) {
       // Build past 12 months
       let monthHtml = '';
-      for (let i = 0; i < 12; i++) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const mName = months[d.getMonth()];
-        const yName = d.getFullYear();
-        // Just for demo purposes, picking an offset based on month
-        const offset = i * 30 * 24; 
-        monthHtml += `
-          <button class="tl-month-option" data-offset="${offset}" style="background:transparent; border:none; text-align:left; padding:6px 12px; font-size:12px; color:#334155; cursor:pointer; border-radius:4px; transition:0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
-            ${mName} ${yName}
-          </button>
-        `;
-      }
-      monthList.innerHTML = monthHtml;
+        for (let i = 0; i < 12; i++) {
+          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          const mName = months[d.getMonth()];
+          const yName = d.getFullYear();
+          const offset = i * 30 * 24; 
+          const isCurrent = (i === 0);
+          monthHtml += `
+            <button class="tl-month-option ${isCurrent ? 'active-month' : ''}" data-offset="${offset}" style="background:${isCurrent ? '#f1f5f9' : 'transparent'}; font-weight:${isCurrent ? '700' : '400'}; border:none; text-align:left; padding:6px 12px; font-size:12px; color:#334155; cursor:pointer; border-radius:4px; transition:0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="if(!this.classList.contains('active-month')) this.style.background='transparent'">
+              ${mName} ${yName}
+            </button>
+          `;
+        }
+        monthList.innerHTML = monthHtml;
 
       monthToggle.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -3882,16 +3899,45 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       monthList.addEventListener('click', (e) => {
-        const option = e.target.closest('.tl-month-option');
-        if (option) {
-          monthDropdown.style.display = 'none';
-          if (!isTimelineMode) btnHistory.click();
-          const offset = parseInt(option.getAttribute('data-offset'));
-          slider.value = Math.min(offset, slider.max);
-          fetchTimelineData(offset);
-          updateTimeDisplay(offset);
-        }
-      });
+          const option = e.target.closest('.tl-month-option');
+          if (option) {
+            monthDropdown.style.display = 'none';
+            
+            // Clear Range buttons
+            const rangeBtns = document.querySelectorAll('.tl-range-btn');
+            rangeBtns.forEach(b => {
+              b.classList.remove('active');
+              b.style.background = '#ffffff';
+              b.style.borderColor = '#cbd5e1';
+            });
+            window.pmcSecurityTimeRange = '';
+            
+            // Clear date highlights
+            if (dateCarousel) dateCarousel.querySelectorAll('.tl-date-btn').forEach(b => b.setAttribute('data-active', 'false'));
+            
+            // Highlight month
+            monthList.querySelectorAll('.tl-month-option').forEach(b => {
+               b.classList.remove('active-month');
+               b.style.background = 'transparent';
+               b.style.fontWeight = '400';
+            });
+            option.classList.add('active-month');
+            option.style.background = '#f1f5f9';
+            option.style.fontWeight = '700';
+
+            if (!isTimelineMode) btnHistory.click();
+            
+            const offset = parseInt(option.getAttribute('data-offset'));
+            window.pmcSecurityHistoryOffset = offset;
+            
+            slider.disabled = true;
+            slider.style.opacity = '0.5';
+            timeDisplay.textContent = option.textContent.trim().toUpperCase();
+            
+            window.dispatchEvent(new Event('pmcTimeRangeChanged'));
+            fetchTimelineData(offset, '');
+          }
+        });
 
       // Close dropdown when clicking outside
       document.addEventListener('click', (e) => {
@@ -4036,55 +4082,71 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const rangeBtns = document.querySelectorAll('.tl-range-btn');
-  rangeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.disabled) return;
-      rangeBtns.forEach(b => {
-        b.classList.remove('active');
-        b.style.background = '#ffffff';
-        b.style.borderColor = '#cbd5e1';
+    rangeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        
+        // 1. Clear Range buttons
+        rangeBtns.forEach(b => {
+          b.classList.remove('active');
+          b.style.background = '#ffffff';
+          b.style.borderColor = '#cbd5e1';
+        });
+        btn.classList.add('active');
+        btn.style.background = '#f1f5f9';
+        btn.style.borderColor = '#94a3b8';
+        
+        // 2. Clear Date & Month highlights
+        if (dateCarousel) dateCarousel.querySelectorAll('.tl-date-btn').forEach(b => b.setAttribute('data-active', 'false'));
+        if (monthList) {
+           monthList.querySelectorAll('.tl-month-option').forEach(b => {
+             b.classList.remove('active-month');
+             b.style.background = 'transparent';
+             b.style.fontWeight = '400';
+           });
+        }
+        
+        const range = btn.getAttribute('data-range');
+        window.pmcSecurityTimeRange = range;
+        window.pmcSecurityHistoryOffset = 0; // Clear offset when using range
+        
+        if (typeof stopPlayback === 'function') stopPlayback();
+        if (typeof isTimelineMode !== 'undefined' && !isTimelineMode) {
+          if (typeof btnHistory !== 'undefined') btnHistory.classList.add('active');
+          if (typeof btnLive !== 'undefined') btnLive.classList.remove('active');
+          isTimelineMode = true;
+          window.pmcSecurityHistoryPaused = true;
+        }
+        if (typeof timeDisplay !== 'undefined') {
+          let label = 'KOKO PÄIVÄ';
+          if (range === '1y') label = 'VUOSI';
+          if (range === '6m') label = '6 KK';
+          if (range === '3m') label = '3 KK';
+          if (range === '2m') label = '2 KK';
+          if (range === '1m') label = '1 KK';
+          if (range === '2w') label = '2 VK';
+          if (range === 'now') label = 'NYT';
+          timeDisplay.textContent = label;
+        }
+        
+        // Disable slider visually when using range
+        slider.disabled = true;
+        slider.style.opacity = '0.5';
+        
+        window.dispatchEvent(new Event('pmcTimeRangeChanged'));
+        window.dispatchEvent(new Event('pmcClearFilters'));
+        if (typeof window.refreshSecurityMap === 'function') window.refreshSecurityMap();
+        if (typeof fetchTimelineData === 'function') fetchTimelineData(0, range);
       });
-      btn.classList.add('active');
-      btn.style.background = '#f1f5f9';
-      btn.style.borderColor = '#94a3b8';
-      
-      const range = btn.getAttribute('data-range');
-      window.pmcSecurityTimeRange = range;
-      window.dispatchEvent(new Event('pmcTimeRangeChanged'));
-      if (typeof stopPlayback === 'function') stopPlayback();
-      if (typeof isTimelineMode !== 'undefined' && !isTimelineMode) {
-        if (typeof btnHistory !== 'undefined') btnHistory.classList.add('active');
-        if (typeof btnLive !== 'undefined') btnLive.classList.remove('active');
-        isTimelineMode = true;
-        window.pmcSecurityHistoryPaused = true;
-      }
-      if (typeof timeDisplay !== 'undefined') {
-        let label = 'KOKO PÄIVÄ';
-        if (range === '1y') label = 'VUOSI';
-        if (range === '6m') label = '6 KK';
-        if (range === '3m') label = '3 KK';
-        if (range === '2m') label = '2 KK';
-        if (range === '1m') label = '1 KK';
-        if (range === '2w') label = '2 VK';
-        if (range === 'now') label = 'NYT';
-        timeDisplay.textContent = label;
-      }
-      window.dispatchEvent(new Event('pmcClearFilters'));
-      if (typeof window.refreshSecurityMap === 'function') window.refreshSecurityMap();
-
     });
-  });
   const clearFocusBtn = document.getElementById('tl-clear-focus-btn');
   
   if (clearFocusBtn) {
     clearFocusBtn.addEventListener('click', () => {
       // Tyhjennä VAIN IP-suodatin (focus), jotta muut valikot (korkea riski yms) pysyvät
       window.dispatchEvent(new CustomEvent('pmcFilterIp', { detail: { ip: '' } }));
-    });
-  }
-  
-  
-  }
+      });
+    }
 
   speedBtns.forEach(btn => {
     btn.addEventListener('click', () => {

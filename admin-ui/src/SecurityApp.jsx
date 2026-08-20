@@ -964,9 +964,10 @@ export default function SecurityApp() {
       const showAllDay = !!window.pmcSecurityShowAllDay;
       const actionName = (offsetHours > 0 || showAllDay) ? 'pmc_security_timelapse_data' : 'pmc_security_live_map_data';
       const requestData = {
-        offset_hours: offsetHours,
-        show_all_day: showAllDay ? 1 : 0
-      };
+          offset_hours: offsetHours,
+          show_all_day: showAllDay ? 1 : 0,
+          time_range: window.pmcSecurityTimeRange || ''
+        };
       
       const data = await request(actionName, requestData);
       setRadar({ ...emptyRadar, ...data, stats: { ...emptyRadar.stats, ...(data.stats || {}) } });
