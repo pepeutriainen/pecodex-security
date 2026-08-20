@@ -1510,7 +1510,7 @@ function psOpenModule(moduleId) {
 		if (mapArea) {
 			mapArea.style.display = 'block';
 			if (typeof window.refreshSecurityMap === 'function') {
-				window.refreshSecurityMap();
+				window.refreshSecurityMap(false);
 			}
 		}
 		document.querySelector('.sidebar-nav a:first-child').classList.add('active');
@@ -1782,7 +1782,7 @@ window.refreshSecurityMap = function () {
 };
 
 map.whenReady(() => {
-  window.refreshSecurityMap();
+  window.refreshSecurityMap(false);
 });
 // Redraw lines on map move so they track geographic positions
 map.on('move', drawAttackLines);
@@ -1876,7 +1876,7 @@ function toggleSidebar() {
   const expanded = !sb.classList.contains('collapsed');
   sb.classList.toggle('collapsed', expanded);
   icon.textContent = expanded ? 'menu' : 'menu_open';
-  setTimeout(() => { if (typeof window.refreshSecurityMap === 'function') window.refreshSecurityMap(); }, 300);
+  setTimeout(() => { if (typeof window.refreshSecurityMap === 'function') window.refreshSecurityMap(false); }, 300);
 }
 window.toggleSidebar = toggleSidebar;
 
@@ -3974,7 +3974,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.pmcSecurityHistoryPaused = true;
       
       // Fetch data
-      fetchTimelineData(sliderToHoursAgo(slider.value));
+      fetchTimelineData(sliderToHoursAgo(slider.value), true);
     } else {
       btnLive.classList.add('active');
       btnHistory.classList.remove('active');
@@ -3994,7 +3994,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.pmcSecurityHistoryPaused = false;
       window.pmcSecurityHistoryOffset = 0;
       if (typeof window.refreshSecurityMap === 'function') {
-        window.refreshSecurityMap();
+        window.refreshSecurityMap(false);
       }
     }
   }
@@ -4057,7 +4057,7 @@ document.addEventListener('DOMContentLoaded', () => {
         slider.value = currentVal;
         updateTimeDisplay(currentVal);
         const hoursAgo = sliderToHoursAgo(currentVal);
-        fetchTimelineData(hoursAgo);
+        fetchTimelineData(hoursAgo, true);
         
         // Auto-highlight matching event if present
         const closest = findClosestEvent(currentVal);
@@ -4135,7 +4135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         window.dispatchEvent(new Event('pmcTimeRangeChanged'));
         window.dispatchEvent(new Event('pmcClearFilters'));
-        if (typeof window.refreshSecurityMap === 'function') window.refreshSecurityMap();
+        if (typeof window.refreshSecurityMap === 'function') window.refreshSecurityMap(false);
         if (typeof fetchTimelineData === 'function') fetchTimelineData(0, range);
       });
     });
@@ -4199,16 +4199,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!isTimelineMode && finalHoursAgo > 0) {
       setMode('history');
     } else if (isTimelineMode) {
-      fetchTimelineData(finalHoursAgo);
+      fetchTimelineData(finalHoursAgo, true);
     }
   });
   
-  function fetchTimelineData(hoursAgo) {
-    window.pmcSecurityHistoryOffset = hoursAgo;
-    if (typeof window.refreshSecurityMap === 'function') {
-      window.refreshSecurityMap();
+  function fetchTimelineData(hoursAgo, quiet = true) {
+      window.pmcSecurityHistoryOffset = hoursAgo;
+      if (typeof window.refreshSecurityMap === 'function') {
+        window.refreshSecurityMap(quiet);
+      }
     }
-  }
 
   // Draw markers on timeline track (Left = Past, Right = Now)
   window.addEventListener('pmcRadarDataLoaded', (e) => {

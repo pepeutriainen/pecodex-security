@@ -1141,6 +1141,14 @@ export default function SecurityApp() {
 
   return (
     <main className="min-h-full bg-slate-50 p-4 text-slate-900 md:p-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+      {loading && (
+        <div className="fixed inset-0 z-[9999] bg-white/40 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white px-8 py-6 rounded-2xl shadow-2xl border border-slate-200 flex flex-col items-center space-y-4">
+            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="text-base font-semibold text-slate-700">Haetaan tietoja...</div>
+          </div>
+        </div>
+      )}
       <div className="mx-auto max-w-[1680px]">
 
         {/* ── Header ── */}
