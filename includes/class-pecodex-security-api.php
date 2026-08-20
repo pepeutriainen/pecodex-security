@@ -352,258 +352,6 @@ class Pecodex_Security_API {
 
 		if ( $this->pmc_has_lockout_tables() ) {
 			$table = $wpdb->prefix . 'pmc_lockout_log';
-			$total_items = $wpdb->get_var("SELECT COUNT(id) FROM {$table} {$time_clause}");
-			$total_pages = ceil($total_items / $per_page);
-			if ( $total_pages < 1 ) $total_pages = 1;
-			$offset = ($page - 1) * $per_page;
-			$logs = $wpdb->get_results( $wpdb->prepare("SELECT * FROM {$table} {$time_clause} ORDER BY id DESC LIMIT %d OFFSET %d", $per_page, $offset), ARRAY_A );
-			
-			// Hae oikea agregoitu data kaaviolle jos taulussa on rivejä tälle aikavälille
-			if (!empty($logs)) {
-				$chart_data = array('labels' => array(), 'failed' => array(), 'success' => array());
-				if ($timeframe === '24h') {
-					$agg = $wpdb->get_results("SELECT DATE_FORMAT(date, '%H:00') as label, SUM(IF(type='auth_fail', 1, 0)) as failed FROM {$table} {$time_clause} GROUP BY HOUR(date) ORDER BY date ASC", ARRAY_A);
-				} else {
-					$agg = $wpdb->get_results("SELECT DATE_FORMAT(date, '%m-%d') as label, SUM(IF(type='auth_fail', 1, 0)) as failed FROM {$table} {$time_clause} GROUP BY DATE(date) ORDER BY date ASC", ARRAY_A);
-				}
-				if ($agg) {
-					foreach ($agg as $row) {
-						$chart_data['labels'][] = $row['label'];
-						$chart_data['failed'][] = (int) $row['failed'];
-						$chart_data['success'][] = rand(5, 20); // Simulated successful logins
-					}
-				}
-			}
-		}
-
-		// Simulated Data Fallback (for UI testing if DB is empty)
-		if (empty($logs)) {
-			$chart_data = array('labels' => array(), 'failed' => array(), 'success' => array());
-			if ($timeframe === '24h') {
-				for ($i=0; $i<24; $i++) {
-					$chart_data['labels'][] = str_pad($i, 2, '0', STR_PAD_LEFT) . ':00';
-					$chart_data['failed'][] = rand(0, 15);
-					$chart_data['success'][] = rand(5, 30);
-				}
-			} else {
-				$days = $timeframe === '7d' ? 7 : 30;
-				for ($i=$days; $i>=0; $i--) {
-					$chart_data['labels'][] = date('m-d', strtotime("-{$i} days"));
-					$chart_data['failed'][] = rand(5, 40);
-					$chart_data['success'][] = rand(20, 100);
-				}
-			}
-			$logs = array(
-				array('id' => 1, 'date' => gmdate('Y-m-d H:i:s'), 'type' => 'auth_fail', 'ip' => '192.168.1.100', 'country_iso_code' => 'FI'),
-				array('id' => 2, 'date' => gmdate('Y-m-d H:i:s', time() - 3600), 'type' => 'auth_lock', 'ip' => '10.0.0.50', 'country_iso_code' => 'US'),
-				array('id' => 3, 'date' => gmdate('Y-m-d H:i:s', time() - 7200), 'type' => 'auth_fail', 'ip' => '172.16.0.1', 'country_iso_code' => 'CN'),
-			);
-		}
-
-		$firewall = get_option( 'pmc_firewall_settings', array('login' => array('attempt' => 5)) );
-		$current_attempts = isset($firewall['login']['attempt']) ? (int) $firewall['login']['attempt'] : 5;
-
-		wp_send_json_success( array(
-			'items'            => $logs,
-			'total_pages'      => $total_pages,
-			'current_page'     => $page,
-			'chart_data'       => $chart_data,
-			'current_attempts' => $current_attempts
-		) );
-	}
-
-	public function ajax_get_locked_ips() {
-		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
-		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
-		
-		wp_send_json_success( $this->get_banned_ips() );
-	}
-
-	private function get_banned_ips() {
-		global $wpdb;
-		$ips = array();
-		if ( $this->pmc_has_lockout_tables() ) {
-			$table = $wpdb->prefix . 'pmc_lockout';
-			$ips = $wpdb->get_results( $wpdb->prepare( "SELECT ip, status, release_time FROM {$table} WHERE status='blocked' AND release_time > %d", time() ), ARRAY_A );
-		}
-		
-		$manual_bans = get_option( 'pmc_firewall_banned_ips', array() );
-		if ( is_array( $manual_bans ) ) {
-			foreach ( $manual_bans as $rule ) {
-				$ips[] = array(
-					'ip' => $rule,
-					'status' => 'manual',
-					'release_time' => 0
-				);
-			}
-		}
-		
-		return $ips;
-	}
-
-	private function validate_ip_rule( $rule ) {
-		if ( empty( $rule ) ) return false;
-		
-		// Exact IP
-		if ( filter_var( $rule, FILTER_VALIDATE_IP ) ) {
-			return true;
-		}
-		
-		// Wildcard
-		if ( strpos( $rule, '*' ) !== false ) {
-			// Basic check for wildcard format (e.g. 192.168.*)
-			return preg_match( '/^[0-9a-fA-F:\.\*]+$/', $rule );
-		}
-		
-		// CIDR
-		if ( strpos( $rule, '/' ) !== false ) {
-			list( $ip, $mask ) = explode( '/', $rule, 2 );
-			if ( filter_var( $ip, FILTER_VALIDATE_IP ) && is_numeric( $mask ) && $mask >= 0 && $mask <= 128 ) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
-	public function ajax_ban_ip() {
-		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
-		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
-
-		$ip = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
-		if ( ! $this->validate_ip_rule( $ip ) ) {
-			wp_send_json_error( 'Virheellinen IP-osoite tai CIDR-alue.' );
-		}
-
-		$current_ip = class_exists( 'Pecodex_Firewall' ) ? Pecodex_Firewall::get_client_ip() : ( isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '' );
-		if ( $ip === $current_ip || in_array( $ip, array( '127.0.0.1', '::1', 'localhost' ), true ) ) {
-			wp_send_json_error( 'Et voi estää omaa IP-osoitettasi!' );
-		}
-
-		$admin_ips = (array) get_option( 'pmc_admin_ips', array() );
-		if ( ! empty( $admin_ips[ $ip ] ) || in_array( $ip, array_keys( $admin_ips ), true ) ) {
-			$admin_name = isset( $admin_ips[ $ip ]['user'] ) ? $admin_ips[ $ip ]['user'] : 'Ylläpitäjä';
-			wp_send_json_error( "Tämä IP kuuluu ylläpitäjälle ({$admin_name}). Ylläpitäjän IP-osoitteen estäminen on suojattu ja estetty." );
-		}
-
-		$banned = get_option( 'pmc_firewall_banned_ips', array() );
-		if ( ! in_array( $ip, $banned, true ) ) {
-			$banned[] = $ip;
-			update_option( 'pmc_firewall_banned_ips', $banned, false );
-		}
-
-		$this->pmc_append_audit_log( 'ban_ip', "IP/Verkko estetty manuaalisesti: {$ip}", 'critical' );
-
-		wp_send_json_success( array( 'message' => 'Banned', 'ip' => $ip ) );
-	}
-
-	public function ajax_allow_ip() {
-		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
-		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
-
-		$ip = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
-		if ( ! $this->validate_ip_rule( $ip ) ) wp_send_json_error( 'Invalid IP or CIDR range' );
-
-		$allowed = get_option( 'pmc_firewall_allowed_ips', array() );
-		if ( ! in_array( $ip, $allowed, true ) ) {
-			$allowed[] = $ip;
-			update_option( 'pmc_firewall_allowed_ips', $allowed, false );
-		}
-		
-		$this->pmc_append_audit_log( 'allow_ip', "IP sallittu palomuurista: {$ip}", 'info' );
-		wp_send_json_success( array( 'message' => 'Allowed', 'ip' => $ip ) );
-	}
-
-	public function ajax_remove_allowed_ip() {
-		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
-		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
-
-		$ip = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
-
-		$allowed = get_option( 'pmc_firewall_allowed_ips', array() );
-		$allowed = array_filter( $allowed, function( $item ) use ( $ip ) {
-			return $item !== $ip;
-		});
-		
-		update_option( 'pmc_firewall_allowed_ips', array_values( $allowed ), false );
-		$this->pmc_append_audit_log( 'remove_allowed_ip', "IP poistettu sallituista: {$ip}", 'info' );
-		wp_send_json_success( array( 'message' => 'Removed', 'ip' => $ip ) );
-	}
-
-	public function ajax_track_ip() {
-		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error();
-		}
-
-		$ip     = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
-		$action = isset( $_POST['track_action'] ) ? sanitize_key( wp_unslash( $_POST['track_action'] ) ) : 'add';
-		if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-			wp_send_json_error( 'Invalid IP' );
-		}
-
-		$tracked = get_option( 'pmc_tracked_ips', array() );
-		if ( ! is_array( $tracked ) ) {
-			$tracked = array();
-		}
-
-		if ( 'remove' === $action ) {
-			unset( $tracked[ $ip ] );
-			$this->pmc_append_audit_log( 'untrack_ip', "IP seuranta poistettu: {$ip}", 'info' );
-		} else {
-			$tracked[ $ip ] = array(
-				'added'   => current_time( 'mysql' ),
-				'added_by' => wp_get_current_user()->user_login,
-			);
-			$this->pmc_append_audit_log( 'track_ip', "IP otettu seurantaan: {$ip}", 'warning' );
-		}
-
-		update_option( 'pmc_tracked_ips', $tracked, false );
-
-		wp_send_json_success( array(
-			'ip'      => $ip,
-			'tracked' => 'remove' !== $action,
-			'list'    => array_keys( $tracked ),
-		) );
-	}
-
-	public function ajax_terminate_ip() {
-		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error();
-		}
-
-		$ip = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
-		if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-			wp_send_json_error( 'Invalid IP' );
-		}
-
-		$this->pmc_block_ip( $ip, YEAR_IN_SECONDS, 'terminated' );
-		$this->pmc_revoke_sessions_for_ip( $ip );
-		$this->pmc_append_audit_log( 'terminate_ip', "Yhteys terminioitu ja IP estetty: {$ip}", 'critical' );
-
-		wp_send_json_success( array(
-			'message' => 'Terminated',
-			'ip'      => $ip,
-		) );
-	}
-
-	public function ajax_timelapse_data() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error();
-		}
-
-		$hours = isset( $_POST['hours'] ) ? max( 1, min( 72, (int) $_POST['hours'] ) ) : 24;
-		$offset_hours = isset( $_POST['offset_hours'] ) ? (int) $_POST['offset_hours'] : 0;
-		$limit = isset( $_POST['limit'] ) ? max( 10, min( 500, (int) $_POST['limit'] ) ) : 200;
-		
-		$time_range = isset( $_POST['time_range'] ) ? sanitize_text_field( $_POST['time_range'] ) : '';
-
-		global $wpdb;
-		$events = array();
-
-		if ( $this->pmc_has_lockout_tables() ) {
-			$table = $wpdb->prefix . 'pmc_lockout_log';
 			
 			$show_all_day = ! empty( $_POST['show_all_day'] );
 			
@@ -620,27 +368,46 @@ class Pecodex_Security_API {
 						ARRAY_A
 					);
 				} else {
-				if ($time_range) {
-				    $range_hours = 24;
-				    if ($time_range === '1y') $range_hours = 8760;
-				    elseif ($time_range === '6m') $range_hours = 4380;
-				    elseif ($time_range === '3m') $range_hours = 2190;
-				    elseif ($time_range === '2m') $range_hours = 1460;
-				    elseif ($time_range === '1m') $range_hours = 730;
-				    elseif ($time_range === '2w') $range_hours = 336;
-				    elseif ($time_range === 'now') $range_hours = 1;
-				    
-				    $since = gmdate( 'Y-m-d H:i:s', time() - ( $range_hours * HOUR_IN_SECONDS ) );
-				    $logs = $wpdb->get_results(
-					    $wpdb->prepare(
-						    "SELECT * FROM {$table} WHERE date > %s ORDER BY date ASC LIMIT %d",
-						    $since,
-						    $limit
-					    ),
-					    ARRAY_A
-				    );
-				} else {
-$since = gmdate( 'Y-m-d H:i:s', time() - ( $hours * HOUR_IN_SECONDS ) );
+					// Timeline mode: Fetch a window around the target time (e.g., +/- 2 hours)
+					$target_time = time() - ( $offset_hours * HOUR_IN_SECONDS );
+					$start_time  = $target_time - ( 2 * HOUR_IN_SECONDS );
+					$end_time    = $target_time + ( 2 * HOUR_IN_SECONDS );
+					
+					$since = gmdate( 'Y-m-d H:i:s', $start_time );
+					$until = gmdate( 'Y-m-d H:i:s', $end_time );
+					
+					$logs = $wpdb->get_results(
+						$wpdb->prepare(
+							"SELECT * FROM {$table} WHERE date BETWEEN %s AND %s ORDER BY date ASC LIMIT %d",
+							$since,
+							$until,
+							$limit
+						),
+						ARRAY_A
+					);
+				}
+			} elseif ($time_range) {
+			    $range_hours = 24;
+			    if ($time_range === '1y') $range_hours = 8760;
+			    elseif ($time_range === '6m') $range_hours = 4380;
+			    elseif ($time_range === '3m') $range_hours = 2190;
+			    elseif ($time_range === '2m') $range_hours = 1460;
+			    elseif ($time_range === '1m') $range_hours = 730;
+			    elseif ($time_range === '2w') $range_hours = 336;
+			    elseif ($time_range === 'now') $range_hours = 1;
+			    
+			    $since = gmdate( 'Y-m-d H:i:s', time() - ( $range_hours * HOUR_IN_SECONDS ) );
+			    $logs = $wpdb->get_results(
+				    $wpdb->prepare(
+					    "SELECT * FROM {$table} WHERE date > %s ORDER BY date ASC LIMIT %d",
+					    $since,
+					    $limit
+				    ),
+				    ARRAY_A
+			    );
+			} else {
+				// Standard mode: Fetch all since X hours ago
+				$since = gmdate( 'Y-m-d H:i:s', time() - ( $hours * HOUR_IN_SECONDS ) );
 				$logs = $wpdb->get_results(
 					$wpdb->prepare(
 						"SELECT * FROM {$table} WHERE date > %s ORDER BY date ASC LIMIT %d",
@@ -649,10 +416,9 @@ $since = gmdate( 'Y-m-d H:i:s', time() - ( $hours * HOUR_IN_SECONDS ) );
 					),
 					ARRAY_A
 				);
-
-				}
 			}
-$events = $this->pmc_format_map_events( $logs );
+
+			$events = $this->pmc_format_map_events( $logs );
 		}
 
 		// --- MOCK DATA FOR RADAR TIMELINE DEMONSTRATION ---
@@ -702,7 +468,20 @@ $events = $this->pmc_format_map_events( $logs );
 				
 				// Simulate event lifecycle (0-72 hours)
 				// E.g., event is born at hour 50, dies at hour 40.
-				$born_hour = mt_rand( 10, 72 );
+				$time_range = isset($_POST['time_range']) ? $_POST['time_range'] : '';
+				if ($time_range) {
+				    $r_hours = 24;
+				    if ($time_range === '1y') $r_hours = 8760;
+				    elseif ($time_range === '6m') $r_hours = 4380;
+				    elseif ($time_range === '3m') $r_hours = 2190;
+				    elseif ($time_range === '2m') $r_hours = 1460;
+				    elseif ($time_range === '1m') $r_hours = 730;
+				    elseif ($time_range === '2w') $r_hours = 336;
+				    elseif ($time_range === 'now') $r_hours = 1;
+				    $born_hour = mt_rand(1, $r_hours);
+				} else {
+				    $born_hour = mt_rand( 10, 72 );
+				}
 				$lifespan = mt_rand( 2, 12 );
 				$die_hour = $born_hour - $lifespan;
 				
