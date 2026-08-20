@@ -1162,7 +1162,30 @@ export default function SecurityApp() {
   };
 
   const selectIp = (ip) => { setFilters((current) => ({ ...current, query: ip })); setPage(1); };
-  const stats = radar.stats;
+    const stats = useMemo(() => {
+    let total = 0, normal = 0, suspicious = 0, blocked = 0;
+    radar.connections.forEach(connection => {
+      if (filters.source !== 'all' && connection.source !== filters.source) return;
+      if (filters.score === 'high' && Number(connection.threat_score || 0) < 60) return;
+      if (filters.score === 'low' && Number(connection.threat_score || 0) >= 60) return;
+      const matchSearch = [connection.ip, connection.country, connection.city, connection.endpoint, connection.type, connection.attack]
+        .join(' ').toLowerCase().includes(filters.query.trim().toLowerCase());
+      if (!matchSearch) return;
+
+      total++;
+      const s = String(connection.statusClass || connection.status || '').toLowerCase();
+      if (s === 'critical' || s === 'blocked') blocked++;
+      else if (s === 'warning' || s === 'suspicious') suspicious++;
+      else normal++;
+    });
+    return {
+      total_connections: total,
+      normal_connections: normal,
+      suspicious_connections: suspicious,
+      blocked_connections: blocked,
+      request_rate: radar.stats?.request_rate || 0
+    };
+  }, [radar.connections, radar.stats, filters.source, filters.score, filters.query]);
 
   return (
     <main className="min-h-full bg-slate-50 p-4 text-slate-900 md:p-6" style={{ fontFamily: 'Inter, sans-serif' }}>
