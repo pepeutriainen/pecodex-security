@@ -4051,6 +4051,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const range = btn.getAttribute('data-range');
       window.pmcSecurityTimeRange = range;
       window.dispatchEvent(new Event('pmcTimeRangeChanged'));
+      if (typeof stopPlayback === 'function') stopPlayback();
+      if (typeof isTimelineMode !== 'undefined' && !isTimelineMode) {
+        if (typeof btnHistory !== 'undefined') btnHistory.classList.add('active');
+        if (typeof btnLive !== 'undefined') btnLive.classList.remove('active');
+        isTimelineMode = true;
+        window.pmcSecurityHistoryPaused = true;
+      }
+      if (typeof timeDisplay !== 'undefined') {
+        let label = 'KOKO PÄIVÄ';
+        if (range === '1y') label = 'VUOSI';
+        if (range === '6m') label = '6 KK';
+        if (range === '3m') label = '3 KK';
+        if (range === '2m') label = '2 KK';
+        if (range === '1m') label = '1 KK';
+        if (range === '2w') label = '2 VK';
+        if (range === 'now') label = 'NYT';
+        timeDisplay.textContent = label;
+      }
+      window.dispatchEvent(new Event('pmcClearFilters'));
+      if (typeof window.refreshSecurityMap === 'function') window.refreshSecurityMap();
+
     });
   });
   const clearFocusBtn = document.getElementById('tl-clear-focus-btn');
@@ -4062,37 +4083,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  if (allDayBtn) {
-    allDayBtn.addEventListener('click', () => {
-      stopPlayback();
-      if (!isTimelineMode) {
-        btnHistory.classList.add('active');
-        btnLive.classList.remove('active');
-        isTimelineMode = true;
-        window.pmcSecurityHistoryPaused = true;
-      }
-      timeDisplay.textContent = 'KOKO PÄIVÄ';
-      allDayBtn.style.background = '#b80048';
-      allDayBtn.style.color = '#ffffff';
-      allDayBtn.style.borderColor = '#b80048';
-
-      // Pyydetään taustajärjestelmältä kaikki 24h tapahtumat kerralla
-      window.pmcSecurityHistoryOffset = 24;
-      window.pmcSecurityShowAllDay = true;
-      
-      // Clear all filters including focus
-      window.dispatchEvent(new Event('pmcClearFilters'));
-
-      if (typeof window.refreshSecurityMap === 'function') {
-        window.refreshSecurityMap();
-      }
-
-      setTimeout(() => {
-        allDayBtn.style.background = '#ffffff';
-        allDayBtn.style.color = '#334155';
-        allDayBtn.style.borderColor = '#cbd5e1';
-      }, 1500);
-    });
+  
   }
 
   speedBtns.forEach(btn => {
