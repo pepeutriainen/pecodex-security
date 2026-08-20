@@ -1221,10 +1221,16 @@ body.admin-bar {
               <span class="material-symbols-outlined" style="font-size: 15px;">close</span>
               Poista focus
             </button>
-            <button id="tl-all-day-btn" style="margin-left: 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s;" onmouseover="if(!this.disabled) this.style.background='#f1f5f9'" onmouseout="if(!this.disabled) this.style.background='#ffffff'">
-              <span class="material-symbols-outlined" style="font-size: 15px; color: #b80048;">layers</span>
-              Kaikki päivän tapahtumat
-            </button>
+            <div class="tl-time-range-group" style="display: flex; gap: 4px; margin-left: 12px; overflow-x: auto; scrollbar-width: none;">
+              <button class="tl-range-btn active" data-range="all" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s;" onmouseover="if(!this.classList.contains('active')) this.style.background='#f1f5f9'" onmouseout="if(!this.classList.contains('active')) this.style.background='#ffffff'">Kaikki</button>
+              <button class="tl-range-btn" data-range="1y" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; transition: 0.2s;">Vuosi</button>
+              <button class="tl-range-btn" data-range="6m" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; transition: 0.2s;">6kk</button>
+              <button class="tl-range-btn" data-range="3m" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; transition: 0.2s;">3kk</button>
+              <button class="tl-range-btn" data-range="2m" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; transition: 0.2s;">2kk</button>
+              <button class="tl-range-btn" data-range="1m" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; transition: 0.2s;">1kk</button>
+              <button class="tl-range-btn" data-range="2w" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; transition: 0.2s;">2vk</button>
+              <button class="tl-range-btn" data-range="now" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; transition: 0.2s;">Nyt</button>
+            </div>
           </div>
           <div class="tl-mode-group">
             <button class="tl-mode-btn active" id="tl-mode-live">LIVE</button>
@@ -4029,7 +4035,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const allDayBtn = document.getElementById('tl-all-day-btn');
+  const rangeBtns = document.querySelectorAll('.tl-range-btn');
+  rangeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      rangeBtns.forEach(b => {
+        b.classList.remove('active');
+        b.style.background = '#ffffff';
+        b.style.borderColor = '#cbd5e1';
+      });
+      btn.classList.add('active');
+      btn.style.background = '#f1f5f9';
+      btn.style.borderColor = '#94a3b8';
+      
+      const range = btn.getAttribute('data-range');
+      window.pmcSecurityTimeRange = range;
+      window.dispatchEvent(new Event('pmcTimeRangeChanged'));
+    });
+  });
   const clearFocusBtn = document.getElementById('tl-clear-focus-btn');
   
   if (clearFocusBtn) {
