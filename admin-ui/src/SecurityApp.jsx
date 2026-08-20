@@ -975,7 +975,7 @@ export default function SecurityApp() {
   }, [filters, pageSize]);
 
   const loadRadar = async (quiet = false) => {
-    if (!quiet) { setLoading(true); window.dispatchEvent(new Event('pmcRadarDataLoading')); }
+    if (!quiet) { setLoading(true); setPage(1); window.dispatchEvent(new Event('pmcRadarDataLoading')); }
     try {
       const offsetHours = window.pmcSecurityHistoryOffset || 0;
       const showAllDay = !!window.pmcSecurityShowAllDay;
