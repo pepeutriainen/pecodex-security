@@ -444,11 +444,8 @@ class Pecodex_Security_API {
 			);
 
 			// Luodaan reilusti enemmän dataa, jotta paginointia on helpompi testata
-			$count = 400; // Aina 400 mock-tapahtumaa testaukseen
 			$base_time = time() - ( $offset_hours * 3600 );
-
-
-			$num_events = 25; // Keep a constant number of possible events to simulate lifecycles
+			$num_events = 200; // Generate plenty of events for range filtering
 			$attacks = array(
                 'Salasanan murtamisyritys', 'SQL-injektio', 'XSS-yritys', 'Porttiskannaus', 
                 'Bottiverkkoliikenne', 'Polun ohitusyritys', 'Onnistunut kirjautuminen', 'DDoS-hyökkäys',
