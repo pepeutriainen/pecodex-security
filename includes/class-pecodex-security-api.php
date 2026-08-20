@@ -2023,7 +2023,7 @@ class Pecodex_Security_API {
 
 		wp_send_json_success( array(
 			'events'         => $events,
-            'connections'    => ! empty( $connections ) ? $connections : $events,
+            'connections'    => !empty($events) && strpos(reset($events)['id'], 'mock') !== false ? array_merge($connections, $events) : (!empty($connections) ? $connections : $events),
             'event_summary'  => $event_summary,
             'logs'           => $logs,
 			'stats'          => $stats,
