@@ -298,8 +298,8 @@ function RadarMap({ events, server, hoveredId, onHover, onSelect, loading }) {
       <div className="absolute left-3 top-3 z-[500] rounded-xl border border-white/80 bg-white/90 px-3 py-2 text-xs backdrop-blur-sm shadow-sm">
         <div className="flex items-center gap-1.5 font-semibold text-slate-800">
           <Globe className="h-3.5 w-3.5 text-[#b80048]" />
-          Uhkaradar
-        </div>
+            Yhteydet
+          </div>
         <p className="mt-0.5 text-slate-500">{events.length} paikannettua tapahtumaa</p>
       </div>
 
