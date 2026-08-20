@@ -3805,7 +3805,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let html = '';
     const now = new Date();
     
-    for (let i = 29; i >= 0; i--) {
+    for (let i = 0; i < 30; i++) {
       const d = new Date(now.getTime() - (i * 24 * 60 * 60 * 1000));
       const isToday = i === 0;
       const activeAttr = isToday ? 'data-active="true"' : 'data-active="false"';
@@ -3820,7 +3820,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Scroll to end (today)
     setTimeout(() => {
-      dateCarousel.scrollLeft = dateCarousel.scrollWidth;
+      dateCarousel.scrollLeft = 0;
     }, 100);
 
     // Date click handling
@@ -3991,7 +3991,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const btns = dateCarousel.querySelectorAll('.tl-date-btn');
         btns.forEach(b => b.setAttribute('data-active', 'false'));
         if (btns.length) btns[btns.length - 1].setAttribute('data-active', 'true');
-        dateCarousel.scrollLeft = dateCarousel.scrollWidth;
+        dateCarousel.scrollLeft = 0;
       }
       
       // Resume live polling in React App

@@ -1115,7 +1115,9 @@ export default function SecurityApp() {
 
   const paginatedConnections = useMemo(() => {
     const start = (page - 1) * pageSize;
-    return filteredConnections.slice(start, start + pageSize);
+    // Sort descending by date (newest first)
+    const sorted = [...filteredConnections].sort((a, b) => new Date(b.date) - new Date(a.date));
+    return sorted.slice(start, start + pageSize);
   }, [filteredConnections, page, pageSize]);
 
   const mapEvents = useMemo(() => radar.events.filter((event) => {
