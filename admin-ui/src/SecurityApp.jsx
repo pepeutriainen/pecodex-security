@@ -1230,7 +1230,7 @@ export default function SecurityApp() {
 
         {/* ── Kartta ── */}
         <RadarMap
-          loading={loading}
+            loading={loading || clientLoading}
           events={mapEvents}
           server={radar.server}
           hoveredId={hoveredId}
@@ -1253,7 +1253,7 @@ export default function SecurityApp() {
             onPageSizeChange={setPageSize}
           />
           <ConnectionTable
-            loading={loading}
+              loading={loading || clientLoading}
             connections={paginatedConnections}
             currentIp={radar.current_ip || window.pmcSecurityConfig?.currentIp || ''}
             adminIps={radar.admin_ips || window.pmcSecurityConfig?.adminIps || {}}
