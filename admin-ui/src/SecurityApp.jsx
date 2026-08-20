@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity, AlertTriangle, Ban, CheckCircle, ChevronLeft, ChevronRight,
   ChevronsLeft, ChevronsRight, Eye, Globe, RefreshCw, Search, Server,
-  Shield, ShieldAlert, ShieldCheck, UserCheck, X, Info,
+  Shield, ShieldAlert, ShieldCheck, UserCheck, X, Info, MapPin,
 } from 'lucide-react';
 
 const emptyRadar = {
