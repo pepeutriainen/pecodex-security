@@ -1817,7 +1817,7 @@ class Pecodex_Security_API {
         $stats['protection'] = array('scanned' => 0, 'quarantined' => 0, 'firewall' => 0, 'vulns' => 0);
 		if ( $this->pmc_has_lockout_tables() ) {
 			$table = $wpdb->prefix . 'pmc_lockout_log';
-			$db_logs  = $wpdb->get_results("SELECT *, 'lockout' AS source FROM {$table} ORDER BY id DESC LIMIT 100", ARRAY_A);
+			$db_logs  = $wpdb->get_results("SELECT *, 'lockout' AS source FROM {$table} WHERE DATE(date) = CURDATE() ORDER BY id DESC LIMIT 100", ARRAY_A);
 			if ( $db_logs ) {
 				$events = $this->pmc_format_map_events( $db_logs, true );
 				$connections = $this->pmc_format_map_events( $db_logs, false );
@@ -1856,7 +1856,7 @@ class Pecodex_Security_API {
         // location. No coordinates are invented for private or unknown IPs.
         $traffic_table = $wpdb->prefix . 'pmc_traffic_log';
         if ( $wpdb->get_var( "SHOW TABLES LIKE '$traffic_table'" ) === $traffic_table ) {
-            $traffic_logs = $wpdb->get_results("SELECT id, ip, time AS date, url, method, status, is_bad, country_iso_code, 'traffic' AS source FROM {$traffic_table} ORDER BY id DESC LIMIT 500", ARRAY_A);
+            $traffic_logs = $wpdb->get_results("SELECT id, ip, time AS date, url, method, status, is_bad, country_iso_code, 'traffic' AS source FROM {$traffic_table} WHERE DATE(time) = CURDATE() ORDER BY id DESC LIMIT 500", ARRAY_A);
             if ($traffic_logs) {
                 $traffic_connections = $this->pmc_format_map_events( $traffic_logs, false );
                 $traffic_events = $this->pmc_format_map_events( $traffic_logs, true );
