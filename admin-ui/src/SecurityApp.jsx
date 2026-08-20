@@ -1120,8 +1120,12 @@ export default function SecurityApp() {
     return sorted.slice(start, start + pageSize);
   }, [filteredConnections, page, pageSize]);
 
-  const mapEvents = useMemo(() => radar.events.filter((event) => {
-    if (!isCoordinate(event.lat) || !isCoordinate(event.lng)) return false;
+    const mapEvents = useMemo(() => radar.events.filter((event) => {
+      if (!isCoordinate(event.lat) || !isCoordinate(event.lng)) return false;
+      
+      // JOS EVENT ON "Ei paikannettu" (fallback koordinaatti), NÄYTETÄÄN SE VAIN JOS KÄYTTÄJÄ ON FILTTERÖINYT IP:N!
+      if (event.city === 'Ei paikannettu' && !filters.query.trim()) return false;
+
     
     const status = String(event.statusClass || event.status || '').toLowerCase();
     const normal = status === 'active' || status === 'tracked';
