@@ -1166,30 +1166,49 @@ export default function SecurityApp() {
   };
 
   const selectIp = (ip) => { setFilters((current) => ({ ...current, query: ip })); setPage(1); };
-    const stats = useMemo(() => {
-    let total = 0, normal = 0, suspicious = 0, blocked = 0;
+        const stats = useMemo(() => {
+    let displayedTotal = 0;
+    let normal = 0, suspicious = 0, blocked = 0;
+    
     radar.connections.forEach(connection => {
+      // Apply non-status filters
       if (filters.source !== 'all' && connection.source !== filters.source) return;
       if (filters.score === 'high' && Number(connection.threat_score || 0) < 60) return;
       if (filters.score === 'low' && Number(connection.threat_score || 0) >= 60) return;
+      
       const matchSearch = [connection.ip, connection.country, connection.city, connection.endpoint, connection.type, connection.attack]
         .join(' ').toLowerCase().includes(filters.query.trim().toLowerCase());
       if (!matchSearch) return;
 
-      total++;
       const s = String(connection.statusClass || connection.status || '').toLowerCase();
-      if (s === 'critical' || s === 'blocked') blocked++;
-      else if (s === 'warning' || s === 'suspicious') suspicious++;
+      const isNormal = s === 'active' || s === 'tracked';
+      const isSuspicious = s === 'warning' || s === 'suspicious';
+      const isBlocked = s === 'critical' || s === 'blocked';
+      
+      // Update categorical counts (IGNORING the status filter so buttons don't zero out)
+      if (isBlocked) blocked++;
+      else if (isSuspicious) suspicious++;
       else normal++;
+      
+      // Update the total displayed count (RESPECTING the status filter)
+      let matchesStatus = true;
+      if (filters.status === 'normal' && !isNormal) matchesStatus = false;
+      if (filters.status === 'suspicious' && !isSuspicious) matchesStatus = false;
+      if (filters.status === 'blocked' && !isBlocked) matchesStatus = false;
+      
+      if (matchesStatus) {
+          displayedTotal++;
+      }
     });
+
     return {
-      total_connections: total,
+      total_connections: displayedTotal,
       normal_connections: normal,
       suspicious_connections: suspicious,
       blocked_connections: blocked,
       request_rate: radar.stats?.request_rate || 0
     };
-  }, [radar.connections, radar.stats, filters.source, filters.score, filters.query]);
+  }, [radar.connections, radar.stats, filters.status, filters.source, filters.score, filters.query]);
 
   return (
     <main className="min-h-full bg-slate-50 p-4 text-slate-900 md:p-6" style={{ fontFamily: 'Inter, sans-serif' }}>
