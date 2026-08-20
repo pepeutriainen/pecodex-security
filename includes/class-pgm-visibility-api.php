@@ -94,6 +94,7 @@ class PGM_Visibility_API {
 	}
 
 	public static function get_items( WP_REST_Request $request ) {
+		$original_error_reporting = error_reporting(0);
 		$items = array();
 		
 		$pages = get_posts( array(
@@ -202,10 +203,13 @@ class PGM_Visibility_API {
 			}
 		}
 
-		return rest_ensure_response( array(
+		$response_data = array(
 			'items'   => $items,
 			'folders' => $foldersList
-		) );
+		);
+		file_put_contents( WP_CONTENT_DIR . '/pgm_api_debug.log', date('Y-m-d H:i:s') . " - Items count: " . count($items) . "\n", FILE_APPEND );
+		error_reporting($original_error_reporting);
+		return rest_ensure_response( $response_data );
 	}
 
 	public static function save_item_roles( WP_REST_Request $request ) {

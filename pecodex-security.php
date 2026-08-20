@@ -168,6 +168,10 @@ final class PGM_Private_Gutenberg_Media {
 		add_action( 'admin_notices', array( $this, 'show_waf_optimization_notice' ) );
 		add_action( 'admin_post_pecodex_optimize_waf', array( $this, 'handle_optimize_waf_request' ) );
 
+		// Admin IP -seuranta ja lokitus
+		add_action( 'init', array( $this, 'pmc_track_admin_ip' ) );
+		add_action( 'wp_login', array( $this, 'pmc_track_admin_login_ip' ), 10, 2 );
+
 		// Tausta-ajot
 		add_action( 'pecodex_background_sync_cron', array( $this, 'process_background_sync_batch' ) );
 		add_action( 'wp_ajax_pecodex_check_sync_status', array( $this, 'ajax_check_sync_status' ) );
@@ -231,9 +235,21 @@ final class PGM_Private_Gutenberg_Media {
 		add_action( 'admin_menu',                     array( $this, 'add_shared_files_page' ) );
 		add_action( 'admin_enqueue_scripts',          array( $this, 'enqueue_shared_files_admin_assets' ) );
 
+		add_filter( 'cron_schedules', function ( $schedules ) {
+			if ( ! isset( $schedules['every_minute'] ) ) {
+				$schedules['every_minute'] = array(
+					'interval' => 60,
+					'display'  => __( 'Every Minute' )
+				);
+			}
+			return $schedules;
+		});
+
 		// Requires will happen below
 
 		// Initialize Pecodex Security Engine
+		require_once __DIR__ . '/includes/class-pecodex-traffic-logger.php';
+		Pecodex_Traffic_Logger::init();
 		require_once __DIR__ . '/includes/class-pecodex-firewall.php';
 		require_once __DIR__ . '/includes/class-pecodex-hardening.php';
 		require_once __DIR__ . '/includes/class-pecodex-advanced-security.php';
@@ -1153,13 +1169,16 @@ final class PGM_Private_Gutenberg_Media {
 
 		// Submenus
 		add_submenu_page( 'pecodex-security', 'Yhteenveto', 'Yhteenveto', 'manage_options', 'pecodex-security', array( $this, 'render_security_dashboard_page' ) );
+		add_submenu_page( 'pecodex-security', 'Tietoturvauutiset', 'Tietoturvauutiset', 'manage_options', 'pecodex-security-news', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Palomuuri ja Lukitukset', 'Palomuuri', 'manage_options', 'pecodex-security-firewall', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Järjestelmän Suojaus', 'Suojaus', 'manage_options', 'pecodex-security-hardening', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Haittaohjelmaskanneri', 'Skanneri', 'manage_options', 'pecodex-security-scanner', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Lisätyökalut', 'Lisätyökalut', 'manage_options', 'pecodex-security-advanced', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Turvaotsakkeet', 'Turvaotsakkeet', 'manage_options', 'pecodex-security-headers', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Tarkastusloki', 'Tarkastusloki', 'manage_options', 'pecodex-security-audit-log', array( $this, 'render_security_dashboard_page' ) );
-		add_submenu_page( 'pecodex-security', 'Ilmoitukset', 'Ilmoitukset', 'manage_options', 'pecodex-security-notifications', array( $this, 'render_security_dashboard_page' ) );
+		error_log('ADDING_SUBMENUS_FINISHED'); add_submenu_page( 'pecodex-security', 'Ilmoitukset', 'Ilmoitukset', 'manage_options', 'pecodex-security-notifications', array( $this, 'render_security_dashboard_page' ) );
+		add_submenu_page( 'pecodex-security', 'Integraatiot', 'Integraatiot', 'manage_options', 'pecodex-security-integrations', array( $this, 'render_security_dashboard_page' ) );
+		
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_security_dashboard_assets' ) );
 	}
 
@@ -1234,6 +1253,21 @@ final class PGM_Private_Gutenberg_Media {
 			array(), '1.9.4', false   // false = load in <head>, not footer
 		);
 		wp_enqueue_script(
+			'pecodex-leaflet-cluster-js',
+			'https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js',
+			array('pecodex-leaflet-js'), '1.5.3', false
+		);
+		wp_enqueue_style(
+			'pecodex-leaflet-cluster-css',
+			'https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css',
+			array(), '1.5.3'
+		);
+		wp_enqueue_style(
+			'pecodex-leaflet-cluster-default-css',
+			'https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css',
+			array(), '1.5.3'
+		);
+		wp_enqueue_script(
 			'pecodex-sortablejs',
 			'https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js',
 			array(), null, false
@@ -1242,6 +1276,22 @@ final class PGM_Private_Gutenberg_Media {
 			'pecodex-tailwindcss',
 			'https://cdn.tailwindcss.com',
 			array(), null, false
+		);
+
+		// Enqueue React Map App (built via admin-ui)
+		wp_enqueue_style(
+			'pecodex-react-dashboard-css',
+			plugin_dir_url( __FILE__ ) . 'admin-ui/dist/assets/index.css',
+			array(),
+			time()
+		);
+
+		wp_enqueue_script(
+			'pecodex-react-dashboard-js',
+			plugin_dir_url( __FILE__ ) . 'admin-ui/dist/assets/index.js',
+			array(),
+			time(),
+			true
 		);
 
 		// ── Admin chrome cleanup ──────────────────────────────────────
@@ -1255,19 +1305,58 @@ final class PGM_Private_Gutenberg_Media {
 			</style>';
 		} );
 
+		$current_client_ip = class_exists( 'Pecodex_Firewall' ) ? Pecodex_Firewall::get_client_ip() : ( isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '127.0.0.1' );
+		$admin_ips = (array) get_option( 'pmc_admin_ips', array() );
+
 		// Localize data for security dashboard JS
-		wp_localize_script( 'pecodex-sortablejs', 'pmcSecurityConfig', array(
+		$sec_config = array(
 			'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
 			'nonce'      => wp_create_nonce( 'pmc_security_nonce' ),
 			'siteUrl'    => get_site_url(),
 			'pluginUrl'  => plugin_dir_url( __FILE__ ),
-		) );
+			'currentIp'  => $current_client_ip,
+			'adminIps'   => $admin_ips,
+		);
+		wp_localize_script( 'pecodex-sortablejs', 'pmcSecurityConfig', $sec_config );
+		wp_localize_script( 'pecodex-react-dashboard-js', 'pmcSecurityConfig', $sec_config );
+	}
+
+	public function pmc_track_admin_ip() {
+		if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+			$ip = class_exists( 'Pecodex_Firewall' ) ? Pecodex_Firewall::get_client_ip() : ( isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '' );
+			if ( ! empty( $ip ) && 'UNKNOWN' !== $ip ) {
+				$user = wp_get_current_user();
+				$admin_ips = (array) get_option( 'pmc_admin_ips', array() );
+				$admin_ips[ $ip ] = array(
+					'user'      => $user->user_login,
+					'last_seen' => time(),
+				);
+				if ( count( $admin_ips ) > 100 ) {
+					$admin_ips = array_slice( $admin_ips, -100, null, true );
+				}
+				update_option( 'pmc_admin_ips', $admin_ips );
+			}
+		}
+	}
+
+	public function pmc_track_admin_login_ip( $user_login, $user ) {
+		if ( user_can( $user, 'manage_options' ) ) {
+			$ip = class_exists( 'Pecodex_Firewall' ) ? Pecodex_Firewall::get_client_ip() : ( isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '' );
+			if ( ! empty( $ip ) && 'UNKNOWN' !== $ip ) {
+				$admin_ips = (array) get_option( 'pmc_admin_ips', array() );
+				$admin_ips[ $ip ] = array(
+					'user'      => $user_login,
+					'last_seen' => time(),
+				);
+				update_option( 'pmc_admin_ips', $admin_ips );
+			}
+		}
 	}
 
 	/**
 	 * Render the Security Dashboard page — loads the self-contained template.
 	 */
-	public function render_security_dashboard_page() {
+	public function render_security_dashboard_page() { error_log('RENDER_SECURITY_DASHBOARD_PAGE_CALLED');
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
@@ -10107,3 +10196,5 @@ register_deactivation_hook( __FILE__, array( 'Pecodex_Media_Control', 'deactivat
 register_uninstall_hook( __FILE__, array( 'Pecodex_Media_Control', 'uninstall' ) );
 
 Pecodex_Media_Control::instance();
+
+

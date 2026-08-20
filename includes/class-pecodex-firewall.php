@@ -38,29 +38,90 @@ class Pecodex_Firewall {
 			KEY ip (ip)
 		) $charset_collate;";
 
+		$table_traffic = $wpdb->prefix . 'pmc_traffic_log';
+		$sql_traffic = "CREATE TABLE $table_traffic (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			ip varchar(45) NOT NULL,
+			time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+			url text,
+			method varchar(10),
+			status varchar(10),
+			is_bad tinyint(1) DEFAULT 0,
+			country_iso_code varchar(5),
+			PRIMARY KEY  (id),
+			KEY ip (ip),
+			KEY time (time)
+		) $charset_collate;";
+
+		$table_geoip = $wpdb->prefix . 'pmc_geoip_cache';
+		$sql_geoip = "CREATE TABLE $table_geoip (
+			ip varchar(45) NOT NULL,
+			country_code varchar(5),
+			city varchar(100),
+			lat decimal(10,8),
+			lng decimal(11,8),
+			updated datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+			PRIMARY KEY  (ip)
+		) $charset_collate;";
+
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql_lockout );
 		dbDelta( $sql_log );
+		dbDelta( $sql_traffic );
+		dbDelta( $sql_geoip );
 	}
 
 	public static function get_client_ip() {
-		$ipaddress = '';
-		if ( isset( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
-			$ipaddress = $_SERVER['HTTP_CF_CONNECTING_IP'];
-		} else if ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-			$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		} else if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
-			$ipaddress = $_SERVER['REMOTE_ADDR'];
-		} else {
-			$ipaddress = 'UNKNOWN';
+		$remote_ip = isset( $_SERVER['REMOTE_ADDR'] ) ? trim( (string) $_SERVER['REMOTE_ADDR'] ) : '';
+
+		if ( ! filter_var( $remote_ip, FILTER_VALIDATE_IP ) ) {
+			return 'UNKNOWN';
 		}
-		
-		// If multiple IPs are present, use the first one
-        if (strpos($ipaddress, ',') !== false) {
-            $ipaddress = explode(',', $ipaddress)[0];
-        }
-        
-		return trim($ipaddress);
+
+		/*
+		 * Forwarded headers are client-controlled unless the immediate peer is a
+		 * proxy we explicitly trust. Trusting X-Forwarded-For unconditionally
+		 * lets an attacker evade per-IP bans simply by sending a forged header.
+		 */
+		if ( ! self::is_trusted_proxy( $remote_ip ) ) {
+			return $remote_ip;
+		}
+
+		foreach ( array( 'HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP' ) as $header ) {
+			if ( empty( $_SERVER[ $header ] ) ) {
+				continue;
+			}
+
+			foreach ( explode( ',', (string) $_SERVER[ $header ] ) as $candidate ) {
+				$candidate = trim( $candidate );
+				if ( filter_var( $candidate, FILTER_VALIDATE_IP ) ) {
+					return $candidate;
+				}
+			}
+		}
+
+		return $remote_ip;
+	}
+
+	/**
+	 * Returns true only for proxy addresses configured by the site owner.
+	 * Define PMC_TRUSTED_PROXY_IPS as a comma-separated list or save an array
+	 * in the pmc_firewall_trusted_proxy_ips option. CIDR and wildcard rules are
+	 * supported by match_ip().
+	 */
+	private static function is_trusted_proxy( $ip ) {
+		$trusted = get_option( 'pmc_firewall_trusted_proxy_ips', array() );
+		if ( defined( 'PMC_TRUSTED_PROXY_IPS' ) ) {
+			$trusted = array_merge( (array) $trusted, explode( ',', PMC_TRUSTED_PROXY_IPS ) );
+		}
+
+		foreach ( (array) $trusted as $rule ) {
+			if ( self::match_ip( $ip, trim( (string) $rule ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public function check_lockout() {
@@ -159,6 +220,28 @@ class Pecodex_Firewall {
 	}
 
 	public static function is_ip_allowed( $ip ) {
+		$ip = trim( (string) $ip );
+		if ( empty( $ip ) ) {
+			return false;
+		}
+
+		// 1. Localhost is always allowed
+		if ( in_array( $ip, array( '127.0.0.1', '::1', 'localhost' ), true ) ) {
+			return true;
+		}
+
+		// 2. Logged-in administrators / staff are always allowed
+		if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		// 3. Known Administrator & Admin Employee IPs
+		$admin_ips = (array) get_option( 'pmc_admin_ips', array() );
+		if ( ! empty( $admin_ips[ $ip ] ) || in_array( $ip, array_keys( $admin_ips ), true ) ) {
+			return true;
+		}
+
+		// 4. Manually allowed IPs / CIDRs
 		$allowed = get_option( 'pmc_firewall_allowed_ips', array() );
 		if ( is_array( $allowed ) ) {
 			foreach ( $allowed as $rule ) {
@@ -170,7 +253,21 @@ class Pecodex_Firewall {
 		return false;
 	}
 
+	public static function is_admin_ip( $ip ) {
+		$ip = trim( (string) $ip );
+		if ( empty( $ip ) ) {
+			return false;
+		}
+		if ( in_array( $ip, array( '127.0.0.1', '::1', 'localhost' ), true ) ) {
+			return true;
+		}
+		$admin_ips = (array) get_option( 'pmc_admin_ips', array() );
+		return ! empty( $admin_ips[ $ip ] ) || in_array( $ip, array_keys( $admin_ips ), true );
+	}
+
 	public static function match_ip( $ip, $rule ) {
+		$ip   = trim( (string) $ip );
+		$rule = trim( (string) $rule );
 		if ( empty( $ip ) || empty( $rule ) ) {
 			return false;
 		}
@@ -192,9 +289,13 @@ class Pecodex_Firewall {
 		if ( strpos( $rule, '/' ) !== false ) {
 			list( $subnet, $bits ) = explode( '/', $rule, 2 );
 			if ( filter_var( $subnet, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) && filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+				$bits = (int) $bits;
+				if ( $bits < 0 || $bits > 32 ) {
+					return false;
+				}
 				$ip_long = ip2long( $ip );
 				$subnet_long = ip2long( $subnet );
-				$mask = -1 << ( 32 - (int) $bits );
+				$mask = 0 === $bits ? 0 : ( -1 << ( 32 - $bits ) );
 				$subnet_long &= $mask;
 				return ( $ip_long & $mask ) === $subnet_long;
 			}
@@ -203,6 +304,9 @@ class Pecodex_Firewall {
 				$subnet_bin = inet_pton( $subnet );
 				if ( $ip_bin !== false && $subnet_bin !== false ) {
 					$bits = (int) $bits;
+					if ( $bits < 0 || $bits > 128 ) {
+						return false;
+					}
 					$bytes = (int) ( $bits / 8 );
 					if ( $bytes > 0 && substr( $ip_bin, 0, $bytes ) !== substr( $subnet_bin, 0, $bytes ) ) {
 						return false;
@@ -271,4 +375,3 @@ class Pecodex_Firewall {
 		}
 	}
 }
-

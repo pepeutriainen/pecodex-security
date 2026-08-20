@@ -1,10 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.jsx'
+import SecurityApp from './SecurityApp.jsx'
+import VisibilityApp from './VisibilityApp.jsx'
+
+const isVisibilityApp = typeof window.pgmVisibilityApi !== 'undefined';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    {isVisibilityApp ? <VisibilityApp /> : <SecurityApp />}
   </StrictMode>,
 )
