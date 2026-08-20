@@ -765,7 +765,7 @@ class Pecodex_Security_API {
 					continue;
 				}
 				
-				if ( $show_all_day || ( $offset_hours <= $born_hour && $offset_hours > $die_hour ) ) {
+				if ( $show_all_day || ( $offset_hours <= $born_hour && $offset_hours >= $die_hour ) ) {
 					$status = $base_status; // Active phase
 				} else {
 					$status = $death_type;  // Died phase
@@ -1961,7 +1961,7 @@ class Pecodex_Security_API {
 
                 // Determine status for LIVE view (offset_hours = 0)
                 $offset_hours = 0;
-                if ( $offset_hours <= $born_hour && $offset_hours > $die_hour ) {
+                if ( $offset_hours <= $born_hour && $offset_hours >= $die_hour ) {
                     $status = $base_status;
                 } else {
                     $status = $death_type;
