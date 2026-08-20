@@ -3790,6 +3790,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const slider = document.getElementById('tl-slider');
   const timeDisplay = document.getElementById('tl-current-time');
   const dateCarousel = document.getElementById('tl-dates');
+    const monthList = document.getElementById('tl-month-list');
   
   if (!slider) return;
 
@@ -3873,8 +3874,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Month Selector Dropdown
     const monthToggle = document.getElementById('tl-month-toggle');
-    const monthDropdown = document.getElementById('tl-month-dropdown');
-    const monthList = document.getElementById('tl-month-list');
+      const monthDropdown = document.getElementById('tl-month-dropdown');
 
     if (monthToggle && monthDropdown && monthList) {
       // Build past 12 months

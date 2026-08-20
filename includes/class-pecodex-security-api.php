@@ -302,7 +302,7 @@ class Pecodex_Security_API {
 					'notfound' => array()
 				) ),
 				array(
-					'banned_ips' => $this->get_banned_ips(),
+					'banned_ips' => get_option( 'pmc_firewall_banned_ips', array() ),
 					'allowed_ips' => get_option( 'pmc_firewall_allowed_ips', array() )
 				)
 			),

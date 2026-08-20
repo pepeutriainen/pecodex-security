@@ -1002,7 +1002,7 @@ export default function SecurityApp() {
         rangeBtns.forEach(btn => { btn.disabled = true; btn.style.opacity = '0.4'; btn.style.cursor = 'not-allowed'; });
         
         
-        allDayBtn.title = 'Poista focus käyttääksesi Koko päivä -tilaa';
+        
       } else {
         rangeBtns.forEach(btn => { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; });
         
