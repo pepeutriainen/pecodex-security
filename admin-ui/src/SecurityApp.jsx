@@ -280,7 +280,7 @@ function RadarMap({ events, server, hoveredId, onHover, onSelect, loading }) {
     return () => {
       if (animFrameId) cancelAnimationFrame(animFrameId);
     };
-  }, [events, hoveredId, onHover, onSelect, ready, server]);
+  }, [events, hoveredId, onHover, onSelect, ready, server, loading]);
 
   return (
     <section className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md" style={{ boxShadow: '0 4px 24px 0 rgba(0,0,0,0.07)' }}>
@@ -1161,7 +1161,7 @@ export default function SecurityApp() {
     }
   };
 
-  const selectIp = (ip) => setFilters((current) => ({ ...current, query: ip }));
+  const selectIp = (ip) => { setFilters((current) => ({ ...current, query: ip })); setPage(1); };
   const stats = radar.stats;
 
   return (
