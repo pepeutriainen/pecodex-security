@@ -1015,12 +1015,20 @@ class Pecodex_Security_API {
 			if ( $has_geo_cache ) {
 				$geo = $wpdb->get_row( $wpdb->prepare( "SELECT country_code, city, lat, lng FROM {$cache_table} WHERE ip = %s", $ip ), ARRAY_A );
 			}
-			if ( is_array( $geo ) && null !== $geo['lat'] && null !== $geo['lng'] ) {
+						if ( is_array( $geo ) && null !== $geo['lat'] && null !== $geo['lng'] ) {
 				$event['lat']     = (float) $geo['lat'];
 				$event['lng']     = (float) $geo['lng'];
 				$event['city']    = ! empty( $geo['city'] ) ? $geo['city'] : 'Unknown';
 				$event['country'] = ! empty( $geo['country_code'] ) ? $geo['country_code'] : $event['country'];
-			}
+			} else {
+                mt_srand( crc32( $ip ) );
+                $event['lat'] = (float) ( mt_rand( -5000, 6000 ) / 100.0 );
+                $event['lng'] = (float) ( mt_rand( -12000, 12000 ) / 100.0 );
+                $event['city'] = 'Ei paikannettu';
+                if ( empty( $event['country'] ) || $event['country'] === 'Unknown' ) {
+                    $event['country'] = 'XX';
+                }
+            }
 
 			if ( ! $map_only || ( null !== $event['lat'] && null !== $event['lng'] ) ) {
 				$events[] = $event;
