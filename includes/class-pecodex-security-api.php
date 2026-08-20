@@ -268,7 +268,23 @@ class Pecodex_Security_API {
 				),
 				ARRAY_A
 			);
-		}
+		} else {
+            foreach ( $events as $c ) {
+                $ts = strtotime($c['datetime']);
+                $born = floor((time() - $ts) / 3600);
+                $event_summary[] = array(
+                    'id' => $c['id'],
+                    'born_hour' => max(0, $born),
+                    'die_hour' => max(0, $born - mt_rand(1, 4)),
+                    'status' => strtolower($c['statusClass']),
+                    'attack' => $c['type'],
+                    'country' => $c['country'],
+                    'ip' => $c['ip'],
+                    'source' => $c['source'],
+                    'threat_score' => $c['threat_score']
+                );
+            }
+        }
 
 		wp_send_json_success( array(
 			'top_attackers' => $top_attackers,
@@ -676,10 +692,10 @@ class Pecodex_Security_API {
 
 		// --- MOCK DATA FOR RADAR TIMELINE DEMONSTRATION ---
 		// If in timeline mode, generate some mock flights to demonstrate the radar capability
-		$event_summary = array();
-		if ( $offset_hours > 0 || !empty($_POST['time_range']) || !empty($_POST['show_all_day']) ) {
+				$event_summary = array();
+		if ( empty( $events ) && ( $offset_hours > 0 || !empty($_POST['time_range']) || !empty($_POST['show_all_day']) ) ) {
 			
-			$seed = $offset_hours > 0 ? $offset_hours * 1000 : (empty($_POST['time_range']) ? 9999 : crc32($_POST['time_range']));
+			$seed = $offset_hours > 0 ? $offset_hours * 1000 : (empty($_POST['time_range']) ? 9999 : crc32($_POST['time_range'])); $offset_hours > 0 ? $offset_hours * 1000 : (empty($_POST['time_range']) ? 9999 : crc32($_POST['time_range']));
 			mt_srand( $seed );
 			mt_srand( $offset_hours * 1000 );
 			
@@ -1954,8 +1970,8 @@ class Pecodex_Security_API {
         $stats['total_connections'] = count( $connections );
 
         // If database has no events yet, generate lively mock connections so the radar & timeline work immediately
-        $event_summary = array();
-        if ( empty( $events ) ) {
+                $event_summary = array();
+        if ( empty( $connections ) ) {
             $mock_locations = array(
                 array('lat' => 40.7128, 'lng' => -74.0060, 'city' => 'New York', 'country' => 'US'),
                 array('lat' => 51.5074, 'lng' => -0.1278, 'city' => 'London', 'country' => 'GB'),
@@ -2035,9 +2051,25 @@ class Pecodex_Security_API {
                     'date'        => gmdate( 'Y-m-d H:i:s', time() - ( $born_hour * 3600 ) ),
                 );
             }
+        } else {
+            foreach ( $connections as $c ) {
+                $ts = strtotime($c['datetime']);
+                $born = floor((time() - $ts) / 3600);
+                $event_summary[] = array(
+                    'id' => $c['id'],
+                    'born_hour' => max(0, $born),
+                    'die_hour' => max(0, $born - mt_rand(1, 4)),
+                    'status' => strtolower($c['statusClass']),
+                    'attack' => $c['type'],
+                    'country' => $c['country'],
+                    'ip' => $c['ip'],
+                    'source' => $c['source'],
+                    'threat_score' => $c['threat_score']
+                );
+            }
         }
-
-		wp_send_json_success( array(
+        
+        wp_send_json_success( array(
 			'events'         => $events,
             'connections'    => !empty($events) && strpos(reset($events)['id'], 'mock') !== false ? array_merge($connections, $events) : (!empty($connections) ? $connections : $events),
             'event_summary'  => $event_summary,
