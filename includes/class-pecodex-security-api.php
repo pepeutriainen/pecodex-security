@@ -707,14 +707,30 @@ class Pecodex_Security_API {
 				array('lat' => 55.7558, 'lng' => 37.6173, 'city' => 'Moscow', 'country' => 'RU'),
 				array('lat' => 39.9042, 'lng' => 116.4074, 'city' => 'Beijing', 'country' => 'CN'),
 			);
-			$attacks = array(
-				'Salasanan murtamisyritys', 'SQL-injektio', 'XSS-yritys', 'Porttiskannaus', 
-				'DDoS-hyökkäys', 'Roskapostikommentti', 'LFI-yritys', 'Polun ohitusyritys'
-			);
 
-			// Luodaan reilusti enemmän dataa, jotta paginointia on helpompi testata
-			$base_time = time() - ( $offset_hours * 3600 );
-			$num_events = 200;
+			$time_range = isset($_POST['time_range']) ? sanitize_text_field($_POST['time_range']) : '';
+			$r_hours = 72; // default
+			if ($time_range) {
+			    if ($time_range === 'all') $r_hours = 43800; // 5 years
+			    elseif ($time_range === '1y') $r_hours = 8760;
+			    elseif ($time_range === '6m') $r_hours = 4380;
+			    elseif ($time_range === '3m') $r_hours = 2190;
+			    elseif ($time_range === '2m') $r_hours = 1460;
+			    elseif ($time_range === '1m') $r_hours = 730;
+			    elseif ($time_range === '2w') $r_hours = 336;
+			    elseif ($time_range === 'now') $r_hours = 1;
+			}
+			
+			// Scale the number of events based on the time range
+			$num_events = 200; // default for 72h
+			if ($r_hours <= 24) $num_events = 50;
+			elseif ($r_hours <= 72) $num_events = 200;
+			elseif ($r_hours <= 336) $num_events = 450; // 2 weeks
+			elseif ($r_hours <= 730) $num_events = 800; // 1 month
+			elseif ($r_hours <= 2190) $num_events = 1200; // 3 months
+			elseif ($r_hours <= 8760) $num_events = 1800; // 6 months - 1 year
+			else $num_events = 2500; // All time
+
 			$attacks = array(
                 'Salasanan murtamisyritys', 'SQL-injektio', 'XSS-yritys', 'Porttiskannaus', 
                 'Bottiverkkoliikenne', 'Polun ohitusyritys', 'Onnistunut kirjautuminen', 'DDoS-hyökkäys',
@@ -732,18 +748,9 @@ class Pecodex_Security_API {
 				$lat = $loc['lat'] + ( mt_rand( -50, 50 ) / 10 );
 				$lng = $loc['lng'] + ( mt_rand( -50, 50 ) / 10 );
 				
-				// Simulate event lifecycle (0-72 hours)
+				// Simulate event lifecycle (0-72 hours or based on selected time range)
 				// E.g., event is born at hour 50, dies at hour 40.
-				$time_range = isset($_POST['time_range']) ? $_POST['time_range'] : '';
 				if ($time_range) {
-				    $r_hours = 24;
-				    if ($time_range === '1y') $r_hours = 8760;
-				    elseif ($time_range === '6m') $r_hours = 4380;
-				    elseif ($time_range === '3m') $r_hours = 2190;
-				    elseif ($time_range === '2m') $r_hours = 1460;
-				    elseif ($time_range === '1m') $r_hours = 730;
-				    elseif ($time_range === '2w') $r_hours = 336;
-				    elseif ($time_range === 'now') $r_hours = 1;
 				    $born_hour = mt_rand(1, $r_hours);
 				} else {
 				    $born_hour = mt_rand( 10, 72 );
@@ -2100,10 +2107,17 @@ class Pecodex_Security_API {
 		check_ajax_referer( 'pmc_security_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
 
-		$countries = isset( $_POST['countries'] ) ? (array) wp_unslash( $_POST['countries'] ) : array();
-		$sanitized_countries = array_map( 'sanitize_text_field', $countries );
+		$global_str = isset( $_POST['global_countries'] ) ? sanitize_text_field( $_POST['global_countries'] ) : '';
+		$login_str  = isset( $_POST['login_countries'] ) ? sanitize_text_field( $_POST['login_countries'] ) : '';
+		$action     = isset( $_POST['login_action'] ) ? sanitize_text_field( $_POST['login_action'] ) : 'hide_form';
 
-		update_option( 'pmc_blocked_countries', $sanitized_countries );
+		$global_arr = array_filter( array_map( 'trim', explode( ',', $global_str ) ) );
+		$login_arr  = array_filter( array_map( 'trim', explode( ',', $login_str ) ) );
+
+		update_option( 'pmc_blocked_countries', $global_arr );
+		update_option( 'pmc_geoip_login_countries', $login_arr );
+		update_option( 'pmc_geoip_login_action', $action );
+
 		wp_send_json_success( 'GeoIP settings saved' );
 	}
 

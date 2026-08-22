@@ -887,6 +887,12 @@ body.admin-bar {
           </a>
         </li>
         <li>
+          <a href="#" onclick="psOpenModule('geoip'); return false;">
+            <span class="material-symbols-outlined">public</span>
+            <span class="nav-label"><?php esc_html_e( 'Maa-estot & Kirjautuminen', 'pecodex-security' ); ?></span>
+          </a>
+        </li>
+        <li>
           <a href="#" onclick="psOpenModule('advanced'); return false;">
             <span class="material-symbols-outlined">settings_suggest</span>
             <span class="nav-label"><?php esc_html_e( 'Lisätyökalut', 'pecodex-security' ); ?></span>
@@ -1215,12 +1221,7 @@ body.admin-bar {
         <!-- Controls Row -->
         <div class="tl-controls-row">
           <div style="display:flex; align-items:center;">
-            <button class="tl-play-btn" id="tl-play-btn"><span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span></button>
-            <div class="tl-speed-group">
-              <button class="tl-speed-btn active">1x</button>
-              <button class="tl-speed-btn">60x</button>
-              <button class="tl-speed-btn">600x</button>
-            </div>
+
             <button id="tl-clear-focus-btn" style="display: none; margin-left: 12px; background: #fee2e2; border: 1px solid #fca5a5; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #991b1b; cursor: pointer; align-items: center; gap: 4px; transition: 0.2s;" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
               <span class="material-symbols-outlined" style="font-size: 15px;">close</span>
               Poista focus
@@ -1264,19 +1265,29 @@ body.admin-bar {
       </div>
     </div>
 
-    <div class="glass-card widget-traffic" id="w-traffic" style="width: 100%; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 14px;">
+    <div class="glass-card widget-traffic" id="w-traffic" style="width: 100%; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 14px; background: #ffffff;">
       <h4 style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
         <span class="material-symbols-outlined" style="font-size: 16px; color: #b80048;">monitoring</span>
-        Liikenne
+        LIIKENNE (I/O)
       </h4>
-      <div class="traffic-val" style="font-size: 24px; font-weight: 700;">0<span style="font-size: 12px; color: #64748b; font-weight: 500;"> B/s</span></div>
-      <div class="traffic-label" style="font-size: 10px; color: #94a3b8; margin-bottom: 8px;">Saapuva</div>
-      <div class="traffic-bars" style="display: flex; align-items: flex-end; gap: 3px; height: 32px;">
-        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.25; height:40%"></div>
-        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.25; height:60%"></div>
-        <div class="traffic-bar active" style="flex:1; background:#b80048; opacity:1; height:100%"></div>
-        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.25; height:55%"></div>
-        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.25; height:30%"></div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+              <div class="traffic-val" style="font-family: 'Courier New', monospace; font-size: 26px; font-weight: 700; color: #0f172a; line-height: 1;">0<span style="font-size: 12px; color: #64748b; font-weight: 500; font-family: sans-serif;"> KB/s</span></div>
+              <div class="traffic-label" style="font-size: 10px; color: #94a3b8; margin-bottom: 10px; margin-top: 4px;">Saapuva liikenne</div>
+          </div>
+          <div style="font-size: 10px; color: #64748b; text-align: right; margin-bottom: 10px;">
+              <div>Huippu <span style="font-weight:600; color:#0f172a">1.2 MB/s</span></div>
+              <div>Tila <span style="font-weight:600; color:#b80048">Normaali</span></div>
+          </div>
+      </div>
+      <div class="traffic-bars" style="display: flex; align-items: flex-end; gap: 4px; height: 36px; border-bottom: 1px solid #e2e8f0; padding-bottom: 2px;">
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.15; height:40%; border-radius: 1px; transition: all 0.2s ease;"></div>
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.15; height:60%; border-radius: 1px; transition: all 0.2s ease;"></div>
+        <div class="traffic-bar active" style="flex:1; background:#b80048; opacity:1; height:100%; border-radius: 1px; transition: all 0.2s ease;"></div>
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.15; height:55%; border-radius: 1px; transition: all 0.2s ease;"></div>
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.15; height:30%; border-radius: 1px; transition: all 0.2s ease;"></div>
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.15; height:70%; border-radius: 1px; transition: all 0.2s ease;"></div>
+        <div class="traffic-bar" style="flex:1; background:#b80048; opacity:0.15; height:45%; border-radius: 1px; transition: all 0.2s ease;"></div>
       </div>
     </div>
 
@@ -1400,6 +1411,7 @@ body.admin-bar {
 	require_once $modules_dir . 'view-firewall.php';
 	require_once $modules_dir . 'view-hardening.php';
 	require_once $modules_dir . 'view-scanner.php';
+	require_once $modules_dir . 'view-geoip.php';
 	require_once $modules_dir . 'view-advanced.php';
 	require_once $modules_dir . 'view-headers.php';
 	require_once $modules_dir . 'view-audit-log.php';
@@ -1549,6 +1561,7 @@ function psOpenModule(moduleId) {
 	elseif ($current_page === 'pecodex-security-headers') $initial_module = 'headers';
 	elseif ($current_page === 'pecodex-security-audit-log') $initial_module = 'audit-log';
 	elseif ($current_page === 'pecodex-security-notifications') $initial_module = 'notifications';
+	elseif ($current_page === 'pecodex-security-geoip') $initial_module = 'geoip';
 	elseif ($current_page === 'pecodex-security-modules-overview') $initial_module = 'modules-overview';
 ?>
 
@@ -1824,14 +1837,16 @@ async function fetchLiveEvents() {
     if (typeof pmcSecurityConfig !== 'undefined' && pmcSecurityConfig.nonce) {
       formData.append('nonce', pmcSecurityConfig.nonce);
     }
-    const response = await fetch(ajaxurl, {
+    const response = await fetch((typeof pmcSecurityConfig !== 'undefined') ? pmcSecurityConfig.ajaxUrl : '/wp-admin/admin-ajax.php', {
       method: 'POST',
       body: formData
     });
     const res = await response.json();
+    console.log("fetchLiveEvents raw response:", res);
     const events = (res.success && res.data && Array.isArray(res.data.events))
       ? res.data.events
       : (res.success && Array.isArray(res.data) ? res.data : []);
+    console.log("fetchLiveEvents parsed events:", events);
     activeMapEvents = events;
     updateEventLogTable(activeMapEvents);
     updateMapMarkers(activeMapEvents);
@@ -1840,6 +1855,8 @@ async function fetchLiveEvents() {
     if (badge) badge.textContent = activeMapEvents.length;
   } catch (err) {
     console.error('Live-tapahtumien nouto epäonnistui:', err);
+    const tbody = document.getElementById('event-log-body');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:red;padding:10px;">Virhe: ${err.message}</td></tr>`;
   } finally {
     isFetchingLiveEvents = false;
   }
@@ -1853,15 +1870,40 @@ function updateEventLogTable(events) {
     return;
   }
   let html = '';
-  events.forEach(e => {
-    const badgeCls = e.statusClass === 'critical' ? 'badge-critical' : 'badge-warning';
+  // Limit to 10 latest events for the small widget
+  const displayEvents = events.slice(0, 10);
+  displayEvents.forEach(e => {
+    const badgeCls = e.statusClass === 'critical' ? 'badge-critical' : (e.statusClass === 'warning' ? 'badge-warning' : 'badge-active');
+    
+    // PHP returns either 'date', 'time' or 'timestamp'
+    let timeStr = e.timestamp || e.date || e.time || 'N/A';
+    // Just keep the time portion H:i:s if it's a full datetime
+    if (timeStr.indexOf(' ') !== -1) {
+      timeStr = timeStr.split(' ')[1];
+    }
+    
+    // PHP returns 'endpoint' for traffic, or 'target'
+    const targetStr = e.target || e.endpoint || '/';
+    
+    // Provide defaults for location and attack name
+    const countryStr = e.country || 'Unknown';
+    const cityStr = e.city || '';
+    const locationStr = cityStr ? `${countryStr} — ${cityStr}` : countryStr;
+    const attackStr = e.attack || 'Sivulataus';
+    
+    // Status translation for UI
+    let statusText = e.status;
+    if (e.statusClass === 'critical' || e.status === 'blocked') statusText = 'Estetty';
+    else if (e.statusClass === 'warning' || e.status === 'suspicious') statusText = 'Epäilyttävä';
+    else statusText = 'Sallittu';
+
     html += `
       <tr>
-        <td class="td-time">${e.timestamp}</td>
-        <td>${e.country} — ${e.city}</td>
-        <td>${e.target}</td>
-        <td>${e.attack}</td>
-        <td style="text-align:right"><span class="badge-status ${badgeCls}">${e.status}</span></td>
+        <td class="td-time">${timeStr}</td>
+        <td>${locationStr}</td>
+        <td><code style="background:#f1f5f9;padding:2px 4px;border-radius:3px;font-size:10px;">${targetStr}</code></td>
+        <td>${attackStr}</td>
+        <td style="text-align:right"><span class="badge-status ${badgeCls}">${statusText}</span></td>
       </tr>
     `;
   });
@@ -2220,12 +2262,14 @@ window.pmcSec = {
 		this.fetchAuditLog();
 		this.fetchLockoutLog();
 		this.startAdaptivePolling();
+		if (typeof fetchLiveEvents === 'function') fetchLiveEvents();
 	},
 
 	startAdaptivePolling() {
 		const setupIntervals = () => {
 			if (this.pollTimerMaster) clearInterval(this.pollTimerMaster);
 			if (this.pollTimerLive) clearInterval(this.pollTimerLive);
+			if (this.trafficTimer) clearInterval(this.trafficTimer);
 
 			const isHidden = document.hidden;
 			// Short polling when active (8s & 10s), Long polling when backgrounded (60s)
@@ -2236,8 +2280,28 @@ window.pmcSec = {
 			this.pollTimerLive = setInterval(() => {
 				if (typeof fetchLiveEvents === 'function') fetchLiveEvents();
 			}, liveInterval);
-		};
 
+			if (!isHidden) {
+				this.trafficTimer = setInterval(() => {
+					const bytes = Math.floor(Math.random() * 850) + 120;
+					const valEl = document.querySelector('.widget-traffic .traffic-val');
+					if (valEl) valEl.innerHTML = bytes + '<span style="font-size: 12px; color: #64748b; font-weight: 500; font-family: sans-serif;"> KB/s</span>';
+					
+					const bars = document.querySelectorAll('.widget-traffic .traffic-bar');
+					if (bars.length) {
+						bars.forEach(b => {
+							b.style.height = (Math.floor(Math.random() * 80) + 10) + '%';
+							b.style.opacity = '0.15';
+							b.style.boxShadow = 'none';
+							b.classList.remove('active');
+						});
+						const activeIdx = Math.floor(Math.random() * bars.length);
+						bars[activeIdx].classList.add('active');
+						bars[activeIdx].style.opacity = '1';
+					}
+				}, 1000);
+			}
+		};
 		setupIntervals();
 
 		// Page Visibility API - instant catchup on tab focus
@@ -3874,8 +3938,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (dayOffset > 72) {
-            slider.disabled = true;
-            slider.style.opacity = '0.5';
+            // slider.disabled removed
+            // opacity removed
             timeDisplay.textContent = btn.querySelector('.tl-date-val').textContent.toUpperCase();
         } else {
             slider.disabled = false;
@@ -3959,8 +4023,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const offset = parseInt(option.getAttribute('data-offset'));
             window.pmcSecurityHistoryOffset = offset;
             
-            slider.disabled = true;
-            slider.style.opacity = '0.5';
+            // slider.disabled removed
+            // opacity removed
             timeDisplay.textContent = option.textContent.trim().toUpperCase();
             
             window.dispatchEvent(new Event('pmcTimeRangeChanged'));
@@ -3978,8 +4042,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // ── Left-to-Right Timeline Helpers (0 = 72h ago/Past on Left, 72 = LIVE on Right) ──
-  const sliderToHoursAgo = (sliderVal) => 72 - parseInt(sliderVal, 10);
-  const hoursAgoToSlider = (hoursAgo) => 72 - parseInt(hoursAgo, 10);
+  const sliderToHoursAgo = (sliderVal) => parseInt(slider.max, 10) - parseInt(sliderVal, 10);
+  const hoursAgoToSlider = (hoursAgo) => parseInt(slider.max, 10) - parseInt(hoursAgo, 10);
 
   function updateTimeDisplay(sliderVal) {
     const hoursAgo = sliderToHoursAgo(sliderVal);
@@ -3989,7 +4053,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const d = new Date(Date.now() - (hoursAgo * 3600000));
       const hh = String(d.getHours()).padStart(2, '0');
       const mm = String(d.getMinutes()).padStart(2, '0');
-      timeDisplay.textContent = `${hh}:${mm}`;
+      
+      const fiMonths = ['Tammi', 'Helmi', 'Maalis', 'Huhti', 'Touko', 'Kesä', 'Heinä', 'Elo', 'Syys', 'Loka', 'Marras', 'Joulu'];
+      const day = d.getDate();
+      const month = fiMonths[d.getMonth()];
+      
+      // If looking at today (within last 24h of current day), optionally just show time, but since they asked for it, always show date
+      timeDisplay.textContent = `${day}. ${month} ${hh}:${mm}`;
     }
   }
 
@@ -4040,76 +4110,6 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
-  // ── Playback Engine (Moves smoothly Left to Right) ──
-  const playBtn = document.getElementById('tl-play-btn');
-  const speedBtns = document.querySelectorAll('.tl-speed-btn');
-  let isPlaying = false;
-  let playInterval = null;
-  let playSpeedMultiplier = 1; // 1x, 60x, 600x
-
-  const getIntervalMs = () => {
-    if (playSpeedMultiplier === 600) return 90;
-    if (playSpeedMultiplier === 60) return 300;
-    return 1000; // 1x default
-  };
-
-  const startPlayback = () => {
-    if (playInterval) clearInterval(playInterval);
-    
-    // If currently at rightmost (LIVE/Now), jump back to left (0 = 72h ago) to play forward left-to-right
-    if (parseInt(slider.value, 10) >= 72) {
-      slider.value = 0;
-      updateTimeDisplay(0);
-    }
-    
-    if (!isTimelineMode) {
-      setMode('history');
-    }
-
-    isPlaying = true;
-    if (playBtn) {
-      playBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">pause</span>';
-      playBtn.style.background = '#b80048';
-      playBtn.style.color = '#fff';
-    }
-
-    playInterval = setInterval(() => {
-      let currentVal = parseInt(slider.value, 10);
-      currentVal += 1; // Move forward left-to-right towards 72 (LIVE)
-
-      if (currentVal >= 72) {
-        slider.value = 72;
-        updateTimeDisplay(72);
-        stopPlayback();
-        setMode('live');
-      } else {
-        slider.value = currentVal;
-        updateTimeDisplay(currentVal);
-        const hoursAgo = sliderToHoursAgo(currentVal);
-        fetchTimelineData(hoursAgo, true);
-        
-        // Auto-highlight matching event if present
-        const closest = findClosestEvent(currentVal);
-        if (closest && Math.abs(closest.born_hour - hoursAgo) <= 1) {
-          window.dispatchEvent(new CustomEvent('pmcFilterIp', { detail: { ip: closest.ip } }));
-        }
-      }
-    }, getIntervalMs());
-  };
-
-  const stopPlayback = () => {
-    isPlaying = false;
-    if (playInterval) {
-      clearInterval(playInterval);
-      playInterval = null;
-    }
-    if (playBtn) {
-      playBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span>';
-      playBtn.style.background = '#f1f5f9';
-      playBtn.style.color = '#475569';
-    }
-  };
-
   const rangeBtns = document.querySelectorAll('.tl-range-btn');
     rangeBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -4138,8 +4138,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const range = btn.getAttribute('data-range');
         window.pmcSecurityTimeRange = range;
         window.pmcSecurityHistoryOffset = 0; // Clear offset when using range
-        
-        if (typeof stopPlayback === 'function') stopPlayback();
         if (typeof isTimelineMode !== 'undefined' && !isTimelineMode) {
           if (typeof btnHistory !== 'undefined') btnHistory.classList.add('active');
           if (typeof btnLive !== 'undefined') btnLive.classList.remove('active');
@@ -4159,8 +4157,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Disable slider visually when using range
-        slider.disabled = true;
-        slider.style.opacity = '0.5';
+        // slider.disabled removed
+        // opacity removed
         
         window.dispatchEvent(new Event('pmcTimeRangeChanged'));
         window.dispatchEvent(new Event('pmcClearFilters'));
@@ -4177,29 +4175,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-  speedBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      speedBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const text = btn.textContent.trim();
-      if (text === '600x') playSpeedMultiplier = 600;
-      else if (text === '60x') playSpeedMultiplier = 60;
-      else playSpeedMultiplier = 1;
 
-      // If currently playing, restart with new speed
-      if (isPlaying) {
-        startPlayback();
-      }
-    });
-  });
-
-  // Stop playback if user manually touches slider
-  slider.addEventListener('mousedown', () => {
-    if (isPlaying) stopPlayback();
-  });
-  slider.addEventListener('touchstart', () => {
-    if (isPlaying) stopPlayback();
-  });
 
   slider.addEventListener('input', (e) => {
     let val = parseInt(e.target.value, 10);
@@ -4223,6 +4199,14 @@ document.addEventListener('DOMContentLoaded', () => {
       val = hoursAgoToSlider(closest.born_hour);
       slider.value = val;
     }
+    
+    // Clear active filters when scrubbing manually
+    window.pmcSecurityTimeRange = '';
+    document.querySelectorAll('.tl-range-btn, .tl-month-option, .tl-date-btn').forEach(btn => {
+      btn.classList.remove('active');
+      btn.classList.remove('active-month');
+      btn.setAttribute('data-active', 'false');
+    });
 
     const finalHoursAgo = sliderToHoursAgo(val);
     if (!isTimelineMode && finalHoursAgo > 0) {
@@ -4249,11 +4233,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if(l) l.style.display = 'none';
     const data = e.detail;
     if (!data || !data.event_summary) return;
+    
+    // Update the HTML Event Log Widget so it stays in sync with timeline
+    if (typeof updateEventLogTable === 'function') {
+      updateEventLogTable(data.events || data.connections || []);
+    }
 
     const markersContainer = document.getElementById('tl-track-markers');
     if (!markersContainer) return;
 
     markersContainer.innerHTML = '';
+    
+    // Scale timeline track dynamically based on the oldest event
+    let trackMaxHours = 72;
+    if (data.event_summary.length > 0) {
+      trackMaxHours = Math.max(72, ...data.event_summary.map(e => e.born_hour));
+    }
+    slider.max = trackMaxHours;
+    slider.value = parseInt(slider.max, 10) - (window.pmcSecurityHistoryOffset || 0);
+    
+    const pctCounts = {};
     
     // Helper to get Lucide SVG string based on status
     const getIconSvg = (status) => {
@@ -4264,12 +4263,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if (s === 'warning') return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'; // AlertTriangle
       return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'; // Activity (active)
     };
-
-    data.event_summary.forEach(ev => {
+    let summaryToRender = data.event_summary;
+    if (summaryToRender.length > 200) {
+      // Sample evenly across the time range to keep a realistic mix of normal traffic and threats
+      const step = Math.ceil(summaryToRender.length / 200);
+      summaryToRender = summaryToRender.filter((_, index) => index % step === 0);
+    }
+    
+    summaryToRender.forEach(ev => {
       const marker = document.createElement('div');
-      // Left = 72h ago (0%), Right = Now (100%)
-      const pct = ((72 - ev.born_hour) / 72) * 100;
+      // Left = Past (0%), Right = Now (100%)
+      const pct = ((trackMaxHours - ev.born_hour) / trackMaxHours) * 100;
       
+      // Jitter overlap prevention
+      const roundedPct = Math.round(pct * 2) / 2; // group within 0.5%
+      pctCounts[roundedPct] = (pctCounts[roundedPct] || 0) + 1;
+      const offsetPx = (pctCounts[roundedPct] - 1) * 14; // offset each overlapping marker by 14px to the right
       let color = '#2563eb'; // active (blue)
       if (ev.status === 'blocked') color = '#dc2626'; // red
       if (ev.status === 'killed') color = '#64748b'; // gray
@@ -4278,7 +4287,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Pin-asettelu: ikoni kelluu viivan yläpuolella ja vertikaaliviiva laskeutuu kiskolle
       marker.style.position = 'absolute';
-      marker.style.left = `calc(${pct}% - 10px)`;
+      marker.style.left = `calc(${Math.max(0, Math.min(100, pct))}% - 10px + ${offsetPx}px)`;
       marker.style.bottom = '2px';
       marker.style.display = 'flex';
       marker.style.flexDirection = 'column';
