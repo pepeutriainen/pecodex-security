@@ -355,13 +355,14 @@ window.pmcSaveGeoIPAdvanced = async (btn) => {
 
 	const formData = new FormData();
 	formData.append('action', 'pmc_save_geoip_settings');
-	formData.append('nonce', window.pmcSecurityNonce);
+	formData.append('nonce', typeof pmcSecurityConfig !== 'undefined' ? pmcSecurityConfig.nonce : '');
 	formData.append('global_countries', globalCountries);
 	formData.append('login_countries', loginCountries);
 	formData.append('login_action', loginAction);
 
 	try {
-		const res = await fetch(window.pmcSecurityAjaxUrl, {
+		const ajaxUrl = typeof pmcSecurityConfig !== 'undefined' ? pmcSecurityConfig.ajaxUrl : '/wp-admin/admin-ajax.php';
+		const res = await fetch(ajaxUrl, {
 			method: 'POST',
 			body: formData
 		});
