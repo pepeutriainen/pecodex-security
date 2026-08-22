@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Security Module: GeoIP & Kirjautuminen
  */
@@ -102,7 +102,7 @@ $login_action      = get_option( 'pmc_geoip_login_action', 'hide_form' ); // hid
 
 		<!-- Tallenna -painike -->
 		<div style="margin-top: 24px; display: flex; align-items: center; gap: 12px;">
-			<button class="ps-btn ps-btn-primary" style="padding: 10px 24px; font-size: 14px; font-weight: 600;" onclick="window.pmcSaveGeoIPAdvanced(this)">Tallenna kaikki GeoIP-asetukset</button>
+			<button type="button" class="ps-btn ps-btn-primary" style="padding: 10px 24px; font-size: 14px; font-weight: 600;" onclick="window.pmcSaveGeoIPAdvanced(this); return false;">Tallenna kaikki GeoIP-asetukset</button>
 			<span id="geoip-save-status" style="color: #16a34a; font-weight: 600; display: none; display: flex; align-items: center; gap: 4px;">
 				<span class="material-symbols-outlined" style="font-size: 18px;">check_circle</span> Asetukset tallennettu onnistuneesti!
 			</span>
@@ -361,18 +361,26 @@ window.pmcSaveGeoIPAdvanced = async (btn) => {
 	formData.append('login_action', loginAction);
 
 	try {
-		await fetch(window.pmcSecurityAjaxUrl, {
+		const res = await fetch(window.pmcSecurityAjaxUrl, {
 			method: 'POST',
 			body: formData
 		});
 		
-		const status = document.getElementById('geoip-save-status');
-		if (status) {
-			status.style.display = 'inline-flex';
-			setTimeout(() => status.style.display = 'none', 3500);
+		const data = await res.json();
+		console.log('GeoIP Save Response:', data);
+		
+		if (data.success) {
+			const status = document.getElementById('geoip-save-status');
+			if (status) {
+				status.style.display = 'inline-flex';
+				setTimeout(() => status.style.display = 'none', 3500);
+			}
+		} else {
+			alert('Palvelin palautti virheen: ' + (data.data || 'Tuntematon virhe'));
 		}
 	} catch (e) {
-		alert('Virhe tallennettaessa');
+		console.error('Save error:', e);
+		alert('Virhe tallennettaessa: ' + e.message);
 	}
 
 	btn.textContent = origText;
