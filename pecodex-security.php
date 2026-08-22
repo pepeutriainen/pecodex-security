@@ -1173,6 +1173,7 @@ final class PGM_Private_Gutenberg_Media {
 		add_submenu_page( 'pecodex-security', 'Palomuuri ja Lukitukset', 'Palomuuri', 'manage_options', 'pecodex-security-firewall', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Järjestelmän Suojaus', 'Suojaus', 'manage_options', 'pecodex-security-hardening', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Haittaohjelmaskanneri', 'Skanneri', 'manage_options', 'pecodex-security-scanner', array( $this, 'render_security_dashboard_page' ) );
+		add_submenu_page( 'pecodex-security', 'Maa-estot ja Kirjautuminen', 'GeoIP & Kirjautuminen', 'manage_options', 'pecodex-security-geoip', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Lisätyökalut', 'Lisätyökalut', 'manage_options', 'pecodex-security-advanced', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Turvaotsakkeet', 'Turvaotsakkeet', 'manage_options', 'pecodex-security-headers', array( $this, 'render_security_dashboard_page' ) );
 		add_submenu_page( 'pecodex-security', 'Tarkastusloki', 'Tarkastusloki', 'manage_options', 'pecodex-security-audit-log', array( $this, 'render_security_dashboard_page' ) );
