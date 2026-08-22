@@ -366,8 +366,19 @@ window.pmcSaveGeoIPAdvanced = async (btn) => {
 			body: formData
 		});
 		
-		const data = await res.json();
-		console.log('GeoIP Save Response:', data);
+		const rawText = await res.text();
+		console.log('Raw Server Response:', rawText);
+		
+		let data;
+		try {
+			data = JSON.parse(rawText);
+		} catch (parseError) {
+			console.error('Failed to parse JSON. Raw response was:', rawText);
+			alert('Palvelin palautti virheellisen vastauksen (katso konsoli).');
+			btn.textContent = origText;
+			btn.disabled = false;
+			return;
+		}
 		
 		if (data.success) {
 			const status = document.getElementById('geoip-save-status');
